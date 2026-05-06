@@ -248,9 +248,23 @@ export default function StatsPage() {
         )}
 
         {/* Footer */}
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          所有数据匿名收集，仅用于生成统计分布
-        </p>
+        <div className="mt-8 text-center text-xs text-muted-foreground">
+          <p>所有数据匿名收集，仅用于生成统计分布</p>
+          <div className="mt-3 flex items-center justify-center gap-3">
+            <Link href="/about" className="transition-colors hover:text-foreground hover:underline underline-offset-4">
+              关于
+            </Link>
+            <span className="text-muted-foreground/40">|</span>
+            <a
+              href="https://deadpan.hydroroll.team"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+            >
+              另一个游戏
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )

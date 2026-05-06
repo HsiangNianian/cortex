@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -819,15 +820,20 @@ export default function TestFlow() {
         {toast}
       </div>
 
-      <footer className="pt-4 text-center text-xs text-muted-foreground">
-        <span>cortex &copy; </span>
+      <footer className="flex items-center justify-center gap-3 pt-4 text-xs text-muted-foreground">
+        <span>cortex &copy; 2026</span>
+        <span className="text-muted-foreground/40">|</span>
+        <Link href="/about" className="transition-colors hover:text-foreground hover:underline underline-offset-4">
+          关于
+        </Link>
+        <span className="text-muted-foreground/40">|</span>
         <a
-          href="https://github.com/HsiangNianian"
+          href="https://deadpan.hydroroll.team"
           target="_blank"
           rel="noreferrer"
           className="transition-colors hover:text-foreground hover:underline underline-offset-4"
         >
-          简律纯
+          另一个游戏
         </a>
       </footer>
     </div>
