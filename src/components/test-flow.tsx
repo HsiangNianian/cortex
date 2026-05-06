@@ -679,11 +679,25 @@ export default function TestFlow() {
   /* ─── Render ─── */
 
   return (
-    <div className="flex min-h-dvh items-center justify-center p-4 md:p-8">
-      {phase === "landing" && renderLanding()}
-      {phase === "declaration" && renderDeclaration()}
-      {phase === "testing" && renderQuestion()}
-      {phase === "result" && renderResult()}
+    <div className="flex min-h-dvh flex-col px-4 py-4 md:px-8 md:py-8">
+      <main className="flex flex-1 items-center justify-center">
+        {phase === "landing" && renderLanding()}
+        {phase === "declaration" && renderDeclaration()}
+        {phase === "testing" && renderQuestion()}
+        {phase === "result" && renderResult()}
+      </main>
+
+      <footer className="pt-4 text-center text-xs text-muted-foreground">
+        <span>cortex &copy; </span>
+        <a
+          href="https://github.com/HsiangNianian"
+          target="_blank"
+          rel="noreferrer"
+          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+        >
+          简律纯
+        </a>
+      </footer>
     </div>
   );
 }
