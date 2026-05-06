@@ -1,32 +1,64 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { QUESTIONS, QUESTION_TIME } from "@/lib/questions"
-import { calculateResult, generateShareText, type ResultTier, type TestResult } from "@/lib/scoring"
+import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { QUESTIONS, QUESTION_TIME } from "@/lib/questions";
+import {
+  calculateResult,
+  generateShareText,
+  type ResultTier,
+  type TestResult,
+} from "@/lib/scoring";
 
-type Phase = "landing" | "declaration" | "testing" | "result"
+type Phase = "landing" | "declaration" | "testing" | "result";
+
+const LOCKED_SELECTION_MESSAGE = "不允许更改，毕竟真正的笨蛋就是没有后悔机会的";
 
 /* ─── SVG Circular Timer ─── */
 
-function QuestionTimer({ remaining, total }: { remaining: number; total: number }) {
-  const radius = 40
-  const circumference = 2 * Math.PI * radius
-  const progress = remaining / total
-  const offset = circumference * (1 - progress)
+function QuestionTimer({
+  remaining,
+  total,
+}: {
+  remaining: number;
+  total: number;
+}) {
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+  const progress = remaining / total;
+  const offset = circumference * (1 - progress);
 
-  const color = progress > 0.5 ? "#16a34a" : progress > 0.25 ? "#d97706" : "#dc2626"
+  const color =
+    progress > 0.5 ? "#16a34a" : progress > 0.25 ? "#d97706" : "#dc2626";
   const textColor =
-    progress > 0.5 ? "text-green-600" : progress > 0.25 ? "text-amber-600" : "text-red-600"
+    progress > 0.5
+      ? "text-green-600"
+      : progress > 0.25
+        ? "text-amber-600"
+        : "text-red-600";
 
   return (
     <div className="relative h-20 w-20 shrink-0">
       <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
-        <circle cx="50" cy="50" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="5" />
+        <circle
+          cx="50"
+          cy="50"
+          r={radius}
+          fill="none"
+          stroke="#e5e7eb"
+          strokeWidth="5"
+        />
         <circle
           cx="50"
           cy="50"
@@ -41,23 +73,38 @@ function QuestionTimer({ remaining, total }: { remaining: number; total: number 
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`text-xl font-bold tabular-nums ${textColor}`}>{remaining}</span>
+        <span className={`text-xl font-bold tabular-nums ${textColor}`}>
+          {remaining}
+        </span>
       </div>
     </div>
-  )
+  );
 }
 
 /* ─── SVG Degradation Gauge ─── */
 
-function DegradationGauge({ index, ringColor }: { index: number; ringColor: string }) {
-  const radius = 68
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - index / 100)
+function DegradationGauge({
+  index,
+  ringColor,
+}: {
+  index: number;
+  ringColor: string;
+}) {
+  const radius = 68;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - index / 100);
 
   return (
     <div className="relative mx-auto h-40 w-40">
       <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
-        <circle cx="80" cy="80" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="10" />
+        <circle
+          cx="80"
+          cy="80"
+          r={radius}
+          fill="none"
+          stroke="#e5e7eb"
+          strokeWidth="10"
+        />
         <circle
           cx="80"
           cy="80"
@@ -76,70 +123,70 @@ function DegradationGauge({ index, ringColor }: { index: number; ringColor: stri
         <span className="text-xs text-muted-foreground">/ 100</span>
       </div>
     </div>
-  )
+  );
 }
 
 /* ─── Main TestFlow Component ─── */
 
 export default function TestFlow() {
-  const [phase, setPhase] = useState<Phase>("landing")
-  const [declared, setDeclared] = useState(false)
-  const [currentQ, setCurrentQ] = useState(0)
-  const [selected, setSelected] = useState<number | null>(null)
-  const [answers, setAnswers] = useState<(number | null)[]>([])
-  const [timeouts, setTimeouts] = useState<boolean[]>([])
-  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME)
-  const [result, setResult] = useState<TestResult | null>(null)
+  const [phase, setPhase] = useState<Phase>("landing");
+  const [declared, setDeclared] = useState(false);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [answers, setAnswers] = useState<(number | null)[]>([]);
+  const [timeouts, setTimeouts] = useState<boolean[]>([]);
+  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
+  const [result, setResult] = useState<TestResult | null>(null);
   const [savedResult, setSavedResult] = useState<{
-    degradationIndex: number
-    tierLabel: string
-    tierColor: string
-    correctCount: number
-    totalQuestions: number
-    timestamp: number
-  } | null>(null)
-  const [showExplanations, setShowExplanations] = useState(false)
+    degradationIndex: number;
+    tierLabel: string;
+    tierColor: string;
+    correctCount: number;
+    totalQuestions: number;
+    timestamp: number;
+  } | null>(null);
+  const [showExplanations, setShowExplanations] = useState(false);
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const isLastQuestion = currentQ === QUESTIONS.length - 1
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isLastQuestion = currentQ === QUESTIONS.length - 1;
 
   /* ─── Timer Management ─── */
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-  }, [])
+  }, []);
 
   const startTimer = useCallback(() => {
-    stopTimer()
-    setTimeLeft(QUESTION_TIME)
+    stopTimer();
+    setTimeLeft(QUESTION_TIME);
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           // Timeout — treat as skip
-          return 0
+          return 0;
         }
-        return prev - 1
-      })
-    }, 1000)
-  }, [stopTimer])
+        return prev - 1;
+      });
+    }, 1000);
+  }, [stopTimer]);
 
   // Auto-submit null (timeout) when timer reaches 0 with no selection
   useEffect(() => {
-    if (phase !== "testing") return
-    if (timeLeft > 0) return
-    if (selected !== null) return
-    if (answers.length > currentQ) return // already submitted for this question
-    submitAnswer(null)
-  }, [timeLeft, phase, selected, answers.length, currentQ])
+    if (phase !== "testing") return;
+    if (timeLeft > 0) return;
+    if (selected !== null) return;
+    if (answers.length > currentQ) return; // already submitted for this question
+    submitAnswer(null);
+  }, [timeLeft, phase, selected, answers.length, currentQ]);
 
   // Calculate result when all questions answered
   useEffect(() => {
-    if (answers.length !== QUESTIONS.length) return
-    const r = calculateResult(answers, timeouts)
-    setResult(r)
+    if (answers.length !== QUESTIONS.length) return;
+    const r = calculateResult(answers, timeouts);
+    setResult(r);
     try {
       localStorage.setItem(
         "cognitive-rust-result",
@@ -151,94 +198,99 @@ export default function TestFlow() {
           totalQuestions: r.totalQuestions,
           timestamp: Date.now(),
         }),
-      )
+      );
     } catch {
       // ignore — storage full or unavailable
     }
-    setPhase("result")
-  }, [answers, timeouts])
+    setPhase("result");
+  }, [answers, timeouts]);
 
   // Auto-advance to next question after answer is recorded
   useEffect(() => {
-    if (phase !== "testing") return
-    if (answers.length <= currentQ) return // no new answer yet
-    if (answers.length >= QUESTIONS.length) return // last — result effect handles
-    setCurrentQ((prev) => prev + 1)
-    startTimer()
-  }, [answers, phase])
+    if (phase !== "testing") return;
+    if (answers.length <= currentQ) return; // no new answer yet
+    if (answers.length >= QUESTIONS.length) return; // last — result effect handles
+    setCurrentQ((prev) => prev + 1);
+    startTimer();
+  }, [answers, phase]);
 
   // Cleanup timer on unmount
   useEffect(() => {
-    return () => stopTimer()
-  }, [stopTimer])
+    return () => stopTimer();
+  }, [stopTimer]);
 
   // Load previous result from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("cognitive-rust-result")
+      const saved = localStorage.getItem("cognitive-rust-result");
       if (saved) {
-        setSavedResult(JSON.parse(saved))
+        setSavedResult(JSON.parse(saved));
       }
     } catch {
       // ignore — no previous result
     }
-  }, [])
+  }, []);
 
   /* ─── Event Handlers ─── */
 
   function handleStart() {
-    setPhase("declaration")
+    setPhase("declaration");
   }
 
   function handleBeginTest() {
-    setPhase("testing")
-    setCurrentQ(0)
-    setAnswers([])
-    setTimeouts([])
-    setSelected(null)
-    startTimer()
+    setPhase("testing");
+    setCurrentQ(0);
+    setAnswers([]);
+    setTimeouts([]);
+    setSelected(null);
+    startTimer();
   }
 
   function handleSelectOption(index: number) {
-    if (selected !== null) return // already selected, wait for advance
-    setSelected(index)
+    if (selected !== null) {
+      if (selected !== index) {
+        window.alert(LOCKED_SELECTION_MESSAGE);
+      }
+      return;
+    }
+    setSelected(index);
   }
 
   function submitAnswer(answer: number | null) {
-    const timedOut = answer === null && timeLeft === 0
-    stopTimer()
-    setAnswers((prev) => [...prev, answer])
-    setTimeouts((prev) => [...prev, timedOut])
-    setSelected(null)
+    const timedOut = answer === null && timeLeft === 0;
+    stopTimer();
+    setAnswers((prev) => [...prev, answer]);
+    setTimeouts((prev) => [...prev, timedOut]);
+    setSelected(null);
     // Auto-advance is handled by the answers.length effect above
   }
 
   function handleNext() {
-    if (selected === null) return
-    submitAnswer(selected)
+    if (selected === null) return;
+    submitAnswer(selected);
   }
 
   function handleRestart() {
-    stopTimer()
-    setPhase("landing")
-    setDeclared(false)
-    setCurrentQ(0)
-    setSelected(null)
-    setAnswers([])
-    setTimeouts([])
-    setTimeLeft(QUESTION_TIME)
-    setResult(null)
-    setShowExplanations(false)
+    stopTimer();
+    setPhase("landing");
+    setDeclared(false);
+    setCurrentQ(0);
+    setSelected(null);
+    setAnswers([]);
+    setTimeouts([]);
+    setTimeLeft(QUESTION_TIME);
+    setResult(null);
+    setShowExplanations(false);
   }
 
   async function handleShare() {
-    if (!result) return
-    const text = generateShareText(result)
+    if (!result) return;
+    const text = generateShareText(result);
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: "认知防锈 · 基线测试", text })
-        return
+        await navigator.share({ title: "认知防锈 · 基线测试", text });
+        return;
       } catch {
         // user cancelled or share failed — fall through to clipboard
       }
@@ -246,7 +298,7 @@ export default function TestFlow() {
 
     // Clipboard fallback
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(text);
     } catch {
       // silently fail — not critical
     }
@@ -261,7 +313,9 @@ export default function TestFlow() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/5">
             <span className="text-2xl font-bold text-primary">?</span>
           </div>
-          <CardTitle className="text-2xl tracking-tight">认知防锈 · 基线测试</CardTitle>
+          <CardTitle className="text-2xl tracking-tight">
+            认知防锈 · 基线测试
+          </CardTitle>
           <CardDescription className="mt-3 text-base leading-relaxed">
             当我们越来越依赖 AI 完成思考工作，一个关键问题出现了——
             <br />
@@ -277,7 +331,9 @@ export default function TestFlow() {
               <span className="font-medium text-foreground">~3</span> 分钟完成
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground text-destructive">禁止使用 AI</span>{" "}
+              <span className="font-medium text-foreground text-destructive">
+                禁止使用 AI
+              </span>{" "}
               辅助答题
             </div>
           </div>
@@ -297,10 +353,15 @@ export default function TestFlow() {
                 </span>
               </div>
               <div className="mt-1 flex items-center gap-2">
-                <span className="text-lg font-bold" style={{ color: savedResult.tierColor }}>
+                <span
+                  className="text-lg font-bold"
+                  style={{ color: savedResult.tierColor }}
+                >
                   {savedResult.degradationIndex}
                 </span>
-                <span className="text-xs text-muted-foreground">退化指数 · </span>
+                <span className="text-xs text-muted-foreground">
+                  退化指数 ·{" "}
+                </span>
                 <span
                   className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
                   style={{ backgroundColor: savedResult.tierColor }}
@@ -317,7 +378,7 @@ export default function TestFlow() {
           </Button>
         </CardFooter>
       </Card>
-    )
+    );
   }
 
   /* ─── Phase: Declaration ─── */
@@ -343,7 +404,10 @@ export default function TestFlow() {
             </li>
             <li className="flex gap-2">
               <span className="text-foreground">•</span>
-              每道题限时 <span className="font-medium text-foreground">{QUESTION_TIME} 秒</span>
+              每道题限时{" "}
+              <span className="font-medium text-foreground">
+                {QUESTION_TIME} 秒
+              </span>
               ，超时将自动跳过
             </li>
           </ul>
@@ -357,7 +421,10 @@ export default function TestFlow() {
               onCheckedChange={(checked) => setDeclared(checked === true)}
               className="mt-0.5"
             />
-            <label htmlFor="declaration" className="text-sm leading-relaxed cursor-pointer">
+            <label
+              htmlFor="declaration"
+              className="text-sm leading-relaxed cursor-pointer"
+            >
               我承诺在本次测试中不使用任何 AI 辅助工具
             </label>
           </div>
@@ -371,19 +438,24 @@ export default function TestFlow() {
           >
             开始答题
           </Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={handleRestart}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground"
+            onClick={handleRestart}
+          >
             返回
           </Button>
         </CardFooter>
       </Card>
-    )
+    );
   }
 
   /* ─── Phase: Testing ─── */
 
   function renderQuestion() {
-    const question = QUESTIONS[currentQ]
-    if (!question) return null
+    const question = QUESTIONS[currentQ];
+    if (!question) return null;
 
     return (
       <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -403,16 +475,19 @@ export default function TestFlow() {
           {/* Progress bar */}
           <div className="mt-3 flex gap-1">
             {QUESTIONS.map((_, i) => {
-              const isAnswered = answers[i] !== undefined
-              const isCurrent = i === currentQ
+              const isAnswered = answers[i] !== undefined;
+              const isCurrent = i === currentQ;
               return (
                 <div
                   key={i}
-                  className={`h-1.5 flex-1 rounded-full transition-colors ${
-                    isAnswered ? "bg-primary" : isCurrent ? "bg-primary/40" : "bg-muted"
-                  }`}
+                  className={`h-1.5 flex-1 rounded-full transition-colors ${isAnswered
+                      ? "bg-primary"
+                      : isCurrent
+                        ? "bg-primary/40"
+                        : "bg-muted"
+                    }`}
                 />
-              )
+              );
             })}
           </div>
 
@@ -423,20 +498,20 @@ export default function TestFlow() {
 
         <CardContent className="space-y-2">
           {question.options.map((option, i) => {
-            const isSelected = selected === i
-            const isCorrect = answers[currentQ] !== undefined && question.answer === i
-            const isWrong = answers[currentQ] === i && !isCorrect
+            const isSelected = selected === i;
+            const isCorrect =
+              answers[currentQ] !== undefined && question.answer === i;
+            const isWrong = answers[currentQ] === i && !isCorrect;
 
             // Show feedback after answering
-            const showFeedback = answers[currentQ] !== undefined
+            const showFeedback = answers[currentQ] !== undefined;
 
             return (
               <button
                 key={i}
                 disabled={answers[currentQ] !== undefined}
                 onClick={() => handleSelectOption(i)}
-                className={`w-full rounded-lg border-2 p-4 text-left text-sm transition-all ${
-                  showFeedback
+                className={`w-full rounded-lg border-2 p-4 text-left text-sm transition-all ${showFeedback
                     ? isCorrect
                       ? "border-green-500 bg-green-50 text-green-800"
                       : isWrong
@@ -445,11 +520,14 @@ export default function TestFlow() {
                     : isSelected
                       ? "border-primary bg-primary/5"
                       : "border-muted hover:border-primary/50 hover:bg-accent"
-                }`}
+                  }`}
               >
-                <span className="font-medium">{String.fromCharCode(65 + i)}.</span> {option}
+                <span className="font-medium">
+                  {String.fromCharCode(65 + i)}.
+                </span>{" "}
+                {option}
               </button>
-            )
+            );
           })}
         </CardContent>
 
@@ -464,13 +542,13 @@ export default function TestFlow() {
           </Button>
         </CardFooter>
       </Card>
-    )
+    );
   }
 
   /* ─── Phase: Result ─── */
 
   function renderResult() {
-    if (!result) return null
+    if (!result) return null;
 
     return (
       <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -482,7 +560,10 @@ export default function TestFlow() {
         <CardContent className="space-y-6">
           {/* Gauge + Tier */}
           <div className="text-center">
-            <DegradationGauge index={result.degradationIndex} ringColor={result.tier.ringColor} />
+            <DegradationGauge
+              index={result.degradationIndex}
+              ringColor={result.tier.ringColor}
+            />
             <div className="mt-3">
               <Badge
                 className="px-3 py-1 text-sm"
@@ -516,15 +597,17 @@ export default function TestFlow() {
               className="flex w-full items-center justify-between text-sm font-medium"
             >
               逐题回顾
-              <span className="text-muted-foreground">{showExplanations ? "收起" : "展开"}</span>
+              <span className="text-muted-foreground">
+                {showExplanations ? "收起" : "展开"}
+              </span>
             </button>
 
             {showExplanations && (
               <div className="mt-3 space-y-3">
                 {QUESTIONS.map((q, i) => {
-                  const userAnswer = result.answers[i]
-                  const isCorrect = userAnswer === q.answer
-                  const timedOut = result.timeouts[i]
+                  const userAnswer = result.answers[i];
+                  const isCorrect = userAnswer === q.answer;
+                  const timedOut = result.timeouts[i];
 
                   return (
                     <div key={i} className="rounded-lg border p-3 text-sm">
@@ -533,13 +616,12 @@ export default function TestFlow() {
                           第 {i + 1} 题 · {q.category}
                         </span>
                         <span
-                          className={`text-xs font-medium ${
-                            timedOut
+                          className={`text-xs font-medium ${timedOut
                               ? "text-muted-foreground"
                               : isCorrect
                                 ? "text-green-600"
                                 : "text-red-600"
-                          }`}
+                            }`}
                         >
                           {timedOut ? "超时" : isCorrect ? "正确" : "错误"}
                         </span>
@@ -549,7 +631,8 @@ export default function TestFlow() {
                         {q.question.includes("\n") ? "…" : ""}
                       </p>
                       <div className="mt-2 text-xs text-muted-foreground">
-                        你的答案：{userAnswer !== null ? q.options[userAnswer] : "未作答"}
+                        你的答案：
+                        {userAnswer !== null ? q.options[userAnswer] : "未作答"}
                         {!isCorrect && !timedOut && (
                           <>
                             {" · "}
@@ -568,7 +651,7 @@ export default function TestFlow() {
                         {q.explanation}
                       </p>
                     </div>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -585,11 +668,12 @@ export default function TestFlow() {
             </Button>
           </div>
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            认知能力就像肌肉——用进废退。定期测量，才能知道 AI 在你身上留下了什么。
+            认知能力就像肌肉——用进废退。定期测量，才能知道 AI
+            在你身上留下了什么。
           </p>
         </CardFooter>
       </Card>
-    )
+    );
   }
 
   /* ─── Render ─── */
@@ -601,5 +685,5 @@ export default function TestFlow() {
       {phase === "testing" && renderQuestion()}
       {phase === "result" && renderResult()}
     </div>
-  )
+  );
 }
