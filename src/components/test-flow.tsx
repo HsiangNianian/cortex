@@ -211,11 +211,6 @@ export default function TestFlow() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }).catch(() => {});
-    fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "test_complete", tier: r.tier.label }),
-    }).catch(() => {});
     setPhase("result");
   }, [answers, timeouts]);
 
@@ -286,12 +281,6 @@ export default function TestFlow() {
 
   function handleRestart() {
     stopTimer();
-    // Track retest event
-    fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "retest" }),
-    }).catch(() => {});
     setPhase("landing");
     setDeclared(false);
     setCurrentQ(0);
@@ -306,15 +295,7 @@ export default function TestFlow() {
   async function handleShare() {
     if (!result) return;
     const text = generateShareText(result);
-    const imageUrl = `/api/og?i=${result.degradationIndex}&t=${encodeURIComponent(result.tier.label)}&c=${result.correctCount}&n=${result.totalQuestions}`;
     const pageUrl = window.location.origin;
-
-    // Track share event
-    fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "share_click", tier: result.tier.label }),
-    }).catch(() => {});
 
     if (navigator.share) {
       try {

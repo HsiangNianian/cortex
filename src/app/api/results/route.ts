@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { redis } from "@/lib/redis"
+import { saveResultAndUpdateStats } from "@/lib/blob"
 
 export async function POST(request: Request) {
   try {
@@ -10,26 +10,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "invalid payload" }, { status: 400 })
     }
 
-    const id = crypto.randomUUID().slice(0, 12)
-    const now = Date.now()
-
-    // Sorted set for distribution stats
-    await redis.zadd("cortex:scores", { score: degradationIndex, member: id })
-    // Total test counter
-    await redis.incr("cortex:total")
-    // Per-tier counter
-    await redis.incr(`cortex:tier:${tierLabel}`)
-    // Full result detail (expire after 30 days)
-    await redis.hset(`cortex:result:${id}`, {
+    await saveResultAndUpdateStats({
       degradationIndex,
       tierLabel,
       correctCount,
       totalQuestions,
-      timestamp: now,
+      timestamp: Date.now(),
     })
-    await redis.expire(`cortex:result:${id}`, 60 * 60 * 24 * 30)
 
-    return NextResponse.json({ id })
+    return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ error: "internal error" }, { status: 500 })
   }
