@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, type ReactNode } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import {
   Card,
@@ -14,8 +20,16 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { selectQuestions, QUESTIONS_PER_TEST, QUESTION_TIME } from "@/lib/questions";
-import { calculateResult, generateShareText, type TestResult } from "@/lib/scoring";
+import {
+  selectQuestions,
+  QUESTIONS_PER_TEST,
+  QUESTION_TIME,
+} from "@/lib/questions";
+import {
+  calculateResult,
+  generateShareText,
+  type TestResult,
+} from "@/lib/scoring";
 import type { Question } from "@/lib/questions";
 
 type Phase = "landing" | "declaration" | "testing" | "result";
@@ -70,7 +84,9 @@ function QuestionTimer({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`text-base font-bold tabular-nums sm:text-xl ${textColor}`}>
+        <span
+          className={`text-base font-bold tabular-nums sm:text-xl ${textColor}`}
+        >
           {remaining}
         </span>
       </div>
@@ -131,7 +147,10 @@ function renderEmphasized(text: string): ReactNode {
     if (part.startsWith("**") && part.endsWith("**")) {
       const ch = part.slice(2, -2);
       return (
-        <span key={i} className="[text-emphasis:dot] [text-emphasis-position:over]">
+        <span
+          key={i}
+          className="[text-emphasis:dot] [text-emphasis-position:over]"
+        >
           {ch}
         </span>
       );
@@ -163,7 +182,9 @@ export default function TestFlow() {
   const [toast, setToast] = useState<string | null>(null);
   const [challengeRef, setChallengeRef] = useState<number | null>(null);
   const [aiUsage, setAiUsage] = useState<string | null>(null);
-  const [questions, setQuestions] = useState(() => selectQuestions(QUESTIONS_PER_TEST));
+  const [questions, setQuestions] = useState(() =>
+    selectQuestions(QUESTIONS_PER_TEST),
+  );
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isLastQuestion = currentQ === questions.length - 1;
@@ -237,7 +258,7 @@ export default function TestFlow() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).catch(() => {});
+    }).catch(() => { });
     setPhase("result");
   }, [answers, timeouts]);
 
@@ -377,7 +398,9 @@ export default function TestFlow() {
             {isChallenge ? (
               <>
                 你的朋友测得{" "}
-                <span className="font-bold text-foreground">{challengeRef}</span>{" "}
+                <span className="font-bold text-foreground">
+                  {challengeRef}
+                </span>{" "}
                 的退化指数。
                 <br />
                 你觉得你能比 TA 强吗？
@@ -445,7 +468,10 @@ export default function TestFlow() {
           <Button size="lg" className="w-full text-base" onClick={handleStart}>
             开始测试
           </Button>
-          <a href="/stats" className="text-xs text-muted-foreground underline-offset-4 hover:underline">
+          <a
+            href="/stats"
+            className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+          >
             查看全平台统计
           </a>
         </CardFooter>
@@ -493,19 +519,20 @@ export default function TestFlow() {
               ChatGPT、Claude、Copilot、Gemini 等都算
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {["< 30 分钟", "30 分钟 - 2 小时", "2 - 5 小时", "> 5 小时"].map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => setAiUsage(opt)}
-                  className={`rounded-full border px-3 py-1.5 text-xs transition-all ${
-                    aiUsage === opt
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground/20 text-muted-foreground hover:border-primary/50"
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
+              {["< 30 分钟", "30 分钟 - 2 小时", "2 - 5 小时", "> 5 小时"].map(
+                (opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => setAiUsage(opt)}
+                    className={`rounded-full border px-3 py-1.5 text-xs transition-all ${aiUsage === opt
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-muted-foreground/20 text-muted-foreground hover:border-primary/50"
+                      }`}
+                  >
+                    {opt}
+                  </button>
+                ),
+              )}
             </div>
           </div>
 
@@ -703,7 +730,9 @@ export default function TestFlow() {
 
           {/* 7-day retest reminder */}
           <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 text-center">
-            <p className="text-sm font-medium text-foreground">7 天后复测，追踪你的变化</p>
+            <p className="text-sm font-medium text-foreground">
+              7 天后复测，追踪你的变化
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
               认知能力就像肌肉——定期测量才能看到趋势。我们会在本地保存你的历史记录。
             </p>
@@ -786,7 +815,10 @@ export default function TestFlow() {
               重新测试
             </Button>
           </div>
-          <a href="/stats" className="text-xs text-muted-foreground underline-offset-4 hover:underline">
+          <a
+            href="/stats"
+            className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+          >
             查看全平台统计
           </a>
           <p className="mt-2 text-center text-xs text-muted-foreground">
@@ -811,19 +843,29 @@ export default function TestFlow() {
 
       {/* Toast */}
       <div
-        className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background shadow-lg transition-all duration-300 ${
-          toast
+        className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background shadow-lg transition-all duration-300 ${toast
             ? "translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-4 opacity-0"
-        }`}
+          }`}
       >
         {toast}
       </div>
 
       <footer className="flex items-center justify-center gap-3 pt-4 text-xs text-muted-foreground">
-        <span>cortex &copy; 2026</span>
+        <span>Cortex &copy; </span>
+        <a
+          href="https://github.com/HsiangNianian"
+          target="_blank"
+          rel="noreferrer"
+          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+        >
+          简律纯
+        </a>
         <span className="text-muted-foreground/40">|</span>
-        <Link href="/about" className="transition-colors hover:text-foreground hover:underline underline-offset-4">
+        <Link
+          href="/about"
+          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+        >
           关于
         </Link>
         <span className="text-muted-foreground/40">|</span>
