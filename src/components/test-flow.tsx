@@ -160,6 +160,7 @@ export default function TestFlow() {
   } | null>(null);
   const [showExplanations, setShowExplanations] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [challengeRef, setChallengeRef] = useState<number | null>(null);
   const [questions] = useState(() => selectQuestions(QUESTIONS_PER_TEST));
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -203,17 +204,21 @@ export default function TestFlow() {
     const r = calculateResult(answers, timeouts, questions);
     setResult(r);
     try {
-      localStorage.setItem(
-        "cognitive-rust-result",
-        JSON.stringify({
-          degradationIndex: r.degradationIndex,
-          tierLabel: r.tier.label,
-          tierColor: r.tier.ringColor,
-          correctCount: r.correctCount,
-          totalQuestions: r.totalQuestions,
-          timestamp: Date.now(),
-        }),
-      );
+      const entry = {
+        degradationIndex: r.degradationIndex,
+        tierLabel: r.tier.label,
+        tierColor: r.tier.ringColor,
+        correctCount: r.correctCount,
+        totalQuestions: r.totalQuestions,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem("cognitive-rust-result", JSON.stringify(entry));
+      // Append to history array (cap at 20)
+      const raw = localStorage.getItem("cognitive-rust-history");
+      const history = raw ? JSON.parse(raw) : [];
+      history.push(entry);
+      if (history.length > 20) history.shift();
+      localStorage.setItem("cognitive-rust-history", JSON.stringify(history));
     } catch {
       // ignore — storage full or unavailable
     }
@@ -246,7 +251,7 @@ export default function TestFlow() {
     return () => stopTimer();
   }, [stopTimer]);
 
-  // Load previous result from localStorage
+  // Load previous result + challenge ref from URL
   useEffect(() => {
     try {
       const saved = localStorage.getItem("cognitive-rust-result");
@@ -255,6 +260,15 @@ export default function TestFlow() {
       }
     } catch {
       // ignore — no previous result
+    }
+    // Read ?ref= from URL
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref !== null) {
+      const n = parseInt(ref, 10);
+      if (!isNaN(n)) setChallengeRef(n);
+      // Clean URL without ref
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
@@ -314,7 +328,7 @@ export default function TestFlow() {
   async function handleShare() {
     if (!result) return;
     const text = generateShareText(result);
-    const pageUrl = window.location.origin;
+    const pageUrl = window.location.origin + "?ref=" + result.degradationIndex;
 
     if (navigator.share) {
       try {
@@ -342,6 +356,7 @@ export default function TestFlow() {
   /* ─── Phase: Landing ─── */
 
   function renderLanding() {
+    const isChallenge = challengeRef !== null;
     return (
       <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
         <CardHeader className="text-center">
@@ -352,9 +367,21 @@ export default function TestFlow() {
             认知防锈 · 基线测试
           </CardTitle>
           <CardDescription className="mt-3 text-base leading-relaxed">
-            当我们越来越依赖 AI 完成思考工作，一个关键问题出现了——
-            <br />
-            那些我们不再经常使用的心智能力，正在发生什么？
+            {isChallenge ? (
+              <>
+                你的朋友测得{" "}
+                <span className="font-bold text-foreground">{challengeRef}</span>{" "}
+                的退化指数。
+                <br />
+                你觉得你能比 TA 强吗？
+              </>
+            ) : (
+              <>
+                当我们越来越依赖 AI 完成思考工作，一个关键问题出现了——
+                <br />
+                那些我们不再经常使用的心智能力，正在发生什么？
+              </>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -625,6 +652,14 @@ export default function TestFlow() {
             <p className="text-sm font-medium">建议</p>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               {result.tier.advice}
+            </p>
+          </div>
+
+          {/* 7-day retest reminder */}
+          <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 text-center">
+            <p className="text-sm font-medium text-foreground">7 天后复测，追踪你的变化</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              认知能力就像肌肉——定期测量才能看到趋势。我们会在本地保存你的历史记录。
             </p>
           </div>
 

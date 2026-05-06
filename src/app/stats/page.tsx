@@ -15,10 +15,20 @@ interface StatsData {
   tierCounts: Record<string, number>
 }
 
+interface HistoryEntry {
+  degradationIndex: number
+  tierLabel: string
+  tierColor: string
+  correctCount: number
+  totalQuestions: number
+  timestamp: number
+}
+
 export default function StatsPage() {
   const [data, setData] = useState<StatsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [history, setHistory] = useState<HistoryEntry[]>([])
 
   useEffect(() => {
     fetch("/api/stats")
@@ -35,12 +45,11 @@ export default function StatsPage() {
         setLoading(false)
       })
 
-    // Track page view
-    fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "stats_view" }),
-    }).catch(() => {})
+    // Load personal history
+    try {
+      const raw = localStorage.getItem("cognitive-rust-history")
+      if (raw) setHistory(JSON.parse(raw))
+    } catch { /* ignore */ }
   }, [])
 
   return (
@@ -178,6 +187,64 @@ export default function StatsPage() {
               </CardContent>
             </Card>
           </div>
+        )}
+
+        {/* Personal trend */}
+        {history.length >= 2 && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">个人趋势</CardTitle>
+              <CardDescription>
+                你的 {history.length} 次测试记录
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <svg
+                viewBox="0 0 600 200"
+                className="h-auto w-full"
+                role="img"
+                aria-label="个人退化指数趋势"
+              >
+                {/* Y axis */}
+                {[0, 25, 50, 75, 100].map((v) => {
+                  const y = 20 + ((100 - v) / 100) * 150;
+                  return (
+                    <g key={v}>
+                      <text x="35" y={y + 4} textAnchor="end" fontSize="11" className="fill-muted-foreground">
+                        {v}
+                      </text>
+                      <line x1="40" y1={y} x2="560" y2={y} strokeWidth="0.5" className="stroke-border/50" />
+                    </g>
+                  );
+                })}
+
+                {/* Line + dots */}
+                {history.map((h, i) => {
+                  const x = 45 + (i / Math.max(history.length - 1, 1)) * 515;
+                  const y = 20 + ((100 - h.degradationIndex) / 100) * 150;
+                  return (
+                    <g key={i}>
+                      {i > 0 && (() => {
+                        const px = 45 + ((i - 1) / Math.max(history.length - 1, 1)) * 515;
+                        const py = 20 + ((100 - history[i - 1].degradationIndex) / 100) * 150;
+                        return (
+                          <line x1={px} y1={py} x2={x} y2={y} stroke="#888" strokeWidth="2" />
+                        );
+                      })()}
+                      <circle cx={x} cy={y} r="5" fill={h.tierColor || "#888"} stroke="white" strokeWidth="2" />
+                      <text x={x} y={y - 10} textAnchor="middle" fontSize="10" className="fill-muted-foreground">
+                        {h.degradationIndex}
+                      </text>
+                    </g>
+                  );
+                })}
+
+                <text x="310" y="195" textAnchor="middle" fontSize="11" className="fill-muted-foreground">
+                  测试次数
+                </text>
+              </svg>
+            </CardContent>
+          </Card>
         )}
 
         {/* Footer */}
