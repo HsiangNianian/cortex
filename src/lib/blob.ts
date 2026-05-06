@@ -1,7 +1,19 @@
 import { put, get } from "@vercel/blob"
 
 const STATS_KEY = "stats.json"
-const RESULTS_PREFIX = "results/"
+
+/** In-memory cache for aggregated stats — avoids reading from Blob on every request */
+let statsCache: { data: StatsData; timestamp: number } | null = null
+const CACHE_TTL = 60_000 // 1 minute
+
+/**
+ * Batching: accumulate results and flush to Blob once the batch is full.
+ * This reduces Advanced Operations (put) from 1 per test → 1 per N tests.
+ * Cold-started functions might lose up to BATCH_SIZE unflushed results,
+ * which is acceptable for anonymous aggregate stats.
+ */
+const BATCH_SIZE = 20
+const pendingResults: ResultData[] = []
 
 export interface ResultData {
   degradationIndex: number
@@ -37,10 +49,33 @@ function emptyStats(): StatsData {
   }
 }
 
+/** Apply a single result to a StatsData object (mutates in-place). */
+function applyResult(stats: StatsData, result: ResultData): void {
+  stats.totalTests++
+  stats.sumDegradation += result.degradationIndex
+  stats.avgDegradation = Math.round((stats.sumDegradation / stats.totalTests) * 10) / 10
+  stats.tierCounts[result.tierLabel] = (stats.tierCounts[result.tierLabel] ?? 0) + 1
+  if (result.aiUsageLevel) {
+    stats.aiUsageCounts[result.aiUsageLevel] = (stats.aiUsageCounts[result.aiUsageLevel] ?? 0) + 1
+    stats.aiUsageDegradationSum[result.aiUsageLevel] =
+      (stats.aiUsageDegradationSum[result.aiUsageLevel] ?? 0) + result.degradationIndex
+  }
+  const bucket = Math.min(Math.floor(result.degradationIndex / 10), 9)
+  stats.distribution[bucket]++
+}
+
 export async function getStats(): Promise<StatsData> {
+  // Return cached if fresh
+  if (statsCache && Date.now() - statsCache.timestamp < CACHE_TTL) {
+    return statsCache.data
+  }
+
   try {
     const result = await get(STATS_KEY, { access: "private" })
-    if (!result || !result.stream) return emptyStats()
+    if (!result || !result.stream) {
+      console.log("blob: no stream for stats.json, returning empty")
+      return emptyStats()
+    }
     const reader = result.stream.getReader()
     const decoder = new TextDecoder()
     let text = ""
@@ -50,40 +85,40 @@ export async function getStats(): Promise<StatsData> {
       text += decoder.decode(value, { stream: true })
     }
     text += decoder.decode()
-    return JSON.parse(text) as StatsData
-  } catch {
+    if (!text) return emptyStats()
+    const data = JSON.parse(text) as StatsData
+    statsCache = { data, timestamp: Date.now() }
+    return data
+  } catch (err) {
+    console.error("blob: getStats error:", err)
     return emptyStats()
   }
 }
 
 export async function saveResultAndUpdateStats(result: ResultData): Promise<void> {
-  // Save individual result blob
-  const id = crypto.randomUUID().slice(0, 12)
-  await put(`${RESULTS_PREFIX}${id}.json`, JSON.stringify(result), {
-    contentType: "application/json",
-    access: "private",
-  })
-
-  // Update aggregated stats (O(1) — no full scan)
-  const stats = await getStats()
-  stats.totalTests++
-  stats.sumDegradation += result.degradationIndex
-  stats.avgDegradation = Math.round((stats.sumDegradation / stats.totalTests) * 10) / 10
-
-  stats.tierCounts[result.tierLabel] = (stats.tierCounts[result.tierLabel] ?? 0) + 1
-
-  // Track AI usage level + degradation sum for per-group avg
-  if (result.aiUsageLevel) {
-    stats.aiUsageCounts[result.aiUsageLevel] = (stats.aiUsageCounts[result.aiUsageLevel] ?? 0) + 1
-    stats.aiUsageDegradationSum[result.aiUsageLevel] = (stats.aiUsageDegradationSum[result.aiUsageLevel] ?? 0) + result.degradationIndex
+  // Mutate cached stats in-memory
+  let stats: StatsData
+  if (statsCache) {
+    stats = statsCache.data
+  } else {
+    stats = await getStats()
   }
 
-  const bucket = Math.min(Math.floor(result.degradationIndex / 10), 9)
-  stats.distribution[bucket]++
+  applyResult(stats, result)
+  statsCache = { data: stats, timestamp: Date.now() }
 
-  await put(STATS_KEY, JSON.stringify(stats), {
-    contentType: "application/json",
-    access: "private",
-    allowOverwrite: true,
-  })
+  // Accumulate for batch flush
+  pendingResults.push(result)
+
+  // Only write to Blob when the batch is full (1 Advanced Op per BATCH_SIZE tests)
+  if (pendingResults.length >= BATCH_SIZE) {
+    pendingResults.length = 0 // clear
+    await put(STATS_KEY, JSON.stringify(stats), {
+      contentType: "application/json",
+      access: "private",
+      allowOverwrite: true,
+    }).catch((err) => {
+      console.error("blob: batch flush failed:", err)
+    })
+  }
 }

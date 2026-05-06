@@ -266,6 +266,39 @@ export default function StatsPage() {
               <CardDescription>
                 你的 {history.length} 次测试记录
               </CardDescription>
+              {/* Dimension toggle */}
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {["overall", "logic", "math", "vocab"].map((dim) => {
+                  const label =
+                    dim === "overall"
+                      ? "综合"
+                      : dim === "logic"
+                        ? "逻辑"
+                        : dim === "math"
+                          ? "速算"
+                          : "词汇";
+                  // Only show dimension toggle if there's data for it
+                  if (dim !== "overall") {
+                    const hasData = history.some(
+                      (h) => h.dimensionScores?.[dim] !== undefined && h.dimensionScores?.[dim] !== null,
+                    );
+                    if (!hasData) return null;
+                  }
+                  return (
+                    <button
+                      key={dim}
+                      onClick={() => setTrendDimension(dim)}
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                        trendDimension === dim
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
             </CardHeader>
             <CardContent>
               <svg
@@ -287,8 +320,8 @@ export default function StatsPage() {
                   );
                 })}
 
-                {/* Line + dots */}
-                {history.map((h, i) => {
+                {/* Line + dots — overall */}
+                {trendDimension === "overall" && history.map((h, i) => {
                   const x = 45 + (i / Math.max(history.length - 1, 1)) * 515;
                   const y = 20 + ((100 - h.degradationIndex) / 100) * 150;
                   return (
@@ -303,6 +336,34 @@ export default function StatsPage() {
                       <circle cx={x} cy={y} r="5" fill={h.tierColor || "#888"} stroke="white" strokeWidth="2" />
                       <text x={x} y={y - 10} textAnchor="middle" fontSize="10" className="fill-muted-foreground">
                         {h.degradationIndex}
+                      </text>
+                    </g>
+                  );
+                })}
+
+                {/* Line + dots — per dimension */}
+                {trendDimension !== "overall" && history.map((h, i) => {
+                  const val = h.dimensionScores?.[trendDimension];
+                  if (val === undefined || val === null) return null;
+                  const dimIndex = 100 - val; // convert correct% to degradation index
+                  const x = 45 + (i / Math.max(history.length - 1, 1)) * 515;
+                  const y = 20 + ((100 - dimIndex) / 100) * 150;
+                  const dimColor = trendDimension === "logic" ? "#2563eb" : trendDimension === "math" ? "#d97706" : "#16a34a";
+                  return (
+                    <g key={i}>
+                      {i > 0 && (() => {
+                        const prevVal = history[i - 1].dimensionScores?.[trendDimension];
+                        if (prevVal === undefined || prevVal === null) return null;
+                        const prevDimIndex = 100 - prevVal;
+                        const px = 45 + ((i - 1) / Math.max(history.length - 1, 1)) * 515;
+                        const py = 20 + ((100 - prevDimIndex) / 100) * 150;
+                        return (
+                          <line x1={px} y1={py} x2={x} y2={y} stroke={dimColor} strokeWidth="2" />
+                        );
+                      })()}
+                      <circle cx={x} cy={y} r="5" fill={dimColor} stroke="white" strokeWidth="2" />
+                      <text x={x} y={y - 10} textAnchor="middle" fontSize="10" className="fill-muted-foreground">
+                        {val}%
                       </text>
                     </g>
                   );

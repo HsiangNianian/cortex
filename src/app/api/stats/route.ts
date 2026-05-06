@@ -21,7 +21,16 @@ export async function GET() {
       aiUsageCounts: stats.aiUsageCounts,
       aiUsageAvgDegradation,
     })
-  } catch {
-    return NextResponse.json({ error: "internal error" }, { status: 500 })
+  } catch (err) {
+    console.error("GET /api/stats error:", err)
+    // Return empty data instead of 500 so the page shows "暂无数据" gracefully
+    return NextResponse.json({
+      totalTests: 0,
+      avgDegradation: null,
+      distribution: Array(10).fill(0),
+      tierCounts: {},
+      aiUsageCounts: {},
+      aiUsageAvgDegradation: {},
+    })
   }
 }

@@ -891,12 +891,14 @@ export default function TestFlow() {
 
           {/* Personalized advice */}
           {(() => {
-            const dims: { key: string; label: string; score: number | null }[] = [
+            const allDims: { key: string; label: string; score: number | null }[] = [
               { key: "logic", label: "逻辑推理", score: result.dimensionScores.logic },
               { key: "math", label: "速算", score: result.dimensionScores.math },
               { key: "vocab", label: "词汇语义", score: result.dimensionScores.vocab },
-            ].filter((d) => d.score !== null) as { key: string; label: string; score: number }[];
-
+            ];
+            const dims = allDims.filter((d): d is { key: string; label: string; score: number } =>
+              d.score !== null
+            );
             dims.sort((a, b) => a.score - b.score);
 
             if (dims.length > 0 && dims[0].score < 60) {
