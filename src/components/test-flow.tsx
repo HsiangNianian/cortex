@@ -142,7 +142,7 @@ export default function TestFlow() {
     timestamp: number;
   } | null>(null);
   const [showExplanations, setShowExplanations] = useState(false);
-  const [showCopiedToast, setShowCopiedToast] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const [questions] = useState(() => selectQuestions(QUESTIONS_PER_TEST));
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -259,7 +259,8 @@ export default function TestFlow() {
   function handleSelectOption(index: number) {
     if (selected !== null) {
       if (selected !== index) {
-        window.alert(LOCKED_SELECTION_MESSAGE);
+        setToast(LOCKED_SELECTION_MESSAGE);
+        setTimeout(() => setToast(null), 2000);
       }
       return;
     }
@@ -314,8 +315,8 @@ export default function TestFlow() {
     // Clipboard fallback: text + URL
     try {
       await navigator.clipboard.writeText(text + "\n" + pageUrl);
-      setShowCopiedToast(true);
-      setTimeout(() => setShowCopiedToast(false), 2000);
+      setToast("结果已复制 ✓");
+      setTimeout(() => setToast(null), 2000);
     } catch {
       // silently fail — not critical
     }
@@ -710,15 +711,15 @@ export default function TestFlow() {
         {phase === "result" && renderResult()}
       </main>
 
-      {/* Copied toast */}
+      {/* Toast */}
       <div
         className={`fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background shadow-lg transition-all duration-300 ${
-          showCopiedToast
+          toast
             ? "translate-y-0 opacity-100"
             : "pointer-events-none translate-y-4 opacity-0"
         }`}
       >
-        结果已复制 ✓
+        {toast}
       </div>
 
       <footer className="pt-4 text-center text-xs text-muted-foreground">
