@@ -4,7 +4,7 @@ import { saveResultAndUpdateStats } from "@/lib/blob"
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { degradationIndex, tierLabel, correctCount, totalQuestions } = body
+    const { degradationIndex, tierLabel, correctCount, totalQuestions, aiUsageLevel } = body
 
     if (typeof degradationIndex !== "number") {
       return NextResponse.json({ error: "invalid payload" }, { status: 400 })
@@ -15,6 +15,7 @@ export async function POST(request: Request) {
       tierLabel,
       correctCount,
       totalQuestions,
+      aiUsageLevel: aiUsageLevel ?? null,
       timestamp: Date.now(),
     })
 

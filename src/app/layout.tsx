@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "认知防锈 | 你的大脑正在被 AI 重塑吗？",
-  description: "测测你是不是被AI变成了笨蛋。5 道题快速评估你的核心认知状态，看看全平台有多少人比你强。",
+  title: "认知防锈 | 你的认知状态怎么样？",
+  description: "5 道题给你的认知能力拍一张快照。定期测量，看清趋势——认知能力就像肌肉，用进废退。",
 }
 
 export default function RootLayout({

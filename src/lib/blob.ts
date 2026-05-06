@@ -8,6 +8,7 @@ export interface ResultData {
   tierLabel: string
   correctCount: number
   totalQuestions: number
+  aiUsageLevel: string | null
   timestamp: number
 }
 

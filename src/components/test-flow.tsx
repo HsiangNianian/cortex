@@ -161,6 +161,7 @@ export default function TestFlow() {
   const [showExplanations, setShowExplanations] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [challengeRef, setChallengeRef] = useState<number | null>(null);
+  const [aiUsage, setAiUsage] = useState<string | null>(null);
   const [questions, setQuestions] = useState(() => selectQuestions(QUESTIONS_PER_TEST));
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -210,6 +211,7 @@ export default function TestFlow() {
         tierColor: r.tier.ringColor,
         correctCount: r.correctCount,
         totalQuestions: r.totalQuestions,
+        aiUsage: aiUsage,
         timestamp: Date.now(),
       };
       localStorage.setItem("cognitive-rust-result", JSON.stringify(entry));
@@ -228,6 +230,7 @@ export default function TestFlow() {
       tierLabel: r.tier.label,
       correctCount: r.correctCount,
       totalQuestions: r.totalQuestions,
+      aiUsageLevel: aiUsage,
     };
     fetch("/api/results", {
       method: "POST",
@@ -279,6 +282,7 @@ export default function TestFlow() {
   }
 
   function handleBeginTest() {
+    if (!aiUsage) return;
     setPhase("testing");
     setCurrentQ(0);
     setAnswers([]);
@@ -317,6 +321,7 @@ export default function TestFlow() {
     setQuestions(selectQuestions(QUESTIONS_PER_TEST));
     setPhase("landing");
     setDeclared(false);
+    setAiUsage(null);
     setCurrentQ(0);
     setSelected(null);
     setAnswers([]);
@@ -378,9 +383,9 @@ export default function TestFlow() {
               </>
             ) : (
               <>
-                当我们越来越依赖 AI 完成思考工作，一个关键问题出现了——
+                你的认知状态怎么样？5 道题拍一张快照。
                 <br />
-                那些我们不再经常使用的心智能力，正在发生什么？
+                定期测量，看看趋势怎么说。
               </>
             )}
           </CardDescription>
@@ -394,10 +399,10 @@ export default function TestFlow() {
               <span className="font-medium text-foreground">~3</span> 分钟完成
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground text-destructive">
-                禁止使用 AI
+              <span className="font-medium text-foreground">
+                不使用 AI 辅助
               </span>{" "}
-              辅助答题
+              ——测的是你，不是 AI
             </div>
           </div>
 
@@ -477,6 +482,31 @@ export default function TestFlow() {
               ，超时将自动跳过
             </li>
           </ul>
+
+          {/* AI usage question */}
+          <div className="rounded-lg border p-4">
+            <p className="text-sm font-medium text-foreground">
+              你每天花多少时间使用 AI 工具？
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              ChatGPT、Claude、Copilot、Gemini 等都算
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {["< 30 分钟", "30 分钟 - 2 小时", "2 - 5 小时", "> 5 小时"].map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setAiUsage(opt)}
+                  className={`rounded-full border px-3 py-1.5 text-xs transition-all ${
+                    aiUsage === opt
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-muted-foreground/20 text-muted-foreground hover:border-primary/50"
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <Separator />
 
@@ -645,6 +675,20 @@ export default function TestFlow() {
               {result.tier.description}
             </p>
           </div>
+
+          {/* AI Usage context */}
+          {aiUsage && (
+            <div className="rounded-lg bg-muted/50 p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">每日 AI 使用量</span>
+                <span className="font-medium text-foreground">{aiUsage}</span>
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                这是你当前的认知活跃度基线。定期复测才能看出趋势——
+                趋势比单次分数更有意义。
+              </p>
+            </div>
+          )}
 
           <Separator />
 
