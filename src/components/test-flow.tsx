@@ -446,7 +446,7 @@ export default function TestFlow() {
   function handleDownloadImage() {
     if (!result) return;
 
-    // Build SVG result card client-side (no server dependency)
+    // Build SVG result card
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -465,16 +465,44 @@ export default function TestFlow() {
       <text x="600" y="580" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#aaa">cortex.hydroroll.team</text>
     </svg>`;
 
+    // Render SVG to canvas, then download as PNG
+    const img = new Image();
     const blob = new Blob([svg], { type: "image/svg+xml" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "cognitive-rust-result.svg";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-    setToast("结果图已保存 ✓");
-    setTimeout(() => setToast(null), 2000);
+    const url = URL.createObjectURL(blob);
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1200;
+      canvas.height = 630;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+
+      canvas.toBlob((pngBlob) => {
+        if (!pngBlob) {
+          setToast("生成图片失败");
+          setTimeout(() => setToast(null), 2000);
+          return;
+        }
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(pngBlob);
+        a.download = "cognitive-rust-result.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+        setToast("结果图已保存 ✓");
+        setTimeout(() => setToast(null), 2000);
+      }, "image/png");
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      setToast("生成图片失败");
+      setTimeout(() => setToast(null), 2000);
+    };
+
+    img.src = url;
   }
 
   /* ─── Phase: Landing ─── */
