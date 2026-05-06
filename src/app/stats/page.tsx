@@ -50,6 +50,29 @@ export default function StatsPage() {
       const raw = localStorage.getItem("cognitive-rust-history")
       if (raw) setHistory(JSON.parse(raw))
     } catch { /* ignore */ }
+
+    // Read ?latest= from URL and persist to localStorage for chart marker
+    const params = new URLSearchParams(window.location.search)
+    const latest = params.get("latest")
+    if (latest !== null) {
+      const n = parseInt(latest, 10)
+      if (!isNaN(n)) {
+        // Save as pseudo-result for the chart marker
+        localStorage.setItem(
+          "cognitive-rust-result",
+          JSON.stringify({
+            degradationIndex: n,
+            tierLabel: "",
+            tierColor: "#dc2626",
+            correctCount: 0,
+            totalQuestions: 5,
+            timestamp: Date.now(),
+          }),
+        )
+      }
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname)
+    }
   }, [])
 
   return (

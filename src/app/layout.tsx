@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="zh-CN" className="antialiased">
+    <html lang="zh-CN" className="antialiased" suppressHydrationWarning>
       <body className="min-h-dvh bg-gradient-to-b from-background to-muted/30">
         {children}
       </body>

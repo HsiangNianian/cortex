@@ -181,6 +181,14 @@ export default function TestFlow() {
   const [showExplanations, setShowExplanations] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [challengeRef, setChallengeRef] = useState<number | null>(null);
+  const [prevResult, setPrevResult] = useState<{
+    degradationIndex: number;
+    tierLabel: string;
+    tierColor: string;
+    correctCount: number;
+    totalQuestions: number;
+    timestamp: number;
+  } | null>(null);
   const [aiUsage, setAiUsage] = useState<string | null>(null);
   const [questions, setQuestions] = useState(() =>
     selectQuestions(QUESTIONS_PER_TEST),
@@ -227,6 +235,12 @@ export default function TestFlow() {
     const r = calculateResult(answers, timeouts, questions);
     setResult(r);
     try {
+      // Save previous result before overwriting
+      const prevRaw = localStorage.getItem("cognitive-rust-result");
+      if (prevRaw) {
+        setPrevResult(JSON.parse(prevRaw));
+      }
+
       const entry = {
         degradationIndex: r.degradationIndex,
         tierLabel: r.tier.label,
@@ -286,6 +300,25 @@ export default function TestFlow() {
     } catch {
       // ignore — no previous result
     }
+    // Check pending reminder
+    try {
+      const reminderRaw = localStorage.getItem("cognitive-rust-reminder");
+      if (reminderRaw) {
+        const reminder = JSON.parse(reminderRaw);
+        if (Date.now() >= reminder.targetDate) {
+          localStorage.removeItem("cognitive-rust-reminder");
+          if ("Notification" in window && Notification.permission === "granted") {
+            new Notification("认知防锈 · 该复测了", {
+              body: `上次测得 ${reminder.tierLabel}，7 天过去了，你的认知状态有变化吗？`,
+              icon: "/favicon.ico",
+            });
+          }
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
     // Read ?ref= from URL
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("ref");
@@ -381,6 +414,35 @@ export default function TestFlow() {
     }
   }
 
+  function handleSetReminder() {
+    if (!("Notification" in window)) {
+      setToast("您的浏览器不支持通知功能");
+      setTimeout(() => setToast(null), 2000);
+      return;
+    }
+
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        const targetDate = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        localStorage.setItem(
+          "cognitive-rust-reminder",
+          JSON.stringify({
+            targetDate,
+            tierLabel: result?.tier.label,
+          }),
+        );
+        new Notification("通知已设定", {
+          body: "7 天后我们会提醒你回来复测",
+        });
+        setToast("7 天后将提醒你 ✓");
+        setTimeout(() => setToast(null), 2000);
+      } else {
+        setToast("需要允许通知权限才能提醒你");
+        setTimeout(() => setToast(null), 2000);
+      }
+    });
+  }
+
   /* ─── Phase: Landing ─── */
 
   function renderLanding() {
@@ -466,7 +528,7 @@ export default function TestFlow() {
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button size="lg" className="w-full text-base" onClick={handleStart}>
-            开始测试
+            {savedResult ? "再测一次" : "开始测试"}
           </Button>
           <a
             href="/stats"
@@ -738,6 +800,55 @@ export default function TestFlow() {
             </p>
           </div>
 
+          {/* Previous vs current comparison */}
+          {prevResult && (
+            <div className="rounded-lg border bg-card p-4">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">
+                与上次测试对比
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="flex-1 text-center">
+                  <p className="text-xs text-muted-foreground">上次</p>
+                  <p
+                    className="text-2xl font-bold"
+                    style={{ color: prevResult.tierColor }}
+                  >
+                    {prevResult.degradationIndex}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {prevResult.tierLabel}
+                  </p>
+                </div>
+                <div className="text-2xl text-muted-foreground">
+                  {result.degradationIndex < prevResult.degradationIndex
+                    ? "↓"
+                    : result.degradationIndex > prevResult.degradationIndex
+                      ? "↑"
+                      : "—"}
+                </div>
+                <div className="flex-1 text-center">
+                  <p className="text-xs text-muted-foreground">本次</p>
+                  <p
+                    className="text-2xl font-bold"
+                    style={{ color: result.tier.ringColor }}
+                  >
+                    {result.degradationIndex}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {result.tier.label}
+                  </p>
+                </div>
+              </div>
+              <p className="mt-2 text-center text-xs text-muted-foreground">
+                {result.degradationIndex < prevResult.degradationIndex
+                  ? "相比上次你的认知活跃度有所提升 ↑"
+                  : result.degradationIndex > prevResult.degradationIndex
+                    ? "相比上次退化指数有所上升，留意趋势"
+                    : "与上次持平，保持关注"}
+              </p>
+            </div>
+          )}
+
           {/* Score breakdown */}
           <div>
             <button
@@ -811,12 +922,15 @@ export default function TestFlow() {
             <Button variant="outline" className="flex-1" onClick={handleShare}>
               分享结果
             </Button>
+            <Button variant="outline" className="flex-1" onClick={handleSetReminder}>
+              7 天后提醒我
+            </Button>
             <Button className="flex-1" onClick={handleRestart}>
               重新测试
             </Button>
           </div>
           <a
-            href="/stats"
+            href={"/stats?latest=" + result.degradationIndex}
             className="text-xs text-muted-foreground underline-offset-4 hover:underline"
           >
             查看全平台统计
