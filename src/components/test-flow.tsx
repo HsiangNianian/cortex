@@ -161,7 +161,7 @@ export default function TestFlow() {
   const [showExplanations, setShowExplanations] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [challengeRef, setChallengeRef] = useState<number | null>(null);
-  const [questions] = useState(() => selectQuestions(QUESTIONS_PER_TEST));
+  const [questions, setQuestions] = useState(() => selectQuestions(QUESTIONS_PER_TEST));
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isLastQuestion = currentQ === questions.length - 1;
@@ -314,6 +314,7 @@ export default function TestFlow() {
 
   function handleRestart() {
     stopTimer();
+    setQuestions(selectQuestions(QUESTIONS_PER_TEST));
     setPhase("landing");
     setDeclared(false);
     setCurrentQ(0);
