@@ -28,9 +28,12 @@ import {
 import {
   calculateResult,
   generateShareText,
+  DIMENSION_LABELS,
   type TestResult,
+  type DimensionScores,
 } from "@/lib/scoring";
 import type { Question } from "@/lib/questions";
+import RadarChart from "@/components/radar-chart";
 
 type Phase = "landing" | "declaration" | "testing" | "result";
 
@@ -176,6 +179,7 @@ export default function TestFlow() {
     tierColor: string;
     correctCount: number;
     totalQuestions: number;
+    dimensionScores?: DimensionScores;
     timestamp: number;
   } | null>(null);
   const [showExplanations, setShowExplanations] = useState(false);
@@ -187,6 +191,7 @@ export default function TestFlow() {
     tierColor: string;
     correctCount: number;
     totalQuestions: number;
+    dimensionScores?: DimensionScores;
     timestamp: number;
   } | null>(null);
   const [aiUsage, setAiUsage] = useState<string | null>(null);
@@ -247,6 +252,7 @@ export default function TestFlow() {
         tierColor: r.tier.ringColor,
         correctCount: r.correctCount,
         totalQuestions: r.totalQuestions,
+        dimensionScores: r.dimensionScores,
         aiUsage: aiUsage,
         timestamp: Date.now(),
       };
@@ -844,13 +850,76 @@ export default function TestFlow() {
 
           <Separator />
 
-          {/* Advice */}
-          <div className="rounded-lg bg-muted/50 p-4">
-            <p className="text-sm font-medium">建议</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {result.tier.advice}
-            </p>
+          {/* Dimension scores - Radar chart */}
+          <div>
+            <p className="mb-3 text-sm font-medium text-foreground">认知画像</p>
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+              <div className="w-48 shrink-0">
+                <RadarChart userScores={result.dimensionScores} size={200} />
+              </div>
+              <div className="flex-1 space-y-2 self-center sm:self-auto">
+                {(["logic", "math", "vocab"] as const).map((key) => {
+                  const score = result.dimensionScores[key];
+                  if (score === null) return null;
+                  const isWeak = score < 50;
+                  return (
+                    <div key={key} className="flex items-center gap-2 text-sm">
+                      <span className="w-16 shrink-0 text-muted-foreground">
+                        {DIMENSION_LABELS[key]}
+                      </span>
+                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            isWeak ? "bg-red-400" : score >= 80 ? "bg-green-400" : "bg-amber-400"
+                          }`}
+                          style={{ width: `${score}%` }}
+                        />
+                      </div>
+                      <span className={`w-10 text-right font-medium tabular-nums ${
+                        isWeak ? "text-red-600" : score >= 80 ? "text-green-600" : "text-amber-600"
+                      }`}>
+                        {score}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
+
+          <Separator />
+
+          {/* Personalized advice */}
+          {(() => {
+            const dims: { key: string; label: string; score: number | null }[] = [
+              { key: "logic", label: "逻辑推理", score: result.dimensionScores.logic },
+              { key: "math", label: "速算", score: result.dimensionScores.math },
+              { key: "vocab", label: "词汇语义", score: result.dimensionScores.vocab },
+            ].filter((d) => d.score !== null) as { key: string; label: string; score: number }[];
+
+            dims.sort((a, b) => a.score - b.score);
+
+            if (dims.length > 0 && dims[0].score < 60) {
+              const weakest = dims[0];
+              const tips: Record<string, string> = {
+                logic: "每天做一道逻辑题（比如数独或推理题），逐步提升分析能力。",
+                math: "在心算之前不要立刻掏出计算器——先自己算一遍，哪怕慢一点。",
+                vocab: "每天读 10 分钟纸质书或长文章，留意用词和表达方式。",
+              };
+              return (
+                <div className="rounded-lg bg-muted/50 p-4">
+                  <p className="text-sm font-medium">针对性训练建议</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    你的 <span className="font-medium text-foreground">{weakest.label}</span> 维度相对较弱。
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {tips[weakest.key] ?? "持续练习会带来改善。"}
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          })()}
 
           {/* 7-day retest reminder */}
           <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 text-center">
@@ -908,6 +977,35 @@ export default function TestFlow() {
                     ? "相比上次退化指数有所上升，留意趋势"
                     : "与上次持平，保持关注"}
               </p>
+              {/* Per-dimension comparison if available */}
+              {prevResult.dimensionScores && (
+                <div className="mt-3 space-y-1.5 border-t pt-3">
+                  <p className="text-xs font-medium text-muted-foreground">各维度对比</p>
+                  {(["logic", "math", "vocab"] as const).map((key) => {
+                    const prev = prevResult.dimensionScores?.[key];
+                    const cur = result.dimensionScores[key];
+                    if (prev === null || prev === undefined || cur === null) return null;
+                    const diff = cur - prev;
+                    return (
+                      <div key={key} className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">{DIMENSION_LABELS[key]}</span>
+                        <span className="tabular-nums">
+                          <span className="text-muted-foreground">{prev}%</span>
+                          <span className="mx-1 text-muted-foreground">→</span>
+                          <span className={`font-medium ${diff > 0 ? "text-green-600" : diff < 0 ? "text-red-600" : "text-muted-foreground"}`}>
+                            {cur}%
+                          </span>
+                          {diff !== 0 && (
+                            <span className={`ml-1 ${diff > 0 ? "text-green-600" : "text-red-600"}`}>
+                              ({diff > 0 ? "+" : ""}{diff})
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

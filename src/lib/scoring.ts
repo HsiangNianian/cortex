@@ -1,5 +1,17 @@
 import type { Question } from "./questions"
 
+export interface DimensionScores {
+  logic: number | null // percentage correct (0-100), null if no questions of this type
+  math: number | null
+  vocab: number | null
+}
+
+export const DIMENSION_LABELS: Record<string, string> = {
+  logic: "逻辑推理",
+  math: "速算",
+  vocab: "词汇语义",
+}
+
 export interface ResultTier {
   min: number
   max: number
@@ -73,6 +85,7 @@ export interface TestResult {
   correctCount: number
   totalQuestions: number
   tier: ResultTier
+  dimensionScores: DimensionScores
   answers: (number | null)[]
   timeouts: boolean[]
   questions: Question[]
@@ -99,12 +112,36 @@ export function calculateResult(
       (t) => degradationIndex >= t.min && degradationIndex <= t.max,
     ) ?? RESULT_TIERS[0]
 
+  // Per-dimension scores
+  const dimCorrect: Record<string, { correct: number; total: number }> = {}
+  for (let i = 0; i < questions.length; i++) {
+    const type = questions[i].type
+    if (!dimCorrect[type]) dimCorrect[type] = { correct: 0, total: 0 }
+    dimCorrect[type].total++
+    if (answers[i] !== null && answers[i] === questions[i].answer) {
+      dimCorrect[type].correct++
+    }
+  }
+
+  const dimensionScores: DimensionScores = {
+    logic: dimCorrect.logic
+      ? Math.round((dimCorrect.logic.correct / dimCorrect.logic.total) * 100)
+      : null,
+    math: dimCorrect.math
+      ? Math.round((dimCorrect.math.correct / dimCorrect.math.total) * 100)
+      : null,
+    vocab: dimCorrect.vocab
+      ? Math.round((dimCorrect.vocab.correct / dimCorrect.vocab.total) * 100)
+      : null,
+  }
+
   return {
     score,
     degradationIndex,
     correctCount,
     totalQuestions: questions.length,
     tier,
+    dimensionScores,
     answers,
     timeouts,
     questions,
@@ -117,12 +154,19 @@ export function generateShareText(result: TestResult): string {
     "",
     `退化指数：${result.degradationIndex}/100 — ${result.tier.label}`,
     `正确：${result.correctCount}/${result.totalQuestions}`,
-    "",
-    result.tier.description,
-    "",
-    result.tier.advice,
-    "",
-    "在 https://cortex.hydroroll.team 测试你的认知状态",
   ]
+
+  // Add dimension scores
+  const dimParts: string[] = []
+  if (result.dimensionScores.logic !== null)
+    dimParts.push(`逻辑 ${result.dimensionScores.logic}%`)
+  if (result.dimensionScores.math !== null)
+    dimParts.push(`速算 ${result.dimensionScores.math}%`)
+  if (result.dimensionScores.vocab !== null)
+    dimParts.push(`词汇 ${result.dimensionScores.vocab}%`)
+  if (dimParts.length > 0) lines.push("", dimParts.join(" · "))
+
+  lines.push("", result.tier.description, "", result.tier.advice, "")
+  lines.push("在 https://cortex.hydroroll.team 测试你的认知状态")
   return lines.join("\n")
 }

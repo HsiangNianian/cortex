@@ -23,6 +23,7 @@ interface HistoryEntry {
   tierColor: string
   correctCount: number
   totalQuestions: number
+  dimensionScores?: Record<string, number | null>
   timestamp: number
 }
 
@@ -31,6 +32,7 @@ export default function StatsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [history, setHistory] = useState<HistoryEntry[]>([])
+  const [trendDimension, setTrendDimension] = useState<string>("overall")
 
   useEffect(() => {
     fetch("/api/stats")
