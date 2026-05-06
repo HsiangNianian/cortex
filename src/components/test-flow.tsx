@@ -445,36 +445,36 @@ export default function TestFlow() {
 
   function handleDownloadImage() {
     if (!result) return;
-    const url =
-      "/api/og?i=" +
-      result.degradationIndex +
-      "&t=" +
-      encodeURIComponent(result.tier.label) +
-      "&c=" +
-      result.correctCount +
-      "&n=" +
-      result.totalQuestions;
 
-    // Fetch the image and trigger download
-    fetch(url)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "cognitive-rust-result.png";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(a.href);
-        setToast("结果图已保存 ✓");
-        setTimeout(() => setToast(null), 2000);
-      })
-      .catch(() => {
-        // Fallback: open in new tab
-        window.open(url, "_blank");
-        setToast("图片已打开，可右键保存");
-        setTimeout(() => setToast(null), 2000);
-      });
+    // Build SVG result card client-side (no server dependency)
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fafafa"/>
+          <stop offset="100%" stop-color="#f0f0f0"/>
+        </linearGradient>
+      </defs>
+      <rect width="1200" height="630" fill="url(#bg)" rx="0"/>
+      <text x="600" y="80" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" fill="#888" font-weight="500">认知防锈 · 基线测试</text>
+      <circle cx="600" cy="280" r="112" fill="white" stroke="${result.tier.ringColor}" stroke-width="14"/>
+      <text x="600" y="300" text-anchor="middle" font-family="system-ui,sans-serif" font-size="72" font-weight="800" fill="#111">${result.degradationIndex}</text>
+      <text x="600" y="340" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#888">/ 100</text>
+      <rect x="475" y="370" width="250" height="44" rx="22" fill="${result.tier.ringColor}"/>
+      <text x="600" y="399" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="600" fill="white">${result.tier.label}</text>
+      <text x="600" y="460" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#666">${result.correctCount} / ${result.totalQuestions} 正确</text>
+      <text x="600" y="580" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#aaa">cortex.hydroroll.team</text>
+    </svg>`;
+
+    const blob = new Blob([svg], { type: "image/svg+xml" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "cognitive-rust-result.svg";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    setToast("结果图已保存 ✓");
+    setTimeout(() => setToast(null), 2000);
   }
 
   /* ─── Phase: Landing ─── */
