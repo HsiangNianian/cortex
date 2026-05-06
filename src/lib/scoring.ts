@@ -1,13 +1,13 @@
-import { QUESTIONS } from "./questions"
+import { QUESTIONS } from "./questions";
 
 export interface ResultTier {
-  min: number
-  max: number
-  label: string
-  description: string
-  advice: string
-  color: string // Tailwind color class
-  ringColor: string // for the SVG ring
+  min: number;
+  max: number;
+  label: string;
+  description: string;
+  advice: string;
+  color: string; // Tailwind color class
+  ringColor: string; // for the SVG ring
 }
 
 export const RESULT_TIERS: ResultTier[] = [
@@ -17,8 +17,7 @@ export const RESULT_TIERS: ResultTier[] = [
     label: "认知巅峰",
     description:
       "你的核心认知能力处于极佳状态。即使频繁使用 AI 工具，你依然保持着独立的深度思考习惯。你很可能在使用 AI 时保持批判性思维，将其视为工具而非替代品。",
-    advice:
-      "继续保持你当前的使用习惯。你证明了 AI 和独立思考可以共存。",
+    advice: "继续保持你当前的使用习惯。你证明了 AI 和独立思考可以共存。",
     color: "text-green-600",
     ringColor: "#16a34a",
   },
@@ -40,7 +39,7 @@ export const RESULT_TIERS: ResultTier[] = [
     description:
       "你的认知活跃度已经出现明显下降。日常过度依赖 AI 完成思考任务，可能在不知不觉中削弱了你的独立分析能力。",
     advice:
-      "建议每天留出 15 分钟的\"无 AI 深度阅读/思考时间\"，让大脑重新习惯独立运转。",
+      '建议每天留出 15 分钟的"无 AI 深度阅读/思考时间"，让大脑重新习惯独立运转。',
     color: "text-amber-600",
     ringColor: "#d97706",
   },
@@ -60,22 +59,22 @@ export const RESULT_TIERS: ResultTier[] = [
     max: 100,
     label: "严重退化",
     description:
-      "你的认知评分处于最低区间。长期依赖 AI 替代独立思考已经产生了明显影响。你的大脑正在经历\"用进废退\"的效应。",
+      '你的认知评分处于最低区间。长期依赖 AI 替代独立思考已经产生了明显影响。你的大脑正在经历"用进废退"的效应。',
     advice:
       "请认真对待这个信号。建议：1) 立即开始每日认知训练 2) 逐步延长不使用 AI 的连续思考时间 3) 培养先自己思考、再求助 AI 的习惯 4) 一个月后重新评估。",
     color: "text-red-600",
     ringColor: "#dc2626",
   },
-]
+];
 
 export interface TestResult {
-  score: number // 0-100
-  degradationIndex: number // 0-100
-  correctCount: number
-  totalQuestions: number
-  tier: ResultTier
-  answers: (number | null)[] // user's selected option indices
-  timeouts: boolean[] // which questions timed out
+  score: number; // 0-100
+  degradationIndex: number; // 0-100
+  correctCount: number;
+  totalQuestions: number;
+  tier: ResultTier;
+  answers: (number | null)[]; // user's selected option indices
+  timeouts: boolean[]; // which questions timed out
 }
 
 /**
@@ -88,17 +87,17 @@ export function calculateResult(
   timeouts: boolean[],
 ): TestResult {
   const correctCount = answers.reduce<number>((count, answer, i) => {
-    if (answer === null) return count
-    return count + (answer === QUESTIONS[i].answer ? 1 : 0)
-  }, 0)
+    if (answer === null) return count;
+    return count + (answer === QUESTIONS[i].answer ? 1 : 0);
+  }, 0);
 
-  const score = (correctCount / QUESTIONS.length) * 100
-  const degradationIndex = 100 - score
+  const score = (correctCount / QUESTIONS.length) * 100;
+  const degradationIndex = 100 - score;
 
   const tier =
     RESULT_TIERS.find(
       (t) => degradationIndex >= t.min && degradationIndex <= t.max,
-    ) ?? RESULT_TIERS[0]
+    ) ?? RESULT_TIERS[0];
 
   return {
     score,
@@ -108,7 +107,7 @@ export function calculateResult(
     tier,
     answers,
     timeouts,
-  }
+  };
 }
 
 export function generateShareText(result: TestResult): string {
@@ -122,7 +121,7 @@ export function generateShareText(result: TestResult): string {
     "",
     result.tier.advice,
     "",
-    "在 https://cognitive-rust.vercel.app 测试你的认知状态",
-  ]
-  return lines.join("\n")
+    "在 https://cortex.hydroroll.team 测试你的认知状态",
+  ];
+  return lines.join("\n");
 }
