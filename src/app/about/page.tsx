@@ -68,31 +68,30 @@ export default function AboutPage() {
             <h2 className="text-sm font-semibold text-foreground">后续计划</h2>
             <div className="space-y-3 text-sm">
               <div>
-                <p className="font-medium text-foreground">近期</p>
+                <p className="font-medium text-foreground">已上线</p>
                 <ul className="mt-1 space-y-1 text-muted-foreground">
-                  <li>
-                    • 个人趋势折线图（已有本地历史记录的，可以在统计页查看）
-                  </li>
+                  <li>• 个人趋势折线图（统计页查看）</li>
                   <li>• 挑战分享——朋友点开链接能看到对比</li>
                   <li>• 按 AI 使用量分组的统计数据</li>
+                  <li>• 浅色/深色主题切换</li>
+                  <li>• 浏览器通知提醒（7 天后复测）</li>
+                  <li>• PWA 支持（可安装到桌面）</li>
+                  <li>• 动态 OG 分享卡片</li>
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-foreground">中期</p>
+                <p className="font-medium text-foreground">近期</p>
                 <ul className="mt-1 space-y-1 text-muted-foreground">
-                  <li>• 自适应出题——根据你的能力水平动态调整题目难度</li>
-                  <li>• 多维度认知画像（逻辑、速算、语义各维度独立评分）</li>
+                  <li>• 自适应出题——动态调整题目难度</li>
+                  <li>• 多维度认知画像（逻辑、速算、语义独立评分）</li>
                   <li>• 个性化训练建议</li>
                 </ul>
               </div>
               <div>
                 <p className="font-medium text-foreground">长期</p>
                 <ul className="mt-1 space-y-1 text-muted-foreground">
-                  <li>• 认知趋势预警——当检测到持续退化时提供早期提醒</li>
-                  <li>
-                    •
-                    社区基准——按行业、年龄段等维度对比（仅限用户自愿提供的信息）
-                  </li>
+                  <li>• 认知趋势预警——持续退化时提供早期提醒</li>
+                  <li>• 社区基准——按行业、年龄段等维度对比</li>
                 </ul>
               </div>
             </div>

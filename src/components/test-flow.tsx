@@ -389,7 +389,7 @@ export default function TestFlow() {
   async function handleShare() {
     if (!result) return;
     const text = generateShareText(result);
-    const pageUrl = window.location.origin + "?ref=" + result.degradationIndex;
+    const pageUrl = window.location.origin + "/share?ref=" + result.degradationIndex;
 
     if (navigator.share) {
       try {

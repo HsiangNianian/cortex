@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ServiceWorkerRegister } from "@/components/service-worker-register"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cortex.hydroroll.team"),
@@ -8,6 +9,10 @@ export const metadata: Metadata = {
   description: "5 道题给你的认知能力拍一张快照。定期测量，看清趋势——认知能力就像肌肉，用进废退。",
   icons: {
     icon: "/favicon.svg",
+  },
+  manifest: "/manifest.json",
+  other: {
+    "theme-color": "#1a1a1a",
   },
   openGraph: {
     title: "认知防锈 · 基线测试",
@@ -55,6 +60,7 @@ export default function RootLayout({
         <div className="fixed right-4 top-4 z-50">
           <ThemeToggle />
         </div>
+        <ServiceWorkerRegister />
         {children}
       </body>
     </html>
