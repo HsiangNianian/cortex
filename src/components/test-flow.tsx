@@ -90,6 +90,14 @@ export default function TestFlow() {
   const [timeouts, setTimeouts] = useState<boolean[]>([])
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME)
   const [result, setResult] = useState<TestResult | null>(null)
+  const [savedResult, setSavedResult] = useState<{
+    degradationIndex: number
+    tierLabel: string
+    tierColor: string
+    correctCount: number
+    totalQuestions: number
+    timestamp: number
+  } | null>(null)
   const [showExplanations, setShowExplanations] = useState(false)
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -118,19 +126,35 @@ export default function TestFlow() {
     }, 1000)
   }, [stopTimer])
 
-  // Timeout auto-advance
+  // Auto-submit null (timeout) when timer reaches 0 with no selection
   useEffect(() => {
     if (phase !== "testing") return
-    if (timeLeft > 0 || selected !== null) return
-    if (answers.length !== currentQ) return // already handled
+    if (timeLeft > 0) return
+    if (selected !== null) return
+    if (answers.length > currentQ) return // already submitted for this question
     submitAnswer(null)
-  }, [timeLeft, phase])
+  }, [timeLeft, phase, selected, answers.length, currentQ])
 
   // Calculate result when all questions answered
   useEffect(() => {
     if (answers.length !== QUESTIONS.length) return
     const r = calculateResult(answers, timeouts)
     setResult(r)
+    try {
+      localStorage.setItem(
+        "cognitive-rust-result",
+        JSON.stringify({
+          degradationIndex: r.degradationIndex,
+          tierLabel: r.tier.label,
+          tierColor: r.tier.ringColor,
+          correctCount: r.correctCount,
+          totalQuestions: r.totalQuestions,
+          timestamp: Date.now(),
+        }),
+      )
+    } catch {
+      // ignore — storage full or unavailable
+    }
     setPhase("result")
   }, [answers, timeouts])
 
@@ -147,6 +171,18 @@ export default function TestFlow() {
   useEffect(() => {
     return () => stopTimer()
   }, [stopTimer])
+
+  // Load previous result from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("cognitive-rust-result")
+      if (saved) {
+        setSavedResult(JSON.parse(saved))
+      }
+    } catch {
+      // ignore — no previous result
+    }
+  }, [])
 
   /* ─── Event Handlers ─── */
 
@@ -245,6 +281,35 @@ export default function TestFlow() {
               辅助答题
             </div>
           </div>
+
+          {savedResult && (
+            <div
+              className="cursor-default rounded-lg p-3 text-sm"
+              style={{
+                backgroundColor: savedResult.tierColor + "15",
+                borderLeft: `3px solid ${savedResult.tierColor}`,
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-foreground">上次测试</span>
+                <span className="text-xs text-muted-foreground">
+                  {new Date(savedResult.timestamp).toLocaleDateString("zh-CN")}
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-lg font-bold" style={{ color: savedResult.tierColor }}>
+                  {savedResult.degradationIndex}
+                </span>
+                <span className="text-xs text-muted-foreground">退化指数 · </span>
+                <span
+                  className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+                  style={{ backgroundColor: savedResult.tierColor }}
+                >
+                  {savedResult.tierLabel}
+                </span>
+              </div>
+            </div>
+          )}
         </CardContent>
         <CardFooter>
           <Button size="lg" className="w-full text-base" onClick={handleStart}>
@@ -479,7 +544,10 @@ export default function TestFlow() {
                           {timedOut ? "超时" : isCorrect ? "正确" : "错误"}
                         </span>
                       </div>
-                      <p className="mt-1 text-muted-foreground">{q.question.split("\n")[0]}</p>
+                      <p className="mt-1 text-muted-foreground">
+                        {q.question.split("\n")[0]}
+                        {q.question.includes("\n") ? "…" : ""}
+                      </p>
                       <div className="mt-2 text-xs text-muted-foreground">
                         你的答案：{userAnswer !== null ? q.options[userAnswer] : "未作答"}
                         {!isCorrect && !timedOut && (
