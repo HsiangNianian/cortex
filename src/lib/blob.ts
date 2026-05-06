@@ -32,7 +32,7 @@ function emptyStats(): StatsData {
 
 export async function getStats(): Promise<StatsData> {
   try {
-    const result = await get(STATS_KEY, { access: "public" })
+    const result = await get(STATS_KEY, { access: "private" })
     if (!result || !result.stream) return emptyStats()
     const reader = result.stream.getReader()
     const decoder = new TextDecoder()
@@ -54,7 +54,7 @@ export async function saveResultAndUpdateStats(result: ResultData): Promise<void
   const id = crypto.randomUUID().slice(0, 12)
   await put(`${RESULTS_PREFIX}${id}.json`, JSON.stringify(result), {
     contentType: "application/json",
-    access: "public",
+    access: "private",
   })
 
   // Update aggregated stats (O(1) — no full scan)
@@ -70,6 +70,6 @@ export async function saveResultAndUpdateStats(result: ResultData): Promise<void
 
   await put(STATS_KEY, JSON.stringify(stats), {
     contentType: "application/json",
-    access: "public",
+    access: "private",
   })
 }
