@@ -176,7 +176,7 @@
       "全部题目难度标定",
       "巨石组件 test-flow 拆分为模块化子组件",
       "修复：Redis 浏览器端报错、Hydration 不匹配、语言切换不更新题目",
-      "Phase 1 Week 3-4：LLM 题目生成（DeepSeek + OpenAI SDK + Redis 缓存 + 限频）",
+      "LLM 题目生成（DeepSeek + OpenAI SDK + Redis 缓存 + 限频）",
       "SSE 流式请求（stream: true + token 用量 + keep-alive 兼容）",
       "LLM 调用日志系统（traceId + 耗时 + 推理过程）"
     ],
