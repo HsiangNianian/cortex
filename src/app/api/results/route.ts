@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
-import { saveResult } from "@/lib/storage"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+    const { saveResult } = await import("@/lib/storage")
     const { degradationIndex, tierLabel, aiUsageLevel, estimationMethod } = body
 
     if (typeof degradationIndex !== "number") {
