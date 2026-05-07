@@ -131,7 +131,10 @@
     "trendFlat": "→ 持平",
     "trendAxis": "测试次数",
     "privacyNote": "所有数据匿名收集，仅用于生成统计分布",
-    "aiLevelSuffix": "人"
+    "aiLevelSuffix": "人",
+    "trendAria": "个人退化指数趋势",
+    "aboutLink": "关于",
+    "otherGame": "另一个游戏"
   },
   "about": {
     "title": "关于",
@@ -181,14 +184,25 @@
     "xAxis": "退化指数",
     "userMarker": "你在这里",
     "yourResult": "你的结果",
-    "exceeds": "超过 {pct}% 的参与者"
+    "exceeds": "超过 {pct}% 的参与者",
+    "degradationLabel": "退化指数"
   },
   "tier": {
     "cognitivePeak": "认知巅峰",
     "mildDecline": "轻度退化",
     "moderateDecline": "中度退化",
     "significantDecline": "明显退化",
-    "severeDecline": "严重退化"
+    "severeDecline": "严重退化",
+    "cognitivePeakDesc": "你的核心认知能力处于极佳状态。即使频繁使用 AI 工具，你依然保持着独立的深度思考习惯。你很可能在使用 AI 时保持批判性思维，将其视为工具而非替代品。",
+    "cognitivePeakAdvice": "继续保持你当前的使用习惯。你证明了 AI 和独立思考可以共存。",
+    "mildDeclineDesc": "你的认知能力整体保持良好，但已经出现了一些轻微的退化信号。可能在某些类型的思考上开始不自觉依赖 AI。",
+    "mildDeclineAdvice": "在请 AI 帮忙之前，先给自己 30 秒独立思考的时间。这个小习惯能有效阻止退化趋势。",
+    "moderateDeclineDesc": "你的认知活跃度已经出现明显下降。日常过度依赖 AI 完成思考任务，可能在不知不觉中削弱了你的独立分析能力。",
+    "moderateDeclineAdvice": "建议每天留出 15 分钟的「无 AI 深度阅读/思考时间」，让大脑重新习惯独立运转。",
+    "significantDeclineDesc": "检测到显著的认知能力下降。你可能已经习惯了让 AI 替你完成本应由自己完成的思考工作。",
+    "significantDeclineAdvice": "建议立即行动：1) 减少 50% 的 AI 使用量，持续一周 2) 每天做一道不借助 AI 的逻辑题 3) 一个月后重新测试。",
+    "severeDeclineDesc": "你的认知评分处于最低区间。长期依赖 AI 替代独立思考已经产生了明显影响。你的大脑正在经历「用进废退」的效应。",
+    "severeDeclineAdvice": "请认真对待这个信号。建议：1) 立即开始每日认知训练 2) 逐步延长不使用 AI 的连续思考时间 3) 培养先自己思考、再求助 AI 的习惯 4) 一个月后重新评估。"
   },
   "question": {
     "category": {

@@ -1,35 +1,41 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useTranslations } from "next-intl"
-import { TIER_LABELS, TIER_COLORS } from "@/lib/scoring"
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { TIER_COLORS, TIER_KEYS } from "@/lib/scoring";
 
 interface ChartProps {
-  distribution: number[]
-  avgDegradation: number | null
+  distribution: number[];
+  avgDegradation: number | null;
 }
 
-export default function DistributionChart({ distribution, avgDegradation }: ChartProps) {
-  const t = useTranslations("distribution")
-  const [userScore, setUserScore] = useState<number | null>(null)
-  const [userTier, setUserTier] = useState<string | null>(null)
+export default function DistributionChart({
+  distribution,
+  avgDegradation,
+}: ChartProps) {
+  const t = useTranslations("distribution");
+  const tierT = useTranslations("tier");
+  const [userScore, setUserScore] = useState<number | null>(null);
+  const [userTier, setUserTier] = useState<string | null>(null);
+  const [userTierKey, setUserTierKey] = useState<string | null>(null);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("cognitive-rust-result")
+      const saved = localStorage.getItem("cognitive-rust-result");
       if (saved) {
-        const data = JSON.parse(saved)
-        setUserScore(data.degradationIndex)
-        setUserTier(data.tierLabel)
+        const data = JSON.parse(saved);
+        setUserScore(data.degradationIndex);
+        setUserTier(data.tierLabel);
+        setUserTierKey(data.tierLabelKey ?? null);
       }
     } catch {
       // ignore
     }
-  }, [])
+  }, []);
 
-  const maxCount = Math.max(...distribution, 1)
-  const total = distribution.reduce((a, b) => a + b, 0)
-  const values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+  const maxCount = Math.max(...distribution, 1);
+  const total = distribution.reduce((a, b) => a + b, 0);
+  const values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
   return (
     <div className="w-full">
@@ -43,11 +49,17 @@ export default function DistributionChart({ distribution, avgDegradation }: Char
         >
           {/* Y axis labels */}
           {[0, 1, 2, 3, 4].map((i) => {
-            const y = 240 - (i / 4) * 200
-            const label = Math.round((maxCount / 4) * i)
+            const y = 240 - (i / 4) * 200;
+            const label = Math.round((maxCount / 4) * i);
             return (
               <g key={i}>
-                <text x="35" y={y + 4} textAnchor="end" className="fill-muted-foreground" fontSize="11">
+                <text
+                  x="35"
+                  y={y + 4}
+                  textAnchor="end"
+                  className="fill-muted-foreground"
+                  fontSize="11"
+                >
                   {label}
                 </text>
                 <line
@@ -60,19 +72,19 @@ export default function DistributionChart({ distribution, avgDegradation }: Char
                   strokeWidth="0.5"
                 />
               </g>
-            )
+            );
           })}
 
           {/* Bars */}
           {distribution.map((count, i) => {
-            const barWidth = 46
-            const gap = 8
-            const x = 45 + i * (barWidth + gap)
-            const barHeight = maxCount > 0 ? (count / maxCount) * 200 : 0
+            const barWidth = 46;
+            const gap = 8;
+            const x = 45 + i * (barWidth + gap);
+            const barHeight = maxCount > 0 ? (count / maxCount) * 200 : 0;
 
             // Determine tier: 0-10 → 0, 11-20 → 0, 21-30 → 1, etc.
-            const tierIndex = Math.min(Math.floor(((i * 10) + 5) / 20), 4)
-            const color = TIER_COLORS[tierIndex]
+            const tierIndex = Math.min(Math.floor((i * 10 + 5) / 20), 4);
+            const color = TIER_COLORS[tierIndex];
 
             return (
               <g key={i}>
@@ -109,11 +121,17 @@ export default function DistributionChart({ distribution, avgDegradation }: Char
                   {i * 10}-{(i + 1) * 10}
                 </text>
               </g>
-            )
+            );
           })}
 
           {/* X axis full range */}
-          <text x="310" y="278" textAnchor="middle" fontSize="11" className="fill-muted-foreground">
+          <text
+            x="310"
+            y="278"
+            textAnchor="middle"
+            fontSize="11"
+            className="fill-muted-foreground"
+          >
             {t("xAxis")}
           </text>
 
@@ -154,13 +172,16 @@ export default function DistributionChart({ distribution, avgDegradation }: Char
 
       {/* Tier legend */}
       <div className="mt-4 flex flex-wrap gap-2 justify-center">
-        {TIER_LABELS.map((label, i) => (
-          <div key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        {TIER_KEYS.map((key, i) => (
+          <div
+            key={key}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground"
+          >
             <span
               className="inline-block h-2.5 w-2.5 rounded-full"
               style={{ backgroundColor: TIER_COLORS[i] }}
             />
-            {label}
+            {tierT(key)}
           </div>
         ))}
       </div>
@@ -170,28 +191,30 @@ export default function DistributionChart({ distribution, avgDegradation }: Char
         <div className="mt-4 rounded-lg border bg-card p-3 text-sm">
           <div className="font-medium text-foreground">{t("yourResult")}</div>
           <div className="mt-1 text-muted-foreground">
-            退化指数 <span className="font-semibold text-foreground">{userScore}</span>
+            {t("degradationLabel")}{" "}
+            <span className="font-semibold text-foreground">{userScore}</span>
             {userTier && (
               <>
                 {" · "}
-                <span>{userTier}</span>
+                <span>{userTierKey ? tierT(userTierKey) : userTier}</span>
               </>
             )}
             {" · "}
             {t("exceeds", {
-              pct: total > 0
-                ? Math.round(
+              pct:
+                total > 0
+                  ? Math.round(
                     (distribution
                       .slice(0, Math.ceil(userScore / 10))
                       .reduce((a, b) => a + b, 0) /
                       total) *
-                      100,
+                    100,
                   )
-                : 0,
+                  : 0,
             })}
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

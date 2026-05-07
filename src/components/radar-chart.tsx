@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useTranslations } from "next-intl"
-import { type DimensionScores } from "@/lib/scoring"
+import { useTranslations } from "next-intl";
+import { type DimensionScores } from "@/lib/scoring";
 
 interface RadarChartProps {
-  userScores: DimensionScores
+  userScores: DimensionScores;
   /** Optional average scores for comparison overlay */
-  avgScores?: DimensionScores
-  size?: number
+  avgScores?: DimensionScores;
+  size?: number;
 }
 
 const COLORS = {
@@ -15,36 +15,36 @@ const COLORS = {
   userFill: "rgba(37, 99, 235, 0.15)",
   avg: "#888",
   avgFill: "rgba(136, 136, 136, 0.1)",
-}
+};
 
 export default function RadarChart({
   userScores,
   avgScores,
   size = 220,
 }: RadarChartProps) {
-  const t = useTranslations("radar")
-  const cx = size / 2
-  const cy = size / 2
-  const radius = size * 0.38
+  const t = useTranslations("radar");
+  const cx = size / 2;
+  const cy = size / 2;
+  const radius = size * 0.38;
 
   const AXIS_LABELS = [
     { key: "logic" as const, label: t("logic") },
     { key: "math" as const, label: t("math") },
     { key: "vocab" as const, label: t("vocab") },
-  ]
+  ];
 
   // Three axes at 120° intervals, starting at top-center (-90°)
   function point(index: number, value: number): { x: number; y: number } {
-    const angle = (-90 + index * 120) * (Math.PI / 180)
-    const r = (value / 100) * radius
+    const angle = (-90 + index * 120) * (Math.PI / 180);
+    const r = (value / 100) * radius;
     return {
       x: cx + r * Math.cos(angle),
       y: cy + r * Math.sin(angle),
-    }
+    };
   }
 
   // Background grid levels (20%, 40%, 60%, 80%, 100%)
-  const levels = [20, 40, 60, 80, 100]
+  const levels = [20, 40, 60, 80, 100];
 
   // Draw a polygon for a set of scores
   function polygon(
@@ -53,18 +53,18 @@ export default function RadarChart({
     fill: string,
   ): string {
     const pts = AXIS_LABELS.map((a) => {
-      const v = scores[a.key] ?? 0
-      return point(AXIS_LABELS.indexOf(a), v)
-    })
-    return pts.map((p) => `${p.x},${p.y}`).join(" ")
+      const v = scores[a.key] ?? 0;
+      return point(AXIS_LABELS.indexOf(a), v);
+    });
+    return pts.map((p) => `${p.x},${p.y}`).join(" ");
   }
 
   // Extract values for grid checking
   function userPolygonValues(): number[] {
-    return AXIS_LABELS.map((a) => userScores[a.key] ?? 0)
+    return AXIS_LABELS.map((a) => userScores[a.key] ?? 0);
   }
 
-  const userVals = userPolygonValues()
+  const userVals = userPolygonValues();
 
   return (
     <svg
@@ -75,7 +75,7 @@ export default function RadarChart({
     >
       {/* Grid levels */}
       {levels.map((level) => {
-        const pts = AXIS_LABELS.map((a, i) => point(i, level))
+        const pts = AXIS_LABELS.map((a, i) => point(i, level));
         return (
           <polygon
             key={level}
@@ -85,12 +85,12 @@ export default function RadarChart({
             className="stroke-border/30"
             strokeWidth="1"
           />
-        )
+        );
       })}
 
       {/* Axis lines */}
       {AXIS_LABELS.map((a, i) => {
-        const p100 = point(i, 100)
+        const p100 = point(i, 100);
         return (
           <line
             key={a.key}
@@ -102,7 +102,7 @@ export default function RadarChart({
             className="stroke-border/40"
             strokeWidth="1"
           />
-        )
+        );
       })}
 
       {/* Average overlay */}
@@ -127,9 +127,9 @@ export default function RadarChart({
 
       {/* User data points */}
       {AXIS_LABELS.map((a, i) => {
-        const v = userScores[a.key]
-        if (v === null) return null
-        const p = point(i, v)
+        const v = userScores[a.key];
+        if (v === null) return null;
+        const p = point(i, v);
         return (
           <circle
             key={a.key}
@@ -140,12 +140,12 @@ export default function RadarChart({
             stroke="white"
             strokeWidth="2"
           />
-        )
+        );
       })}
 
       {/* Axis labels */}
       {AXIS_LABELS.map((a, i) => {
-        const p = point(i, 115)
+        const p = point(i, 115);
         return (
           <text
             key={a.key}
@@ -159,19 +159,19 @@ export default function RadarChart({
           >
             {a.label}
           </text>
-        )
+        );
       })}
 
       {/* Value labels near user dots */}
       {AXIS_LABELS.map((a, i) => {
-        const v = userScores[a.key]
-        if (v === null) return null
-        const p = point(i, v)
+        const v = userScores[a.key];
+        if (v === null) return null;
+        const p = point(i, v);
         // Offset text toward the outer direction
-        const offset = v > 80 ? -12 : 10
-        const angle = (-90 + i * 120) * (Math.PI / 180)
-        const tx = p.x + offset * Math.cos(angle)
-        const ty = p.y + offset * Math.sin(angle)
+        const offset = v > 80 ? -12 : 10;
+        const angle = (-90 + i * 120) * (Math.PI / 180);
+        const tx = p.x + offset * Math.cos(angle);
+        const ty = p.y + offset * Math.sin(angle);
         return (
           <text
             key={`val-${a.key}`}
@@ -185,8 +185,8 @@ export default function RadarChart({
           >
             {v}%
           </text>
-        )
+        );
       })}
     </svg>
-  )
+  );
 }

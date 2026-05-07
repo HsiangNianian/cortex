@@ -131,7 +131,10 @@
     "trendFlat": "→ 横ばい",
     "trendAxis": "テスト回数",
     "privacyNote": "すべてのデータは匿名で収集され、統計分布の生成のみに使用されます",
-    "aiLevelSuffix": "人"
+    "aiLevelSuffix": "人",
+    "trendAria": "個人の退化指数の傾向",
+    "aboutLink": "このアプリについて",
+    "otherGame": "別のゲーム"
   },
   "about": {
     "title": "このアプリについて",
@@ -181,14 +184,25 @@
     "xAxis": "退化指数",
     "userMarker": "あなたの位置",
     "yourResult": "あなたの結果",
-    "exceeds": "参加者の{pct}%以上"
+    "exceeds": "参加者の{pct}%以上",
+    "degradationLabel": "退化指数"
   },
   "tier": {
     "cognitivePeak": "認知の頂点",
     "mildDecline": "軽度退化",
     "moderateDecline": "中度退化",
     "significantDecline": "顕著な退化",
-    "severeDecline": "重度退化"
+    "severeDecline": "重度退化",
+    "cognitivePeakDesc": "中核的な認知能力は非常に良好な状態です。AIツールを頻繁に使用していても、独立した深い思考習慣を維持しています。あなたはおそらくAIを批判的に捉え、代替手段ではなくツールとして使用しています。",
+    "cognitivePeakAdvice": "現在の習慣を維持してください。AIと独立思考は共存できることを証明しています。",
+    "mildDeclineDesc": "認知能力は全体的に良好ですが、軽度の低下の兆候が見られ始めています。特定のタイプの思考において、無意識にAIに依存し始めている可能性があります。",
+    "mildDeclineAdvice": "AIに頼る前に、30秒間自分で考える時間を取りましょう。この小さな習慣が低下傾向を効果的に防ぎます。",
+    "moderateDeclineDesc": "認知活性度が明らかに低下しています。日常的にAIに思考タスクを依存しすぎることで、独立した分析能力が知らず知らずのうちに弱まっている可能性があります。",
+    "moderateDeclineAdvice": "毎日15分間の「AIなしの深い読書・思考時間」を確保し、脳を再び独立した運転に慣れさせましょう。",
+    "significantDeclineDesc": "顕著な認知能力の低下が検出されました。本来自分で行うべき思考をAIに任せる習慣がついているかもしれません。",
+    "significantDeclineAdvice": "すぐに行動を：1) AI使用量を50%減らし、1週間続ける 2) AIなしで毎日1問の論理問題を解く 3) 1ヶ月後に再テストする。",
+    "severeDeclineDesc": "認知スコアは最低範囲にあります。長期的なAIへの依存が独立思考に明確な影響を与えています。あなたの脳は「使わなければ衰える」効果を経験しています。",
+    "severeDeclineAdvice": "この信号を真剣に受け止めてください。推奨：1) 直ちに毎日の認知トレーニングを開始 2) AIなしの思考時間を徐々に延長 3) 「自分で考えてからAIに頼む」習慣を身につける 4) 1ヶ月後に再評価。"
   },
   "question": {
     "category": {

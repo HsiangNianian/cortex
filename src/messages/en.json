@@ -99,7 +99,7 @@
     "retestButton": "Test Again",
     "viewStatsButton": "View Platform-wide Stats",
     "downloadButton": "Save Result Image",
-    "author": "Jian Lüchun",
+    "author": "Hsiang Nianian",
     "aboutLink": "About",
     "otherGame": "Another Game"
   },
@@ -131,7 +131,10 @@
     "trendFlat": "→ Flat",
     "trendAxis": "Test Number",
     "privacyNote": "All data is collected anonymously and only used to generate statistical distributions",
-    "aiLevelSuffix": "people"
+    "aiLevelSuffix": "people",
+    "trendAria": "Personal degradation index trend",
+    "aboutLink": "About",
+    "otherGame": "Another Game"
   },
   "about": {
     "title": "About",
@@ -181,14 +184,25 @@
     "xAxis": "Degradation Index",
     "userMarker": "You are here",
     "yourResult": "Your Result",
-    "exceeds": "Exceeds {pct}% of participants"
+    "exceeds": "Exceeds {pct}% of participants",
+    "degradationLabel": "Degradation Index"
   },
   "tier": {
     "cognitivePeak": "Cognitive Peak",
     "mildDecline": "Mild Decline",
     "moderateDecline": "Moderate Decline",
     "significantDecline": "Significant Decline",
-    "severeDecline": "Severe Decline"
+    "severeDecline": "Severe Decline",
+    "cognitivePeakDesc": "Your core cognitive abilities are in excellent shape. Even with frequent AI tool use, you maintain independent deep-thinking habits. You likely approach AI with critical thinking, treating it as a tool rather than a substitute.",
+    "cognitivePeakAdvice": "Keep up your current habits. You've proven that AI and independent thinking can coexist.",
+    "mildDeclineDesc": "Your cognitive abilities are generally good, but some early signs of decline are appearing. You may be starting to unconsciously rely on AI for certain types of thinking.",
+    "mildDeclineAdvice": "Before asking AI for help, give yourself 30 seconds to think independently. This small habit can effectively halt the decline.",
+    "moderateDeclineDesc": "Your cognitive activity has dropped noticeably. Daily over-reliance on AI for thinking tasks may be silently weakening your independent analytical skills.",
+    "moderateDeclineAdvice": "Set aside 15 minutes of AI-free deep reading/thinking time each day to let your brain get used to independent operation again.",
+    "significantDeclineDesc": "Significant cognitive decline detected. You may have grown accustomed to letting AI do the thinking that you should be doing yourself.",
+    "significantDeclineAdvice": "Take action now: 1) Reduce AI usage by 50% for one week 2) Do one logic puzzle daily without AI 3) Retest after one month.",
+    "severeDeclineDesc": "Your cognitive score is in the lowest range. Long-term reliance on AI to replace independent thinking has had a clear impact. Your brain is experiencing the \"use it or lose it\" effect.",
+    "severeDeclineAdvice": "Take this signal seriously. We recommend: 1) Start daily cognitive training immediately 2) Gradually extend AI-free thinking sessions 3) Develop a \"think first, then ask AI\" habit 4) Re-evaluate after one month."
   },
   "question": {
     "category": {

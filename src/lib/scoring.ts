@@ -6,6 +6,7 @@ export interface DimensionScores {
   vocab: number | null
 }
 
+// Dimension labels — kept for backward compat, use `n("radar." + type)` for display
 export const DIMENSION_LABELS: Record<string, string> = {
   logic: "逻辑推理",
   math: "速算",
@@ -18,11 +19,14 @@ export interface ResultTier {
   label: string
   description: string
   advice: string
+  tierKey: string
   color: string
   ringColor: string
 }
 
 export const TIER_LABELS = ["认知巅峰", "轻度退化", "中度退化", "明显退化", "严重退化"] as const
+
+export const TIER_KEYS = ["cognitivePeak", "mildDecline", "moderateDecline", "significantDecline", "severeDecline"] as const
 
 export const TIER_COLORS = ["#16a34a", "#65a30d", "#d97706", "#ea580c", "#dc2626"] as const
 
@@ -47,6 +51,7 @@ export const RESULT_TIERS: ResultTier[] = [
     description:
       "你的核心认知能力处于极佳状态。即使频繁使用 AI 工具，你依然保持着独立的深度思考习惯。你很可能在使用 AI 时保持批判性思维，将其视为工具而非替代品。",
     advice: "继续保持你当前的使用习惯。你证明了 AI 和独立思考可以共存。",
+    tierKey: "cognitivePeak",
     color: "text-green-600",
     ringColor: "#16a34a",
   },
@@ -58,6 +63,7 @@ export const RESULT_TIERS: ResultTier[] = [
       "你的认知能力整体保持良好，但已经出现了一些轻微的退化信号。可能在某些类型的思考上开始不自觉依赖 AI。",
     advice:
       "在请 AI 帮忙之前，先给自己 30 秒独立思考的时间。这个小习惯能有效阻止退化趋势。",
+    tierKey: "mildDecline",
     color: "text-lime-600",
     ringColor: "#65a30d",
   },
@@ -69,6 +75,7 @@ export const RESULT_TIERS: ResultTier[] = [
       "你的认知活跃度已经出现明显下降。日常过度依赖 AI 完成思考任务，可能在不知不觉中削弱了你的独立分析能力。",
     advice:
       '建议每天留出 15 分钟的"无 AI 深度阅读/思考时间"，让大脑重新习惯独立运转。',
+    tierKey: "moderateDecline",
     color: "text-amber-600",
     ringColor: "#d97706",
   },
@@ -80,6 +87,7 @@ export const RESULT_TIERS: ResultTier[] = [
       "检测到显著的认知能力下降。你可能已经习惯了让 AI 替你完成本应由自己完成的思考工作。",
     advice:
       "建议立即行动：1) 减少 50% 的 AI 使用量，持续一周 2) 每天做一道不借助 AI 的逻辑题 3) 一个月后重新测试。",
+    tierKey: "significantDecline",
     color: "text-orange-600",
     ringColor: "#ea580c",
   },
@@ -91,6 +99,7 @@ export const RESULT_TIERS: ResultTier[] = [
       '你的认知评分处于最低区间。长期依赖 AI 替代独立思考已经产生了明显影响。你的大脑正在经历"用进废退"的效应。',
     advice:
       "请认真对待这个信号。建议：1) 立即开始每日认知训练 2) 逐步延长不使用 AI 的连续思考时间 3) 培养先自己思考、再求助 AI 的习惯 4) 一个月后重新评估。",
+    tierKey: "severeDecline",
     color: "text-red-600",
     ringColor: "#dc2626",
   },
@@ -165,25 +174,48 @@ export function calculateResult(
   }
 }
 
-export function generateShareText(result: TestResult): string {
+export function generateShareText(result: TestResult, labels?: {
+  site: string
+  degradation: string
+  correct: string
+  tier: string
+  description: string
+  advice: string
+  logic: string
+  math: string
+  vocab: string
+  cta: string
+}): string {
+  const l = labels ?? {
+    site: "认知防锈 · 基线测试结果",
+    degradation: "退化指数",
+    correct: "正确",
+    tier: result.tier.label,
+    description: result.tier.description,
+    advice: result.tier.advice,
+    logic: "逻辑",
+    math: "速算",
+    vocab: "词汇",
+    cta: "在 https://cortex.hydroroll.team 测试你的认知状态",
+  }
   const lines = [
-    "认知防锈 · 基线测试结果",
+    l.site,
     "",
-    `退化指数：${result.degradationIndex}/100 — ${result.tier.label}`,
-    `正确：${result.correctCount}/${result.totalQuestions}`,
+    `${l.degradation}：${result.degradationIndex}/100 — ${l.tier}`,
+    `${l.correct}：${result.correctCount}/${result.totalQuestions}`,
   ]
 
   // Add dimension scores
   const dimParts: string[] = []
   if (result.dimensionScores.logic !== null)
-    dimParts.push(`逻辑 ${result.dimensionScores.logic}%`)
+    dimParts.push(`${l.logic} ${result.dimensionScores.logic}%`)
   if (result.dimensionScores.math !== null)
-    dimParts.push(`速算 ${result.dimensionScores.math}%`)
+    dimParts.push(`${l.math} ${result.dimensionScores.math}%`)
   if (result.dimensionScores.vocab !== null)
-    dimParts.push(`词汇 ${result.dimensionScores.vocab}%`)
+    dimParts.push(`${l.vocab} ${result.dimensionScores.vocab}%`)
   if (dimParts.length > 0) lines.push("", dimParts.join(" · "))
 
-  lines.push("", result.tier.description, "", result.tier.advice, "")
-  lines.push("在 https://cortex.hydroroll.team 测试你的认知状态")
+  lines.push("", l.description, "", l.advice, "")
+  lines.push(l.cta)
   return lines.join("\n")
 }

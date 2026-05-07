@@ -29,10 +29,10 @@ import {
 import {
   calculateResult,
   generateShareText,
-  DIMENSION_LABELS,
   type TestResult,
   type DimensionScores,
 } from "@/lib/scoring";
+import { AI_CANONICAL_LEVELS } from "@/lib/storage";
 import type { Question } from "@/lib/questions";
 import RadarChart from "@/components/radar-chart";
 
@@ -49,7 +49,7 @@ interface SavedProgress {
   answers: (number | null)[];
   timeouts: boolean[];
   declared: boolean;
-  aiUsage: string | null;
+  aiUsage: number | null;
   timeLeft: number;
   timestamp: number;
 }
@@ -57,7 +57,9 @@ interface SavedProgress {
 function saveProgress(data: SavedProgress) {
   try {
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
-  } catch { /* storage full – non‑critical */ }
+  } catch {
+    /* storage full – non‑critical */
+  }
 }
 
 function loadProgress(): SavedProgress | null {
@@ -70,11 +72,17 @@ function loadProgress(): SavedProgress | null {
       return null;
     }
     return data;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 function clearProgress() {
-  try { localStorage.removeItem(PROGRESS_KEY); } catch { /* ignore */ }
+  try {
+    localStorage.removeItem(PROGRESS_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 /* ─── SVG Circular Timer ─── */
@@ -92,16 +100,20 @@ function QuestionTimer({
   const offset = circumference * (1 - progress);
   const isUrgent = remaining <= 10 && remaining > 0;
 
-  const color =
-    isUrgent ? "#ef4444"
-      : progress > 0.5 ? "#16a34a"
-        : progress > 0.25 ? "#d97706"
-          : "#dc2626";
-  const textColor =
-    isUrgent ? "text-red-500"
-      : progress > 0.5 ? "text-green-600"
-        : progress > 0.25 ? "text-amber-600"
-          : "text-red-600";
+  const color = isUrgent
+    ? "#ef4444"
+    : progress > 0.5
+      ? "#16a34a"
+      : progress > 0.25
+        ? "#d97706"
+        : "#dc2626";
+  const textColor = isUrgent
+    ? "text-red-500"
+    : progress > 0.5
+      ? "text-green-600"
+      : progress > 0.25
+        ? "text-amber-600"
+        : "text-red-600";
 
   return (
     <div
@@ -131,9 +143,8 @@ function QuestionTimer({
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className={`text-base font-bold tabular-nums sm:text-xl transition-all ${textColor} ${
-            isUrgent ? "scale-125" : ""
-          }`}
+          className={`text-base font-bold tabular-nums sm:text-xl transition-all ${textColor} ${isUrgent ? "scale-125" : ""
+            }`}
         >
           {remaining}
         </span>
@@ -241,12 +252,12 @@ export default function TestFlow() {
     dimensionScores?: DimensionScores;
     timestamp: number;
   } | null>(null);
-  const [aiUsage, setAiUsage] = useState<string | null>(null);
+  const [aiUsage, setAiUsage] = useState<number | null>(null);
   const [questions, setQuestions] = useState(() =>
     selectQuestions(QUESTIONS_PER_TEST),
   );
-  const [savedProgress, setSavedProgress] = useState<SavedProgress | null>(
-    () => loadProgress(),
+  const [savedProgress, setSavedProgress] = useState<SavedProgress | null>(() =>
+    loadProgress(),
   );
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -262,18 +273,21 @@ export default function TestFlow() {
     }
   }, []);
 
-  const startTimer = useCallback((initialTime?: number) => {
-    stopTimer();
-    setTimeLeft(initialTime ?? QUESTION_TIME);
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }, [stopTimer]);
+  const startTimer = useCallback(
+    (initialTime?: number) => {
+      stopTimer();
+      setTimeLeft(initialTime ?? QUESTION_TIME);
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    },
+    [stopTimer],
+  );
 
   // Auto-submit when timer reaches 0
   useEffect(() => {
@@ -301,6 +315,7 @@ export default function TestFlow() {
       const entry = {
         degradationIndex: r.degradationIndex,
         tierLabel: r.tier.label,
+        tierLabelKey: r.tier.tierKey,
         tierColor: r.tier.ringColor,
         correctCount: r.correctCount,
         totalQuestions: r.totalQuestions,
@@ -322,7 +337,7 @@ export default function TestFlow() {
       tierLabel: r.tier.label,
       correctCount: r.correctCount,
       totalQuestions: r.totalQuestions,
-      aiUsageLevel: aiUsage,
+      aiUsageLevel: aiUsage !== null ? AI_CANONICAL_LEVELS[aiUsage] : null,
     };
     fetch("/api/results", {
       method: "POST",
@@ -394,7 +409,16 @@ export default function TestFlow() {
       document.removeEventListener("visibilitychange", onHide);
       window.removeEventListener("beforeunload", onBeforeUnload);
     };
-  }, [phase, questions, currentQ, answers, timeouts, declared, aiUsage, timeLeft]);
+  }, [
+    phase,
+    questions,
+    currentQ,
+    answers,
+    timeouts,
+    declared,
+    aiUsage,
+    timeLeft,
+  ]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -418,9 +442,16 @@ export default function TestFlow() {
         const reminder = JSON.parse(reminderRaw);
         if (Date.now() >= reminder.targetDate) {
           localStorage.removeItem("cognitive-rust-reminder");
-          if ("Notification" in window && Notification.permission === "granted") {
+          if (
+            "Notification" in window &&
+            Notification.permission === "granted"
+          ) {
             new Notification(n("toast.reminderTitle"), {
-              body: n("toast.reminderBody", { tier: reminder.tierLabel }),
+              body: n("toast.reminderBody", {
+                tier: reminder.tierLabelKey
+                  ? n("tier." + reminder.tierLabelKey)
+                  : reminder.tierLabel,
+              }),
               icon: "/favicon.ico",
             });
           }
@@ -455,7 +486,7 @@ export default function TestFlow() {
     setAnswers(s.answers);
     setTimeouts(s.timeouts);
     setDeclared(s.declared);
-    setAiUsage(s.aiUsage);
+    setAiUsage(typeof s.aiUsage === "number" ? s.aiUsage : null);
     clearProgress();
     setSavedProgress(null);
     setPhase("testing");
@@ -466,7 +497,7 @@ export default function TestFlow() {
   }
 
   function handleBeginTest() {
-    if (!aiUsage) return;
+    if (aiUsage === null) return;
     clearProgress();
     setSavedProgress(null);
     setPhase("testing");
@@ -520,8 +551,21 @@ export default function TestFlow() {
 
   async function handleShare() {
     if (!result) return;
-    const text = generateShareText(result);
-    const pageUrl = window.location.origin + "/share?ref=" + result.degradationIndex;
+    const tierKey = result.tier.tierKey;
+    const text = generateShareText(result, {
+      site: n("landing.title"),
+      degradation: n("stats.avgDegradation"),
+      correct: n("result.reviewCorrect"),
+      tier: n("tier." + tierKey),
+      description: n("tier." + tierKey + "Desc"),
+      advice: n("tier." + tierKey + "Advice"),
+      logic: n("radar.logic"),
+      math: n("radar.math"),
+      vocab: n("radar.vocab"),
+      cta: n("landing.title") + " — cortex.hydroroll.team",
+    });
+    const pageUrl =
+      window.location.origin + "/share?ref=" + result.degradationIndex;
 
     if (navigator.share) {
       try {
@@ -560,6 +604,7 @@ export default function TestFlow() {
           JSON.stringify({
             targetDate,
             tierLabel: result?.tier.label,
+            tierLabelKey: result?.tier.tierKey,
           }),
         );
         new Notification(n("toast.notifConfirmTitle"), {
@@ -581,10 +626,18 @@ export default function TestFlow() {
     setTimeout(() => setToast(null), 1500);
 
     const dimParts = [
-      result.dimensionScores.logic !== null ? `${n("radar.logic")} ${result.dimensionScores.logic}%` : "",
-      result.dimensionScores.math !== null ? `${n("radar.math")} ${result.dimensionScores.math}%` : "",
-      result.dimensionScores.vocab !== null ? `${n("radar.vocab")} ${result.dimensionScores.vocab}%` : "",
-    ].filter(Boolean).join("  ·  ");
+      result.dimensionScores.logic !== null
+        ? `${n("radar.logic")} ${result.dimensionScores.logic}%`
+        : "",
+      result.dimensionScores.math !== null
+        ? `${n("radar.math")} ${result.dimensionScores.math}%`
+        : "",
+      result.dimensionScores.vocab !== null
+        ? `${n("radar.vocab")} ${result.dimensionScores.vocab}%`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("  ·  ");
 
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
       <defs>
@@ -599,7 +652,7 @@ export default function TestFlow() {
       <text x="600" y="278" text-anchor="middle" font-family="system-ui,sans-serif" font-size="72" font-weight="800" fill="#111">${result.degradationIndex}</text>
       <text x="600" y="318" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#999">/ 100</text>
       <rect x="475" y="350" width="250" height="44" rx="22" fill="${result.tier.ringColor}"/>
-      <text x="600" y="379" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="600" fill="white">${result.tier.label}</text>
+      <text x="600" y="379" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="600" fill="white">${n("tier." + result.tier.tierKey)}</text>
       <text x="600" y="435" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#666">${result.correctCount} / ${result.totalQuestions}</text>
       ${dimParts ? `<text x="600" y="465" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" fill="#999">${dimParts}</text>` : ""}
       <text x="600" y="580" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#bbb">cortex.hydroroll.team</text>
@@ -670,19 +723,25 @@ export default function TestFlow() {
                 {n("landing.challengeSuffix")}
               </>
             ) : (
-              <>
-                {n("landing.defaultSubtitle", { count: QUESTIONS_PER_TEST })}
-              </>
+              <>{n("landing.defaultSubtitle", { count: QUESTIONS_PER_TEST })}</>
             )}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground">{QUESTIONS_PER_TEST}</span> {n("landing.questionsCount", { count: QUESTIONS_PER_TEST })}
+              <span className="font-medium text-foreground">
+                {QUESTIONS_PER_TEST}
+              </span>{" "}
+              {n("landing.questionsCount", { count: QUESTIONS_PER_TEST })}
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground">~{Math.ceil(QUESTIONS_PER_TEST * QUESTION_TIME / 60)}</span> {n("landing.timeEstimate", { minutes: Math.ceil(QUESTIONS_PER_TEST * QUESTION_TIME / 60) })}
+              <span className="font-medium text-foreground">
+                ~{Math.ceil((QUESTIONS_PER_TEST * QUESTION_TIME) / 60)}
+              </span>{" "}
+              {n("landing.timeEstimate", {
+                minutes: Math.ceil((QUESTIONS_PER_TEST * QUESTION_TIME) / 60),
+              })}
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium text-foreground">
@@ -701,7 +760,9 @@ export default function TestFlow() {
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium text-foreground">{n("landing.lastTestLabel")}</span>
+                <span className="font-medium text-foreground">
+                  {n("landing.lastTestLabel")}
+                </span>
                 <span className="text-xs text-muted-foreground">
                   {new Date(savedResult.timestamp).toLocaleDateString()}
                 </span>
@@ -720,7 +781,9 @@ export default function TestFlow() {
                   className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
                   style={{ backgroundColor: savedResult.tierColor }}
                 >
-                  {savedResult.tierLabel}
+                  {(savedResult as any).tierLabelKey
+                    ? n("tier." + (savedResult as any).tierLabelKey)
+                    : savedResult.tierLabel}
                 </span>
               </div>
             </div>
@@ -729,10 +792,17 @@ export default function TestFlow() {
         <CardFooter className="flex-col gap-2">
           {savedProgress && !isChallenge ? (
             <>
-              <Button size="lg" className="w-full text-base" onClick={handleResume}>
+              <Button
+                size="lg"
+                className="w-full text-base"
+                onClick={handleResume}
+              >
                 {n("landing.resumeButton")}
                 <span className="ml-2 text-sm opacity-70">
-                  {n("landing.resumeProgress", { done: savedProgress.answers.length, total: QUESTIONS_PER_TEST })}
+                  {n("landing.resumeProgress", {
+                    done: savedProgress.answers.length,
+                    total: QUESTIONS_PER_TEST,
+                  })}
                 </span>
               </Button>
               <Button
@@ -745,7 +815,11 @@ export default function TestFlow() {
               </Button>
             </>
           ) : (
-            <Button size="lg" className="w-full text-base" onClick={handleStart}>
+            <Button
+              size="lg"
+              className="w-full text-base"
+              onClick={handleStart}
+            >
               {savedResult ? n("landing.retakeButton") : n("landing.ctaButton")}
             </Button>
           )}
@@ -779,7 +853,9 @@ export default function TestFlow() {
             </li>
             <li className="flex gap-2">
               <span className="text-foreground">•</span>
-              {n("declaration.fullTime", { minutes: Math.ceil(QUESTIONS_PER_TEST * QUESTION_TIME / 60) })}
+              {n("declaration.fullTime", {
+                minutes: Math.ceil((QUESTIONS_PER_TEST * QUESTION_TIME) / 60),
+              })}
             </li>
             <li className="flex gap-2">
               <span className="text-foreground">•</span>
@@ -797,11 +873,11 @@ export default function TestFlow() {
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {(n.raw("declaration.aiLevels") as string[]).map(
-                (opt: string) => (
+                (opt: string, i: number) => (
                   <button
-                    key={opt}
-                    onClick={() => setAiUsage(opt)}
-                    className={`rounded-full border px-3 py-1.5 text-xs transition-all ${aiUsage === opt
+                    key={i}
+                    onClick={() => setAiUsage(i)}
+                    className={`rounded-full border px-3 py-1.5 text-xs transition-all ${aiUsage === i
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-muted-foreground/20 text-muted-foreground hover:border-primary/50"
                       }`}
@@ -834,10 +910,12 @@ export default function TestFlow() {
           <Button
             size="lg"
             className="w-full text-base"
-            disabled={!declared || !aiUsage}
+            disabled={!declared || aiUsage === null}
             onClick={handleBeginTest}
           >
-            {aiUsage ? n("declaration.startButton") : n("declaration.selectAiFirst")}
+            {aiUsage !== null
+              ? n("declaration.startButton")
+              : n("declaration.selectAiFirst")}
           </Button>
           <Button
             variant="ghost"
@@ -938,7 +1016,9 @@ export default function TestFlow() {
             disabled={selected === null}
             onClick={handleNext}
           >
-            {isLastQuestion ? n("testing.finishButton") : n("testing.nextButton")}
+            {isLastQuestion
+              ? n("testing.finishButton")
+              : n("testing.nextButton")}
           </Button>
         </CardFooter>
       </Card>
@@ -951,7 +1031,9 @@ export default function TestFlow() {
     return (
       <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
         <CardHeader className="pb-2 text-center">
-          <CardTitle className="text-2xl tracking-tight">{n("processing.title")}</CardTitle>
+          <CardTitle className="text-2xl tracking-tight">
+            {n("processing.title")}
+          </CardTitle>
           <CardDescription>{n("processing.subtitle")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4 py-12">
@@ -972,7 +1054,9 @@ export default function TestFlow() {
     return (
       <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
         <CardHeader className="pb-2 text-center">
-          <CardTitle className="text-2xl tracking-tight">{n("result.title")}</CardTitle>
+          <CardTitle className="text-2xl tracking-tight">
+            {n("result.title")}
+          </CardTitle>
           <CardDescription>{n("result.subtitle")}</CardDescription>
         </CardHeader>
 
@@ -991,20 +1075,24 @@ export default function TestFlow() {
                   color: "#fff",
                 }}
               >
-                {result.tier.label}
+                {n("tier." + result.tier.tierKey)}
               </Badge>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              {result.tier.description}
+              {n("tier." + result.tier.tierKey + "Desc")}
             </p>
           </div>
 
           {/* AI Usage context */}
-          {aiUsage && (
+          {aiUsage !== null && (
             <div className="rounded-lg bg-muted/50 p-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{n("result.aiUsageLabel")}</span>
-                <span className="font-medium text-foreground">{aiUsage}</span>
+                <span className="text-muted-foreground">
+                  {n("result.aiUsageLabel")}
+                </span>
+                <span className="font-medium text-foreground">
+                  {(n.raw("declaration.aiLevels") as string[])[aiUsage]}
+                </span>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
                 {n("result.description")}
@@ -1016,7 +1104,9 @@ export default function TestFlow() {
 
           {/* Dimension scores - Radar chart */}
           <div>
-            <p className="mb-3 text-sm font-medium text-foreground">{n("result.radarLabel")}</p>
+            <p className="mb-3 text-sm font-medium text-foreground">
+              {n("result.radarLabel")}
+            </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
               <div className="w-48 shrink-0">
                 <RadarChart userScores={result.dimensionScores} size={200} />
@@ -1029,19 +1119,27 @@ export default function TestFlow() {
                   return (
                     <div key={key} className="flex items-center gap-2 text-sm">
                       <span className="w-16 shrink-0 text-muted-foreground">
-                        {DIMENSION_LABELS[key]}
+                        {n("radar." + key)}
                       </span>
                       <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                         <div
-                          className={`h-full rounded-full transition-all ${
-                            isWeak ? "bg-red-400" : score >= 80 ? "bg-green-400" : "bg-amber-400"
-                          }`}
+                          className={`h-full rounded-full transition-all ${isWeak
+                              ? "bg-red-400"
+                              : score >= 80
+                                ? "bg-green-400"
+                                : "bg-amber-400"
+                            }`}
                           style={{ width: `${score}%` }}
                         />
                       </div>
-                      <span className={`w-10 text-right font-medium tabular-nums ${
-                        isWeak ? "text-red-600" : score >= 80 ? "text-green-600" : "text-amber-600"
-                      }`}>
+                      <span
+                        className={`w-10 text-right font-medium tabular-nums ${isWeak
+                            ? "text-red-600"
+                            : score >= 80
+                              ? "text-green-600"
+                              : "text-amber-600"
+                          }`}
+                      >
                         {score}%
                       </span>
                     </div>
@@ -1055,13 +1153,30 @@ export default function TestFlow() {
 
           {/* Personalized advice */}
           {(() => {
-            const allDims: { key: string; label: string; score: number | null }[] = [
-              { key: "logic", label: n("radar.logic"), score: result.dimensionScores.logic },
-              { key: "math", label: n("radar.math"), score: result.dimensionScores.math },
-              { key: "vocab", label: n("radar.vocab"), score: result.dimensionScores.vocab },
-            ];
-            const dims = allDims.filter((d): d is { key: string; label: string; score: number } =>
-              d.score !== null
+            const allDims: {
+              key: string;
+              label: string;
+              score: number | null;
+            }[] = [
+                {
+                  key: "logic",
+                  label: n("radar.logic"),
+                  score: result.dimensionScores.logic,
+                },
+                {
+                  key: "math",
+                  label: n("radar.math"),
+                  score: result.dimensionScores.math,
+                },
+                {
+                  key: "vocab",
+                  label: n("radar.vocab"),
+                  score: result.dimensionScores.vocab,
+                },
+              ];
+            const dims = allDims.filter(
+              (d): d is { key: string; label: string; score: number } =>
+                d.score !== null,
             );
             dims.sort((a, b) => a.score - b.score);
 
@@ -1069,12 +1184,15 @@ export default function TestFlow() {
               const weakest = dims[0];
               return (
                 <div className="rounded-lg bg-muted/50 p-4">
-                  <p className="text-sm font-medium">{n("result.adviceTitle")}</p>
+                  <p className="text-sm font-medium">
+                    {n("result.adviceTitle")}
+                  </p>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     {n("result.adviceWeakest", { dimension: weakest.label })}
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {n.raw("result.adviceTips")[weakest.key] ?? n("result.adviceDefault")}
+                    {n.raw("result.adviceTips")[weakest.key] ??
+                      n("result.adviceDefault")}
                   </p>
                 </div>
               );
@@ -1100,7 +1218,9 @@ export default function TestFlow() {
               </p>
               <div className="flex items-center gap-4">
                 <div className="flex-1 text-center">
-                  <p className="text-xs text-muted-foreground">{n("result.lastLabel")}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {n("result.lastLabel")}
+                  </p>
                   <p
                     className="text-2xl font-bold"
                     style={{ color: prevResult.tierColor }}
@@ -1108,7 +1228,9 @@ export default function TestFlow() {
                     {prevResult.degradationIndex}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {prevResult.tierLabel}
+                    {(prevResult as any).tierLabelKey
+                      ? n("tier." + (prevResult as any).tierLabelKey)
+                      : prevResult.tierLabel}
                   </p>
                 </div>
                 <div className="text-2xl text-muted-foreground">
@@ -1119,7 +1241,9 @@ export default function TestFlow() {
                       : "—"}
                 </div>
                 <div className="flex-1 text-center">
-                  <p className="text-xs text-muted-foreground">{n("result.currentLabel")}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {n("result.currentLabel")}
+                  </p>
                   <p
                     className="text-2xl font-bold"
                     style={{ color: result.tier.ringColor }}
@@ -1127,7 +1251,7 @@ export default function TestFlow() {
                     {result.degradationIndex}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {result.tier.label}
+                    {n("tier." + result.tier.tierKey)}
                   </p>
                 </div>
               </div>
@@ -1141,24 +1265,37 @@ export default function TestFlow() {
               {/* Per-dimension comparison if available */}
               {prevResult.dimensionScores && (
                 <div className="mt-3 space-y-1.5 border-t pt-3">
-                  <p className="text-xs font-medium text-muted-foreground">{n("result.dimensionCompare")}</p>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {n("result.dimensionCompare")}
+                  </p>
                   {(["logic", "math", "vocab"] as const).map((key) => {
                     const prev = prevResult.dimensionScores?.[key];
                     const cur = result.dimensionScores[key];
-                    if (prev === null || prev === undefined || cur === null) return null;
+                    if (prev === null || prev === undefined || cur === null)
+                      return null;
                     const diff = cur - prev;
                     return (
-                      <div key={key} className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">{DIMENSION_LABELS[key]}</span>
+                      <div
+                        key={key}
+                        className="flex items-center justify-between text-xs"
+                      >
+                        <span className="text-muted-foreground">
+                          {n("radar." + key)}
+                        </span>
                         <span className="tabular-nums">
                           <span className="text-muted-foreground">{prev}%</span>
                           <span className="mx-1 text-muted-foreground">→</span>
-                          <span className={`font-medium ${diff > 0 ? "text-green-600" : diff < 0 ? "text-red-600" : "text-muted-foreground"}`}>
+                          <span
+                            className={`font-medium ${diff > 0 ? "text-green-600" : diff < 0 ? "text-red-600" : "text-muted-foreground"}`}
+                          >
                             {cur}%
                           </span>
                           {diff !== 0 && (
-                            <span className={`ml-1 ${diff > 0 ? "text-green-600" : "text-red-600"}`}>
-                              ({diff > 0 ? "+" : ""}{diff})
+                            <span
+                              className={`ml-1 ${diff > 0 ? "text-green-600" : "text-red-600"}`}
+                            >
+                              ({diff > 0 ? "+" : ""}
+                              {diff})
                             </span>
                           )}
                         </span>
@@ -1178,7 +1315,9 @@ export default function TestFlow() {
             >
               {n("result.reviewTitle")}
               <span className="text-muted-foreground">
-                {showExplanations ? n("result.reviewToggleClose") : n("result.reviewToggle")}
+                {showExplanations
+                  ? n("result.reviewToggleClose")
+                  : n("result.reviewToggle")}
               </span>
             </button>
 
@@ -1193,7 +1332,10 @@ export default function TestFlow() {
                     <div key={i} className="rounded-lg border p-3 text-sm">
                       <div className="flex items-center justify-between">
                         <span className="font-medium">
-                          {n("result.reviewQuestion", { i: i + 1, category: n("question.category." + q.category) })}
+                          {n("result.reviewQuestion", {
+                            i: i + 1,
+                            category: n("question.category." + q.category),
+                          })}
                         </span>
                         <span
                           className={`text-xs font-medium ${timedOut
@@ -1203,7 +1345,11 @@ export default function TestFlow() {
                                 : "text-red-600"
                             }`}
                         >
-                          {timedOut ? n("result.reviewTimeout") : isCorrect ? n("result.reviewCorrect") : n("result.reviewWrong")}
+                          {timedOut
+                            ? n("result.reviewTimeout")
+                            : isCorrect
+                              ? n("result.reviewCorrect")
+                              : n("result.reviewWrong")}
                         </span>
                       </div>
                       <p className="mt-1 text-muted-foreground">
@@ -1212,19 +1358,25 @@ export default function TestFlow() {
                       </p>
                       <div className="mt-2 text-xs text-muted-foreground">
                         {n("result.reviewYourAnswer")}
-                        {userAnswer !== null ? q.options[userAnswer] : n("result.reviewUnanswered")}
+                        {userAnswer !== null
+                          ? q.options[userAnswer]
+                          : n("result.reviewUnanswered")}
                         {!isCorrect && !timedOut && (
                           <>
                             {" · "}
                             <span className="text-green-600">
-                              {n("result.reviewCorrectAnswer", { answer: q.options[q.answer] })}
+                              {n("result.reviewCorrectAnswer", {
+                                answer: q.options[q.answer],
+                              })}
                             </span>
                           </>
                         )}
                       </div>
                       {timedOut && (
                         <div className="mt-1 text-xs text-green-600">
-                          {n("result.reviewCorrectAnswer", { answer: q.options[q.answer] })}
+                          {n("result.reviewCorrectAnswer", {
+                            answer: q.options[q.answer],
+                          })}
                         </div>
                       )}
                       <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-muted-foreground">
@@ -1243,7 +1395,11 @@ export default function TestFlow() {
             <Button variant="outline" className="flex-1" onClick={handleShare}>
               {n("result.shareButton")}
             </Button>
-            <Button variant="outline" className="flex-1" onClick={handleSetReminder}>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={handleSetReminder}
+            >
               {n("result.remindButton")}
             </Button>
             <Button className="flex-1" onClick={handleRestart}>

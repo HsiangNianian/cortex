@@ -1,4 +1,4 @@
-import type { Question } from "./types"
+import type { Question } from "./types";
 
 export const bank: Question[] = [
   // ════════════════════════════════════════════
@@ -9,7 +9,7 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "In a warehouse theft investigation, four suspects are questioned. Their statements are:\n\nA says: \"It wasn't me.\"\nB says: \"C did it.\"\nC says: \"It wasn't me.\"\nD says: \"A is telling the truth.\"\n\nIf only one of the four is telling the truth, who is the thief?",
+      'In a warehouse theft investigation, four suspects are questioned. Their statements are:\n\nA says: "It wasn\'t me."\nB says: "C did it."\nC says: "It wasn\'t me."\nD says: "A is telling the truth."\n\nIf only one of the four is telling the truth, who is the thief?',
     options: ["A", "B", "C", "D"],
     answer: 0,
     explanation:
@@ -42,7 +42,7 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "On an island, there are two types of people: Truth-tellers (always tell the truth) and Liars (always lie). You meet three people A, B, and C.\n\nA says: \"All three of us are liars.\"\nB says: \"Exactly one of us is a truth-teller.\"\n\nWhich of the following is correct?",
+      'On an island, there are two types of people: Truth-tellers (always tell the truth) and Liars (always lie). You meet three people A, B, and C.\n\nA says: "All three of us are liars."\nB says: "Exactly one of us is a truth-teller."\n\nWhich of the following is correct?',
     options: [
       "A is a truth-teller, B and C are liars",
       "B is a truth-teller, A and C are liars",
@@ -51,7 +51,7 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "If A were telling the truth, then A would be a liar — a contradiction, so A must be a liar.\nSince A is lying, \"all three are liars\" is false — there is at least one truth-teller.\nAssume B is telling the truth: exactly one person (B) is truthful, so A and C are liars. Then \"all three are liars\" is false (since B is truthful), and A lying holds. ✅\nAssume C is the only truth-teller: then B is lying, but B's statement \"exactly one truth-teller\" would actually be true (C), creating a contradiction.\n\nTherefore B is the truth-teller, and A and C are liars.",
+      'If A were telling the truth, then A would be a liar — a contradiction, so A must be a liar.\nSince A is lying, "all three are liars" is false — there is at least one truth-teller.\nAssume B is telling the truth: exactly one person (B) is truthful, so A and C are liars. Then "all three are liars" is false (since B is truthful), and A lying holds. ✅\nAssume C is the only truth-teller: then B is lying, but B\'s statement "exactly one truth-teller" would actually be true (C), creating a contradiction.\n\nTherefore B is the truth-teller, and A and C are liars.',
   },
   {
     id: 5,
@@ -69,11 +69,11 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "A, B, and C participate in a 100-meter race. After the results are announced, each makes a statement:\n\nA says: \"I am not in first place.\"\nB says: \"C is in first place.\"\nC says: \"I am not in first place.\"\n\nIf only one of them is telling the truth, who is truly in first place?",
+      'A, B, and C participate in a 100-meter race. After the results are announced, each makes a statement:\n\nA says: "I am not in first place."\nB says: "C is in first place."\nC says: "I am not in first place."\n\nIf only one of them is telling the truth, who is truly in first place?',
     options: ["A", "B", "C", "Cannot be determined"],
     answer: 0,
     explanation:
-      "Assume A is first:\n- A says \"I am not first\" → false\n- B says \"C is first\" → false\n- C says \"I am not first\" → true (C is not first, A is)\n→ exactly one true ✅\n\nAssume B is first:\n- A says \"I am not first\" → true (A is not first, B is)\n- B says \"C is first\" → false\n- C says \"I am not first\" → true (C is not first)\n→ two true ❌\n\nAssume C is first:\n- A true (A is not first), B true (C is first), C false (C claims not first)\n→ two true ❌\n\nTherefore A is in first place.",
+      'Assume A is first:\n- A says "I am not first" → false\n- B says "C is first" → false\n- C says "I am not first" → true (C is not first, A is)\n→ exactly one true ✅\n\nAssume B is first:\n- A says "I am not first" → true (A is not first, B is)\n- B says "C is first" → false\n- C says "I am not first" → true (C is not first)\n→ two true ❌\n\nAssume C is first:\n- A true (A is not first), B true (C is first), C false (C claims not first)\n→ two true ❌\n\nTherefore A is in first place.',
   },
   {
     id: 7,
@@ -102,7 +102,7 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "There are three boxes A, B, and C, one of which contains a prize. Each box has a statement written on it, and only one statement is true:\n\nA: \"The prize is here.\"\nB: \"The prize is not in A.\"\nC: \"The prize is not in here.\"\n\nWhich box contains the prize?",
+      'There are three boxes A, B, and C, one of which contains a prize. Each box has a statement written on it, and only one statement is true:\n\nA: "The prize is here."\nB: "The prize is not in A."\nC: "The prize is not in here."\n\nWhich box contains the prize?',
     options: ["A", "B", "C", "Cannot be determined"],
     answer: 2,
     explanation:
@@ -118,7 +118,12 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A book is priced at $240. The store first increases the price by 25%, then offers a 20% discount. Compared to the original price, the final price is:",
-    options: ["Higher than the original", "Lower than the original", "The same as the original", "Cannot be determined"],
+    options: [
+      "Higher than the original",
+      "Lower than the original",
+      "The same as the original",
+      "Cannot be determined",
+    ],
     answer: 2,
     explanation:
       "After 25% increase: 240 × 1.25 = $300\nAfter 20% discount: 300 × 0.8 = $240\nThe final price is the same as the original price.\n\nA 25% increase and a 20% discount are reciprocals — many people intuitively think the price must change, but mathematically they cancel out exactly.",
@@ -213,14 +218,14 @@ export const bank: Question[] = [
     options: ["thrifty", "stingy", "frugal", "economical"],
     answer: 1,
     explanation:
-      "\"Stingy\" has a negative connotation, describing someone unwilling to spend money.\n\"Thrifty,\" \"frugal,\" and \"economical\" are positive or neutral, describing careful and efficient use of resources.\n\nThis question tests the distinction between positive and negative connotations in word choice.",
+      '"Stingy" has a negative connotation, describing someone unwilling to spend money.\n"Thrifty," "frugal," and "economical" are positive or neutral, describing careful and efficient use of resources.\n\nThis question tests the distinction between positive and negative connotations in word choice.',
   },
   {
     id: 19,
     type: "vocab",
     category: "vocab",
     question:
-      "In which sentence does the word \"grave\" have a different meaning from the other three?",
+      'In which sentence does the word "grave" have a different meaning from the other three?',
     options: [
       "He wore a grave expression on his face.",
       "This is a grave situation for the company.",
@@ -229,14 +234,14 @@ export const bank: Question[] = [
     ],
     answer: 3,
     explanation:
-      "In A, B, and C, \"grave\" means \"serious or solemn.\"\nIn D, \"grave\" refers to \"a burial site,\" which is a different meaning entirely.\n\nThis tests the ability to distinguish between homonyms — words with the same spelling but different meanings.",
+      'In A, B, and C, "grave" means "serious or solemn."\nIn D, "grave" refers to "a burial site," which is a different meaning entirely.\n\nThis tests the ability to distinguish between homonyms — words with the same spelling but different meanings.',
   },
   {
     id: 20,
     type: "vocab",
     category: "vocab",
     question:
-      "What does the phrase \"beg the question\" traditionally mean in formal logic?",
+      'What does the phrase "beg the question" traditionally mean in formal logic?',
     options: [
       "To raise a new question that needs to be asked",
       "To assume the truth of the conclusion within the premise itself",
@@ -245,34 +250,33 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Beg the question\" (from Latin petitio principii) is a logical fallacy where an argument assumes the very point it is trying to prove.\n\nThis is one of the most commonly misused phrases in English — many people use it to mean \"raises the question,\" but its traditional meaning refers to circular reasoning.",
+      '"Beg the question" (from Latin petitio principii) is a logical fallacy where an argument assumes the very point it is trying to prove.\n\nThis is one of the most commonly misused phrases in English — many people use it to mean "raises the question," but its traditional meaning refers to circular reasoning.',
   },
   {
     id: 21,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which word is a different part of speech from the others?",
+    question: "Which word is a different part of speech from the others?",
     options: ["kindness", "happiness", "darkness", "cautious"],
     answer: 3,
     explanation:
-      "\"Kindness,\" \"happiness,\" and \"darkness\" are all nouns (formed by adding the suffix -ness to adjectives).\n\"Cautious\" is an adjective, making it the odd one out.",
+      '"Kindness," "happiness," and "darkness" are all nouns (formed by adding the suffix -ness to adjectives).\n"Cautious" is an adjective, making it the odd one out.',
   },
   {
     id: 22,
     type: "vocab",
     category: "vocab",
     question:
-      "Which of the following best describes the origin of the word \"salary\"?",
+      'Which of the following best describes the origin of the word "salary"?',
     options: [
-      "It comes from a Latin word meaning \"payment for work done\"",
-      "It comes from the Latin word for \"salt money,\" a ration given to Roman soldiers",
-      "It comes from an Old French word for \"yearly income\"",
-      "It comes from a Greek word meaning \"coins stamped with metal\"",
+      'It comes from a Latin word meaning "payment for work done"',
+      'It comes from the Latin word for "salt money," a ration given to Roman soldiers',
+      'It comes from an Old French word for "yearly income"',
+      'It comes from a Greek word meaning "coins stamped with metal"',
     ],
     answer: 1,
     explanation:
-      "\"Salary\" derives from Latin \"salarium\" (salt money), which was an allowance given to Roman soldiers to purchase salt. Salt was highly valuable in ancient times.\n\nOver centuries, the word came to mean any regular payment for work.",
+      '"Salary" derives from Latin "salarium" (salt money), which was an allowance given to Roman soldiers to purchase salt. Salt was highly valuable in ancient times.\n\nOver centuries, the word came to mean any regular payment for work.',
   },
   {
     id: 23,
@@ -288,14 +292,14 @@ export const bank: Question[] = [
     ],
     answer: 3,
     explanation:
-      "\"Begin/commence,\" \"quick/rapid,\" and \"big/enormous\" are all pairs of synonyms — words with similar meanings.\n\n\"Hot/cold\" are antonyms — words with opposite meanings. This makes option D the odd one out.",
+      '"Begin/commence," "quick/rapid," and "big/enormous" are all pairs of synonyms — words with similar meanings.\n\n"Hot/cold" are antonyms — words with opposite meanings. This makes option D the odd one out.',
   },
   {
     id: 24,
     type: "vocab",
     category: "vocab",
     question:
-      "What did the word \"nice\" originally mean when it entered the English language?",
+      'What did the word "nice" originally mean when it entered the English language?',
     options: [
       "pleasant and agreeable",
       "foolish or ignorant",
@@ -304,7 +308,7 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Nice\" comes from Latin \"nescius\" meaning \"ignorant\" (ne- \"not\" + scire \"to know\").\nOver centuries, its meaning shifted dramatically: from \"foolish\" (13th c.) to \"shy\" to \"precise\" to \"agreeable, pleasant\" (18th c.).\n\nThis is a classic example of semantic drift in the English language.",
+      '"Nice" comes from Latin "nescius" meaning "ignorant" (ne- "not" + scire "to know").\nOver centuries, its meaning shifted dramatically: from "foolish" (13th c.) to "shy" to "precise" to "agreeable, pleasant" (18th c.).\n\nThis is a classic example of semantic drift in the English language.',
   },
   {
     id: 25,
@@ -313,14 +317,14 @@ export const bank: Question[] = [
     question:
       "Which of the following lines expresses a happy or joyful tone, while the others express sorrow, loss, or mortality?",
     options: [
-      "\"O Captain! my Captain! our fearful trip is done\" — Walt Whitman",
-      "\"Because I could not stop for Death — / He kindly stopped for me\" — Emily Dickinson",
-      "\"I wandered lonely as a cloud / That floats on high o'er vales and hills\" — William Wordsworth",
-      "\"Do not go gentle into that good night / Old age should burn and rave at close of day\" — Dylan Thomas",
+      '"O Captain! my Captain! our fearful trip is done" — Walt Whitman',
+      '"Because I could not stop for Death — / He kindly stopped for me" — Emily Dickinson',
+      '"I wandered lonely as a cloud / That floats on high o\'er vales and hills" — William Wordsworth',
+      '"Do not go gentle into that good night / Old age should burn and rave at close of day" — Dylan Thomas',
     ],
     answer: 2,
     explanation:
-      "Wordsworth's \"I wandered lonely as a cloud\" describes the joyful memory of seeing a field of daffodils — a tone of peaceful happiness and appreciation of nature.\n\nThe other three all deal with death or mortality: Whitman mourns Abraham Lincoln, Dickinson calmly personifies Death, and Thomas urges defiant resistance against dying.",
+      'Wordsworth\'s "I wandered lonely as a cloud" describes the joyful memory of seeing a field of daffodils — a tone of peaceful happiness and appreciation of nature.\n\nThe other three all deal with death or mortality: Whitman mourns Abraham Lincoln, Dickinson calmly personifies Death, and Thomas urges defiant resistance against dying.',
   },
 
   // ════════════════════════════════════════════
@@ -331,11 +335,16 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "In a government office, the department head says: \"Every employee in our department is a party member.\"\nThe deputy head says: \"If Smith is not a party member, then Johnson is not a party member either.\"\nSmith says: \"I am not a party member.\"\nJohnson says: \"There is someone in this department who is not a party member.\"\n\nIf exactly one of the four is lying, which statement must be true?",
-    options: ["The department head is lying", "Smith is not a party member", "Johnson is a party member", "The deputy head is lying"],
+      'In a government office, the department head says: "Every employee in our department is a party member."\nThe deputy head says: "If Smith is not a party member, then Johnson is not a party member either."\nSmith says: "I am not a party member."\nJohnson says: "There is someone in this department who is not a party member."\n\nIf exactly one of the four is lying, which statement must be true?',
+    options: [
+      "The department head is lying",
+      "Smith is not a party member",
+      "Johnson is a party member",
+      "The deputy head is lying",
+    ],
     answer: 0,
     explanation:
-      "The department head says \"everyone is a member\" and Johnson says \"someone is not a member\" — these two statements contradict each other, so one must be true and one false.\n\nSince exactly one person is lying, the lie must be between these two. Therefore the deputy head and Smith are both telling the truth.\n\nSmith says \"I am not a party member\" which is true, so the department head's claim that \"everyone is a member\" is false.",
+      'The department head says "everyone is a member" and Johnson says "someone is not a member" — these two statements contradict each other, so one must be true and one false.\n\nSince exactly one person is lying, the lie must be between these two. Therefore the deputy head and Smith are both telling the truth.\n\nSmith says "I am not a party member" which is true, so the department head\'s claim that "everyone is a member" is false.',
   },
   {
     id: 27,
@@ -380,7 +389,7 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "After an exam, a teacher writes four scores on the board: 85, 90, 95, 100. These belong to students A, B, C, and D.\n\nA says: \"I am not the lowest.\"\nB says: \"C scored higher than me.\"\nC says: \"I scored higher than D.\"\nD says: \"B scored higher than me.\"\n\nIf all four are telling the truth, what is D's score?",
+      'After an exam, a teacher writes four scores on the board: 85, 90, 95, 100. These belong to students A, B, C, and D.\n\nA says: "I am not the lowest."\nB says: "C scored higher than me."\nC says: "I scored higher than D."\nD says: "B scored higher than me."\n\nIf all four are telling the truth, what is D\'s score?',
     options: ["85", "90", "95", "100"],
     answer: 0,
     explanation:
@@ -391,7 +400,7 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "A says: \"I am 3 years older than B.\"\nB says: \"I am 2 years older than C.\"\nC says: \"I am 1 year older than D.\"\nD says: \"I am 5 years younger than A.\"\n\nIf all four are telling the truth, who is the oldest?",
+      'A says: "I am 3 years older than B."\nB says: "I am 2 years older than C."\nC says: "I am 1 year older than D."\nD says: "I am 5 years younger than A."\n\nIf all four are telling the truth, who is the oldest?',
     options: ["A", "B", "C", "D"],
     answer: 0,
     explanation:
@@ -429,12 +438,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "Between 6:00 and 7:00, at what time do the hour and minute hands first overlap exactly?",
-    options: [
-      "6:30",
-      "6:32 and 8/11 minutes",
-      "6:33",
-      "6:35",
-    ],
+    options: ["6:30", "6:32 and 8/11 minutes", "6:33", "6:35"],
     answer: 1,
     explanation:
       "At 6:00, the hands are 180° apart.\nThe minute hand moves 6°/min, the hour hand moves 0.5°/min, with a relative speed of 5.5°/min.\nCatch-up time = 180 ÷ 5.5 = 360/11 = 32 and 8/11 minutes.\n\nSo the hands overlap at 6:32 and 8/11 minutes.",
@@ -491,8 +495,7 @@ export const bank: Question[] = [
     id: 39,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the idiom \"break the ice\" mean?",
+    question: 'What does the idiom "break the ice" mean?',
     options: [
       "To literally shatter frozen water",
       "To initiate conversation and make people feel more comfortable in a social setting",
@@ -501,14 +504,13 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Break the ice\" means to do or say something that reduces tension and helps people feel more relaxed when meeting for the first time or in an awkward social situation. The phrase likely originates from the idea of breaking ice to create a passage for ships.",
+      '"Break the ice" means to do or say something that reduces tension and helps people feel more relaxed when meeting for the first time or in an awkward social situation. The phrase likely originates from the idea of breaking ice to create a passage for ships.',
   },
   {
     id: 40,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the idiom \"hit the nail on the head\" mean?",
+    question: 'What does the idiom "hit the nail on the head" mean?',
     options: [
       "To hammer a nail perfectly straight into wood",
       "To be exactly right about something or accurately identify the core issue",
@@ -517,14 +519,13 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Hit the nail on the head\" means to describe exactly what is causing a situation or problem, or to be precisely correct about something. The metaphor comes from carpentry — striking the nail's head squarely drives it in perfectly.",
+      '"Hit the nail on the head" means to describe exactly what is causing a situation or problem, or to be precisely correct about something. The metaphor comes from carpentry — striking the nail\'s head squarely drives it in perfectly.',
   },
   {
     id: 41,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which sentence contains a subject-verb agreement error?",
+    question: "Which sentence contains a subject-verb agreement error?",
     options: [
       "The dog runs in the park every morning.",
       "She go to school by bus every day.",
@@ -533,14 +534,13 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"She go\" is incorrect. The third-person singular subject \"she\" requires the verb \"goes\" (with the -s ending). The correct sentence is \"She goes to school by bus every day.\"\n\nThis is a common error for English language learners, as most other verb forms do not change for person.",
+      '"She go" is incorrect. The third-person singular subject "she" requires the verb "goes" (with the -s ending). The correct sentence is "She goes to school by bus every day."\n\nThis is a common error for English language learners, as most other verb forms do not change for person.',
   },
   {
     id: 42,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which sentence has a tense consistency error?",
+    question: "Which sentence has a tense consistency error?",
     options: [
       "I went to the store and bought some milk.",
       "She was reading when the phone rang.",
@@ -549,7 +549,7 @@ export const bank: Question[] = [
     ],
     answer: 2,
     explanation:
-      "\"Yesterday\" establishes a past time frame, so \"I walk\" should be \"I walked.\" The sentence mixes present tense (\"walk\") with past tense (\"played\"), creating a tense inconsistency.\n\nThe corrected sentence: \"Yesterday, I walked to the park and played soccer.\"",
+      '"Yesterday" establishes a past time frame, so "I walk" should be "I walked." The sentence mixes present tense ("walk") with past tense ("played"), creating a tense inconsistency.\n\nThe corrected sentence: "Yesterday, I walked to the park and played soccer."',
   },
   {
     id: 43,
@@ -557,60 +557,47 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Which of the following plays was NOT written by William Shakespeare?",
-    options: [
-      "Hamlet",
-      "Macbeth",
-      "Doctor Faustus",
-      "Romeo and Juliet",
-    ],
+    options: ["Hamlet", "Macbeth", "Doctor Faustus", "Romeo and Juliet"],
     answer: 2,
     explanation:
-      "\"Doctor Faustus\" was written by Christopher Marlowe, a contemporary of Shakespeare who also wrote \"Tamburlaine the Great\" and \"The Jew of Malta.\"\n\n\"Hamlet,\" \"Macbeth,\" and \"Romeo and Juliet\" are all among Shakespeare's most famous plays.",
+      '"Doctor Faustus" was written by Christopher Marlowe, a contemporary of Shakespeare who also wrote "Tamburlaine the Great" and "The Jew of Malta."\n\n"Hamlet," "Macbeth," and "Romeo and Juliet" are all among Shakespeare\'s most famous plays.',
   },
   {
     id: 44,
     type: "vocab",
     category: "vocab",
-    question:
-      "Who wrote the dystopian novel \"1984\"?",
-    options: [
-      "Aldous Huxley",
-      "George Orwell",
-      "Jules Verne",
-      "H. G. Wells",
-    ],
+    question: 'Who wrote the dystopian novel "1984"?',
+    options: ["Aldous Huxley", "George Orwell", "Jules Verne", "H. G. Wells"],
     answer: 1,
     explanation:
-      "George Orwell (Eric Blair) wrote \"1984,\" published in 1949. It is a dystopian novel about totalitarianism, surveillance, and government control.\n\nAldous Huxley wrote \"Brave New World\" (another famous dystopian novel), Jules Verne wrote adventure sci-fi, and H. G. Wells wrote \"The War of the Worlds.\"",
+      'George Orwell (Eric Blair) wrote "1984," published in 1949. It is a dystopian novel about totalitarianism, surveillance, and government control.\n\nAldous Huxley wrote "Brave New World" (another famous dystopian novel), Jules Verne wrote adventure sci-fi, and H. G. Wells wrote "The War of the Worlds."',
   },
   {
     id: 45,
     type: "vocab",
     category: "vocab",
     question:
-      "Which word correctly completes the sentence: \"The weather will _____ our travel plans.\"",
+      'Which word correctly completes the sentence: "The weather will _____ our travel plans."',
     options: ["affect", "effect", "infect", "defect"],
     answer: 0,
     explanation:
-      "\"Affect\" (verb) means to influence or have an impact on something. \"Effect\" is most commonly used as a noun (e.g., \"the effect was dramatic\") and rarely as a verb meaning \"to bring about.\"\n\n\"Affect\" and \"effect\" are among the most commonly confused word pairs in English.",
+      '"Affect" (verb) means to influence or have an impact on something. "Effect" is most commonly used as a noun (e.g., "the effect was dramatic") and rarely as a verb meaning "to bring about."\n\n"Affect" and "effect" are among the most commonly confused word pairs in English.',
   },
   {
     id: 46,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which word is a synonym of \"ubiquitous\"?",
+    question: 'Which word is a synonym of "ubiquitous"?',
     options: ["omnipresent", "rare", "unique", "scarce"],
     answer: 0,
     explanation:
-      "\"Ubiquitous\" means present, appearing, or found everywhere at once. \"Omnipresent\" is its direct synonym.\n\n\"Rare,\" \"unique,\" and \"scarce\" are all antonyms of \"ubiquitous\" — they describe things that are not commonly found.",
+      '"Ubiquitous" means present, appearing, or found everywhere at once. "Omnipresent" is its direct synonym.\n\n"Rare," "unique," and "scarce" are all antonyms of "ubiquitous" — they describe things that are not commonly found.',
   },
   {
     id: 47,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the idiom \"bite the bullet\" mean?",
+    question: 'What does the idiom "bite the bullet" mean?',
     options: [
       "To literally bite a metal projectile",
       "To endure a painful or unpleasant situation with courage and resolve",
@@ -619,14 +606,13 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Bite the bullet\" means to face a difficult, unpleasant, or painful situation with bravery and determination.\n\nThe phrase originates from battlefield surgery before anesthesia, where soldiers would literally bite on a bullet to cope with the pain during operations.",
+      '"Bite the bullet" means to face a difficult, unpleasant, or painful situation with bravery and determination.\n\nThe phrase originates from battlefield surgery before anesthesia, where soldiers would literally bite on a bullet to cope with the pain during operations.',
   },
   {
     id: 48,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which sentence contains a dangling modifier?",
+    question: "Which sentence contains a dangling modifier?",
     options: [
       "Running quickly, she caught the bus just in time.",
       "Having finished dinner, the dishes were washed.",
@@ -635,14 +621,13 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "In option B, the modifier \"Having finished dinner\" logically should refer to a person, but the subject of the main clause is \"the dishes,\" which cannot finish dinner. This is a dangling modifier — a modifying phrase that does not clearly and logically attach to the word it is meant to modify.\n\nThe corrected version: \"Having finished dinner, she washed the dishes.\"",
+      'In option B, the modifier "Having finished dinner" logically should refer to a person, but the subject of the main clause is "the dishes," which cannot finish dinner. This is a dangling modifier — a modifying phrase that does not clearly and logically attach to the word it is meant to modify.\n\nThe corrected version: "Having finished dinner, she washed the dishes."',
   },
   {
     id: 49,
     type: "vocab",
     category: "vocab",
-    question:
-      "Who wrote the novel \"The Great Gatsby\"?",
+    question: 'Who wrote the novel "The Great Gatsby"?',
     options: [
       "Ernest Hemingway",
       "F. Scott Fitzgerald",
@@ -651,25 +636,23 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "F. Scott Fitzgerald wrote \"The Great Gatsby\" in 1925, a novel that explores themes of wealth, love, and the American Dream during the Jazz Age.\n\nAll four options are famous 20th-century American novelists: Hemingway wrote \"The Old Man and the Sea,\" Steinbeck wrote \"The Grapes of Wrath,\" and Faulkner wrote \"The Sound and the Fury.\"",
+      'F. Scott Fitzgerald wrote "The Great Gatsby" in 1925, a novel that explores themes of wealth, love, and the American Dream during the Jazz Age.\n\nAll four options are famous 20th-century American novelists: Hemingway wrote "The Old Man and the Sea," Steinbeck wrote "The Grapes of Wrath," and Faulkner wrote "The Sound and the Fury."',
   },
   {
     id: 50,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which word is an antonym of \"ephemeral\"?",
+    question: 'Which word is an antonym of "ephemeral"?',
     options: ["temporary", "fleeting", "permanent", "brief"],
     answer: 2,
     explanation:
-      "\"Ephemeral\" means lasting for a very short time or fleeting. \"Permanent\" is its direct antonym, meaning lasting indefinitely.\n\n\"Temporary,\" \"fleeting,\" and \"brief\" are all synonyms of \"ephemeral\" — they all describe things that do not last long.",
+      '"Ephemeral" means lasting for a very short time or fleeting. "Permanent" is its direct antonym, meaning lasting indefinitely.\n\n"Temporary," "fleeting," and "brief" are all synonyms of "ephemeral" — they all describe things that do not last long.',
   },
   {
     id: 51,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the idiom \"let the cat out of the bag\" mean?",
+    question: 'What does the idiom "let the cat out of the bag" mean?',
     options: [
       "To free a trapped animal from a container",
       "To accidentally or carelessly reveal a secret",
@@ -678,25 +661,24 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Let the cat out of the bag\" means to reveal a secret, usually unintentionally or prematurely.\n\nThe phrase likely originates from an old market trick where a dishonest seller would place a cat in a bag instead of a pig; if someone \"let the cat out of the bag,\" the deception would be exposed.",
+      '"Let the cat out of the bag" means to reveal a secret, usually unintentionally or prematurely.\n\nThe phrase likely originates from an old market trick where a dishonest seller would place a cat in a bag instead of a pig; if someone "let the cat out of the bag," the deception would be exposed.',
   },
   {
     id: 52,
     type: "vocab",
     category: "vocab",
     question:
-      "Which pronoun correctly completes the sentence: \"She is the person _____ won the award.\"",
+      'Which pronoun correctly completes the sentence: "She is the person _____ won the award."',
     options: ["who", "whom", "which", "whose"],
     answer: 0,
     explanation:
-      "\"Who\" is the subject of the relative clause \"who won the award\" — the person performed the action of winning.\n\n\"Whom\" is the objective case, used for the object of a verb or preposition (e.g., \"the person to whom the award was given\"). \"Which\" refers to things, not people. \"Whose\" indicates possession.",
+      '"Who" is the subject of the relative clause "who won the award" — the person performed the action of winning.\n\n"Whom" is the objective case, used for the object of a verb or preposition (e.g., "the person to whom the award was given"). "Which" refers to things, not people. "Whose" indicates possession.',
   },
   {
     id: 53,
     type: "vocab",
     category: "vocab",
-    question:
-      "Who wrote the epic poem \"Paradise Lost\"?",
+    question: 'Who wrote the epic poem "Paradise Lost"?',
     options: [
       "William Wordsworth",
       "John Milton",
@@ -705,14 +687,13 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "John Milton wrote \"Paradise Lost\" (first published in 1667), an epic poem in blank verse that tells the biblical story of the Fall of Man — the temptation of Adam and Eve by Satan and their expulsion from the Garden of Eden.\n\nChaucer wrote \"The Canterbury Tales\" (Middle English), while Wordsworth and Keats were Romantic poets of the 19th century.",
+      'John Milton wrote "Paradise Lost" (first published in 1667), an epic poem in blank verse that tells the biblical story of the Fall of Man — the temptation of Adam and Eve by Satan and their expulsion from the Garden of Eden.\n\nChaucer wrote "The Canterbury Tales" (Middle English), while Wordsworth and Keats were Romantic poets of the 19th century.',
   },
   {
     id: 54,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the word \"ambiguous\" mean?",
+    question: 'What does the word "ambiguous" mean?',
     options: [
       "Clear and straightforward in meaning",
       "Having more than one possible meaning or interpretation",
@@ -721,6 +702,6 @@ export const bank: Question[] = [
     ],
     answer: 1,
     explanation:
-      "\"Ambiguous\" describes something that can be understood or interpreted in more than one way, making its meaning unclear or uncertain. It is commonly used to describe language, statements, or situations that are open to multiple interpretations.\n\nFor example: \"The ending of the film was ambiguous, leaving viewers to decide what really happened.\"",
+      '"Ambiguous" describes something that can be understood or interpreted in more than one way, making its meaning unclear or uncertain. It is commonly used to describe language, statements, or situations that are open to multiple interpretations.\n\nFor example: "The ending of the film was ambiguous, leaving viewers to decide what really happened."',
   },
-]
+];

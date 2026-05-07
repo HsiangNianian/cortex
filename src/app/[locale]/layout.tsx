@@ -54,18 +54,13 @@ export default async function LocaleLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className="antialiased" suppressHydrationWarning>
-      <head />
-      <body className="min-h-dvh bg-gradient-to-b from-background to-muted/30">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
-            <LanguageToggle />
-            <ThemeToggle />
-          </div>
-          <ServiceWorkerRegister />
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
+      <ServiceWorkerRegister />
+      {children}
+    </NextIntlClientProvider>
   )
 }

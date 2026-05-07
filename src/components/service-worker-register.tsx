@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
+import { useEffect } from "react";
 
 export function ServiceWorkerRegister() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {
         // silently fail — PWA is optional
-      })
+      });
     }
-  }, [])
+  }, []);
 
-  return null
+  return null;
 }

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import DistributionChart from "@/components/distribution-chart"
 import { Link } from "@/i18n/navigation"
 import { ArrowLeft, Users, Brain, BarChart3 } from "lucide-react"
-import { TIER_COLOR_MAP, TIER_LABELS } from "@/lib/scoring"
+import { TIER_COLOR_MAP, TIER_KEYS } from "@/lib/scoring"
 
 interface StatsPageData {
   totalTests: number
@@ -36,6 +36,7 @@ interface UserResult {
 
 export default function StatsPage() {
   const t = useTranslations("stats")
+  const tierLabel = useTranslations("tier")
   const [data, setData] = useState<StatsPageData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -310,7 +311,7 @@ export default function StatsPage() {
                 viewBox="0 0 600 220"
                 className="h-auto w-full"
                 role="img"
-                aria-label="个人退化指数趋势"
+                aria-label={t("trendAria")}
               >
                 {/* Tier zone backgrounds */}
                 {[
@@ -324,16 +325,16 @@ export default function StatsPage() {
                 ))}
 
                 {/* Tier zone labels */}
-                {TIER_LABELS.map((label, i) => (
+                {TIER_KEYS.map((key, i) => (
                   <text
-                    key={label}
+                    key={key}
                     x="38"
                     y={22 + i * 44 + 22}
                     textAnchor="end"
                     fontSize="8"
                     className="fill-muted-foreground/40"
                   >
-                    {label}
+                    {tierLabel(key)}
                   </text>
                 ))}
 
@@ -446,7 +447,7 @@ export default function StatsPage() {
           <p>{t("privacyNote")}</p>
           <div className="mt-3 flex items-center justify-center gap-3">
             <Link href="/about" className="transition-colors hover:text-foreground hover:underline underline-offset-4">
-              {t("pageTitle")}
+              {t("aboutLink")}
             </Link>
             <span className="text-muted-foreground/40">|</span>
             <a
@@ -455,7 +456,7 @@ export default function StatsPage() {
               rel="noreferrer"
               className="transition-colors hover:text-foreground hover:underline underline-offset-4"
             >
-              另一个游戏
+              {t("otherGame")}
             </a>
           </div>
         </div>
