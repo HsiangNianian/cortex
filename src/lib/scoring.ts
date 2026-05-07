@@ -115,6 +115,45 @@ export interface TestResult {
   answers: (number | null)[]
   timeouts: boolean[]
   questions: Question[]
+  /** Phase 1: how the degradation index was computed */
+  estimationMethod?: "percentage" | "irt"
+}
+
+/**
+ * Standard normal CDF (Φ(z)) using Abramowitz & Stegun approximation.
+ */
+export function normalCDF(x: number): number {
+  const a1 = 0.254829592
+  const a2 = -0.284496736
+  const a3 = 1.421413741
+  const a4 = -1.453152027
+  const a5 = 1.061405429
+  const p = 0.3275911
+
+  const sign = x < 0 ? -1 : 1
+  const absX = Math.abs(x)
+
+  // Approximation of the error function
+  const t = 1 / (1 + p * absX)
+  const erf =
+    1 -
+    (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX))
+
+  return 0.5 * (1 + sign * erf)
+}
+
+/**
+ * Map an IRT ability estimate (theta, logits) to the 0-100 degradation index.
+ *
+ *   percentile = Φ(theta) × 100
+ *   degradationIndex = 100 − percentile
+ *
+ * theta = 0 (average) → degradationIndex ≈ 50 (moderate decline).
+ * theta = +1.5 → degradationIndex ≈ 7 (cognitive peak).
+ */
+export function abilityToDegradationIndex(theta: number): number {
+  const percentile = normalCDF(theta) * 100
+  return Math.round(Math.max(0, Math.min(100, 100 - percentile)))
 }
 
 /**
@@ -171,6 +210,7 @@ export function calculateResult(
     answers,
     timeouts,
     questions,
+    estimationMethod: "percentage",
   }
 }
 
