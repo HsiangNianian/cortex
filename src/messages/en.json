@@ -172,11 +172,10 @@
       "Adaptive test coordinator (dimension rotation + theta tracking)",
       "Difficulty calibration on all questions",
       "Monolithic test-flow refactored into modular components",
-      "Fixed: Redis browser errors, hydration mismatch, language switch not updating questions"
+      "Fixed: Redis browser errors, hydration mismatch, language switch not updating questions",
+      "Phase 1 Week 3: LLM Item Generation—DeepSeek API + OpenAI SDK + Redis caching + rate limiting"
     ],
-    "roadmapNearItems": [
-      "Phase 1 Week 3: LLM Item Generation—AI Gateway + structured generation + caching + rate limiting"
-    ],
+    "roadmapNearItems": [],
     "roadmapLongItems": [
       "Phase 2: Micro-Intervention Engine—dual Agent (assessment + coaching) for personalized training",
       "Phase 3: Cognitive Mirror—cross-dimensional analysis revealing blind spots",

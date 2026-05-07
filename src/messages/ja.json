@@ -172,11 +172,10 @@
       "適応型テスト調整機能（次元ローテーション + theta追跡）",
       "全問題に難易度を設定",
       "モノリシックtest-flowをモジュール化",
-      "修正：Redisブラウザエラー、Hydration不一致、言語切替で問題が更新されない問題"
+      "修正：Redisブラウザエラー、Hydration不一致、言語切替で問題が更新されない問題",
+      "Phase 1 Week 3：LLM問題生成——DeepSeek API + OpenAI SDK + Redis キャッシュ + レート制限"
     ],
-    "roadmapNearItems": [
-      "Phase 1 Week 3：LLM問題生成——AI Gateway + 構造化生成 + キャッシュ + レート制限"
-    ],
+    "roadmapNearItems": [],
     "roadmapLongItems": [
       "Phase 2：マイクロ介入エンジン——二重Agent（評価＋コーチ）による個人トレーニング計画",
       "Phase 3：認知ミラー——多次元分析で認知の盲点を解明",

@@ -14,7 +14,7 @@ import {
   type TestResult,
   type DimensionScores,
 } from "@/lib/scoring";
-import { AI_CANONICAL_LEVELS } from "@/lib/storage";
+import { AI_CANONICAL_LEVELS } from "@/lib/constants";
 import type { Question } from "@/lib/questions";
 import {
   loadProgress,

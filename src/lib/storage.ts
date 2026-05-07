@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis"
 import { TIER_LABELS } from "./scoring"
+import { AI_CANONICAL_LEVELS } from "./constants"
 
 function getRedis(): Redis {
   return Redis.fromEnv()
@@ -15,8 +16,6 @@ export interface StatsData {
   aiUsageCounts: Record<string, number>
   sumDegradation: number
 }
-
-export const AI_CANONICAL_LEVELS = ["< 30 分钟", "30 分钟 - 2 小时", "2 - 5 小时", "> 5 小时"]
 
 export async function getStats(): Promise<StatsData> {
   const p = getRedis().pipeline()

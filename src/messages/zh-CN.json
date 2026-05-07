@@ -172,11 +172,10 @@
       "自适应测试协调器（维度轮换 + theta 追踪）",
       "全部题目难度标定",
       "巨石组件 test-flow 拆分为模块化子组件",
-      "修复：Redis 浏览器端报错、Hydration 不匹配、语言切换不更新题目"
+      "修复：Redis 浏览器端报错、Hydration 不匹配、语言切换不更新题目",
+      "Phase 1 Week 3：LLM 题目生成——DeepSeek API + OpenAI SDK + Redis 缓存 + 频率限制"
     ],
-    "roadmapNearItems": [
-      "Phase 1 Week 3：LLM 题目生成——AI Gateway + 结构化生成 + 缓存 + 频率限制"
-    ],
+    "roadmapNearItems": [],
     "roadmapLongItems": [
       "Phase 2：微干预引擎——双 Agent（评测 + 教练）定制个人训练计划",
       "Phase 3：认知镜像——跨维度分析揭示认知盲区",
