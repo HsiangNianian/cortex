@@ -44,6 +44,7 @@ export default function TestFlow() {
             timeLeft={s.timeLeft}
             selected={s.selected}
             isLastQuestion={s.isLastQuestion}
+            totalQuestions={s.totalQuestions}
             handleSelectOption={s.handleSelectOption}
             handleNext={s.handleNext}
           />

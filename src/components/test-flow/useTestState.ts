@@ -91,7 +91,9 @@ export function useTestState() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef<SavedProgress | null>(null);
   const questionMarkRef = useRef<HTMLDivElement | null>(null);
-  const isLastQuestion = currentQ === questions.length - 1;
+  const isLastQuestion = ADAPTIVE_MODE
+    ? answers.length >= QUESTIONS_PER_TEST - 1
+    : currentQ === questions.length - 1;
 
   /* ─── Timer Management ─── */
 
@@ -126,7 +128,8 @@ export function useTestState() {
 
   // Calculate result when all questions answered
   useEffect(() => {
-    if (answers.length === 0 || answers.length !== questions.length) return;
+    const total = ADAPTIVE_MODE ? QUESTIONS_PER_TEST : questions.length;
+    if (answers.length === 0 || answers.length !== total) return;
 
     setPhase("processing");
 
@@ -198,7 +201,7 @@ export function useTestState() {
   useEffect(() => {
     if (phase !== "testing") return;
     if (answers.length <= currentQ) return;
-    if (answers.length >= questions.length) return;
+    if (answers.length >= (ADAPTIVE_MODE ? QUESTIONS_PER_TEST : questions.length)) return;
     setCurrentQ((prev) => prev + 1);
     startTimer();
   }, [answers, phase]);
@@ -647,6 +650,7 @@ export function useTestState() {
     aiUsage, setAiUsage,
     questions,
     isLastQuestion,
+    totalQuestions: QUESTIONS_PER_TEST,
 
     // Refs
     questionMarkRef,

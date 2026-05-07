@@ -1,26 +1,21 @@
 import type { Question } from "./types";
 import { bank as zhCN } from "./zh-CN";
+import { bank as en } from "./en";
+import { bank as ja } from "./ja";
 
 const BANKS: Record<string, Question[]> = {
   "zh-CN": zhCN,
+  en,
+  ja,
 };
 
 /**
  * Ensure the question bank for a given locale is loaded.
- * Other locales are code-split and only loaded on demand.
+ * All banks are statically imported to avoid Turbopack compilation
+ * delays in dev mode from dynamic import() of large TS files.
  */
-export async function ensureBank(locale: string): Promise<void> {
-  if (BANKS[locale]) return;
-  switch (locale) {
-    case "en":
-      BANKS[locale] = (await import("./en")).bank;
-      break;
-    case "ja":
-      BANKS[locale] = (await import("./ja")).bank;
-      break;
-    default:
-      BANKS[locale] = zhCN;
-  }
+export async function ensureBank(_locale: string): Promise<void> {
+  // All banks are already loaded at module level
 }
 
 /**

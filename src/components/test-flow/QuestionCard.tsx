@@ -22,6 +22,7 @@ interface QuestionCardProps {
   timeLeft: number;
   selected: number | null;
   isLastQuestion: boolean;
+  totalQuestions: number;
   handleSelectOption: (i: number) => void;
   handleNext: () => void;
 }
@@ -33,6 +34,7 @@ export function QuestionCard({
   timeLeft,
   selected,
   isLastQuestion,
+  totalQuestions,
   handleSelectOption,
   handleNext,
 }: QuestionCardProps) {
@@ -46,7 +48,7 @@ export function QuestionCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-xs">
-              {currentQ + 1}/{questions.length}
+              {currentQ + 1}/{totalQuestions}
             </Badge>
             <Badge variant="outline" className="text-xs">
               {n("question.category." + question.category)}
@@ -55,19 +57,19 @@ export function QuestionCard({
           <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
         </div>
 
-        {/* Progress bar */}
-        <div className="mt-3 flex gap-1">
-          {questions.map((_, i) => {
+        {/* Progress bar: always N segments, answered ones turn solid */}
+        <div className="mt-3 flex gap-[3px]">
+          {Array.from({ length: totalQuestions }).map((_, i) => {
             const isAnswered = answers[i] !== undefined;
             const isCurrent = i === currentQ;
             return (
               <div
                 key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
+                className={`h-1.5 flex-1 rounded-sm transition-colors ${
                   isAnswered
-                    ? "bg-primary"
+                    ? "bg-foreground"
                     : isCurrent
-                      ? "bg-primary/40"
+                      ? "bg-foreground/30"
                       : "bg-muted"
                 }`}
               />
