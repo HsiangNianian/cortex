@@ -46,7 +46,12 @@
     "timeLimit": "Each question has a {seconds}-second limit, auto-skip on timeout",
     "aiUsageLabel": "How much time do you spend using AI tools daily?",
     "aiUsageHint": "ChatGPT, Claude, Copilot, Gemini, etc. all count",
-    "aiLevels": ["< 30 min", "30 min - 2 hr", "2 - 5 hr", "> 5 hr"],
+    "aiLevels": [
+      "< 30 min",
+      "30 min - 2 hr",
+      "2 - 5 hr",
+      "> 5 hr"
+    ],
     "pledge": "I pledge not to use any AI assistance during this test",
     "startButton": "Start Quiz",
     "selectAiFirst": "Please select your AI usage first",
@@ -155,36 +160,25 @@
     "roadmapNear": "Upcoming",
     "roadmapLong": "Long-term",
     "roadmapDoneItems": [
-      "Personal trend line chart (view on stats page)",
-      "Challenge sharing—friends opening the link can see comparisons",
-      "Statistics grouped by AI usage",
-      "Light/dark theme toggle",
-      "Browser notification reminder (retest in 7 days)",
-      "PWA support (installable to desktop)",
-      "Dynamic OG share cards",
-      "44 questions in the bank, 20 randomly selected per test",
-      "Urgency prompt during the last 10 seconds of countdown",
-      "Test completion transition animation",
-      "Mid-test save/resume—pause and continue a 14-minute test",
-      "Multi-language support (中文 / English / 日本語)",
-      "Language switcher",
-      "Multi-dimensional cognitive radar chart",
-      "Home page \"?\" animation",
-      "Error Boundary global error handling",
-      "IRT adaptive assessment engine (EAP estimation + max Fisher selection)",
-      "Adaptive test coordinator (dimension rotation + theta tracking)",
-      "Difficulty calibration on all questions",
-      "Monolithic test-flow refactored into modular components",
-      "Fixed: Redis browser errors, hydration mismatch, language switch not updating questions",
-      "LLM Question Generation (DeepSeek + OpenAI SDK + Redis caching + rate limiting)",
-      "SSE streaming (stream: true + token usage + keep-alive compatible)",
-      "LLM call logging system (traceId + latency + reasoning trace)"
+      "Adaptive assessment engine (IRT + EAP + Max Fisher + dimension rotation)",
+      "LLM question generation pipeline (DeepSeek + SSE streaming + Redis cache + rate limiting + logging)",
+      "Multi-language question bank (zh-CN 150 / en 148 / ja 146, covering IRT -3.0 ~ +3.0)",
+      "Complete test flow (timer/countdown/save-resume/transition animation/Error Boundary)",
+      "Global stats & personal trends (normal distribution/percentile/AI grouping/line chart/radar chart)",
+      "Sharing & retention (OG cards/challenge sharing/PWA/7-day reminder/theme toggle)",
+      "Multi-language UI (中文/English/日本語 + language switcher)",
+      "Infrastructure (Redis migration/component refactor/hydration fixes/build verification)"
     ],
-    "roadmapNearItems": [],
+    "roadmapNearItems": [
+      "AI question integration into test flow — Pure AI / Hybrid / Adaptive+AI modes",
+      "Question quality calibration — human review + statistical filtering for LLM-generated questions",
+      "Performance optimization — SSE timeout handling, cache hit rate monitoring, generation latency p50/p95 tracking",
+      "Test flow UX polish — adaptive mode UI, difficulty display, answer review"
+    ],
     "roadmapLongItems": [
-      "Phase 2: Micro-Intervention Engine—dual Agent (assessment + coaching) for personalized training",
-      "Phase 3: Cognitive Mirror—cross-dimensional analysis revealing blind spots",
-      "Phase 4: Cognitive Rustproof Economy—employer matching, insurance pricing, cognitive credit ecosystem"
+      "Phase 2: Micro-Intervention Engine — dual Agent (assessment + coaching) delivers daily training based on your decline curve",
+      "Phase 3: Cognitive Mirror — four-Agent collaboration for cross-dimensional analysis, revealing blind spots the user doesn't see",
+      "Phase 4: Cognitive Rustproof Economy — employer matching, insurance pricing, decentralized cognitive credit ecosystem"
     ],
     "signature": "May 7, 2026\nHsiang Nianian",
     "footerBack": "Back to Test"

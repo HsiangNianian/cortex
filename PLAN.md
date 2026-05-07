@@ -302,7 +302,7 @@ Phase 0 → 0.9 全部完成。Phase 1 全部完成。✅
 - estimationMethod 字段贯穿：storage → API → stats → localStorage
 
 已上线核心能力：
-- 44 题题库，每测 20 题随机抽取，三语言独立题库
+- 150+/148/146 题三语言题库（zh-CN/en/ja），每测 20 题随机抽取
 - 定时测试（40s/题）+ 自我声明 + 倒计时紧迫感提示
 - 中途保存/恢复（localStorage checkpoint + tab 关闭保护）
 - 退化指数算法 + 5 档分级 + 多维度雷达画像
@@ -314,28 +314,25 @@ Phase 0 → 0.9 全部完成。Phase 1 全部完成。✅
 - PWA 支持（manifest + Service Worker + 可安装）
 - 浅色/深色主题切换
 - 三语言 UI（中文 / English / 日本語），含语言切换器
-- Error Boundary 全局错误捕获
-- 首页 "?" 动画
-- LLM 题目生成（SSE 流式 + 三语言 prompt 模板 + Redis 缓存 + 限频）
+- LLM 题目生成（SSE 流式 + 批量生成管线 + 断点续传）
 - LLM 调用日志系统（traceId + 耗时 + token 用量 + 推理过程）
 
 技术债清理：
 - Vercel Blob → Upstash Redis 迁移
-- 死代码清理、SEO 动态化、统计页硬编码修复
-- Tier label 集中化（消除 6 处重复）
-- 题库审核（修复逻辑矛盾、去重，最终 44 题）
-- 倒计时自动提交 bug 修复、过渡动画、字体优化
+- 题库批量生成脚本（scripts/batch-generate.ts + merge-bank.ts）
+- 题库从 44 题扩至 444 题（三语言合计），覆盖 IRT -3.0 ~ +3.0 全难度区间
 
 ## 下一步选择
 
-Phase 1 全部完成 ✅。IRT 自适应 + LLM 题目生成 + SSE 流式等全部基础设施就绪。
+Phase 1 全部完成 ✅。题库已从 44 题扩至 444 题（三语言合计），覆盖 IRT -3.0 ~ +3.0 全难度区间。
 
 ### 最近更新
 
-- LLM 生成改为 SSE 流式请求（stream: true + include_usage + keep-alive 兼容）
-- `traceId` 维度调用日志（打印 prompt、耗时、token 用量、推理过程）
-- Redis 惰性初始化修复（避免浏览器端报错）
-- API route 动态 import 避免客户端打包 `@upstash/redis`
+- 题库批量生成完成（zh-CN 150 题 / en 148 题 / ja 146 题）
+- `scripts/batch-generate.ts` + `merge-bank.ts` 批量生成与合并管线
+- DeepSeek API 三语言 × 三题型文化适配 prompt
+- 生成断点续传 + 进度保存 + 去重合并
+- `pnpm build` 验证通过
 
 ### 接下来做什么？
 
@@ -344,9 +341,10 @@ A. **把 LLM 出题接入测试流程**
   - Pure AI 模式 / Hybrid 模式 / Adaptive+AI 可选
   - 需要决定：什么条件下走 LLM？AI 出题比例？
 
-B. **Phase 2：微干预引擎设计**
-  - 双 Agent（评测 + 教练）架构设计
-  - 用户留存策略：每日一题、个性化训练
+B. **题目质量审核与实证校准**
+  - 人工抽检 LLM 生成题目的准确性和文化适切性
+  - 根据实测数据统计筛选低质量题目
+  - 校准 IRT 参数（difficulty 从预设值→实证值）
 
 C. **监控与稳定性**
   - LLM 生成成功率、延迟 p50/p95、缓存命中率
