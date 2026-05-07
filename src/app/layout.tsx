@@ -16,5 +16,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return children
+  return (
+    <>
+      <script
+        id="theme-init"
+        dangerouslySetInnerHTML={{
+          __html: `(function(){var t=localStorage.getItem('cortex-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})()`,
+        }}
+      />
+      {children}
+    </>
+  )
 }

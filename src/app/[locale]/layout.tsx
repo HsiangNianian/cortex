@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import Script from "next/script"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -58,16 +57,6 @@ export default async function LocaleLayout({
     <html lang={locale} className="antialiased" suppressHydrationWarning>
       <head />
       <body className="min-h-dvh bg-gradient-to-b from-background to-muted/30">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`
-            (function() {
-              var theme = localStorage.getItem('cortex-theme');
-              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-              }
-            })();
-          `}
-        </Script>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
             <LanguageToggle />
