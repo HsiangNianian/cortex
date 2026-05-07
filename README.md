@@ -4,13 +4,13 @@
 
 ## 当前状态
 
-Phase 0 → 0.9 完成。Phase 1 Week 1-2 完成。
+Phase 0 → 0.9 完成。Phase 1 全部完成。
 
-IRT 自适应评估基础设施就绪：
+动态评估引擎已就绪：
 - IRT 1PL 引擎 + EAP 能力估计 + 最大信息量选题
 - 自适应测试协调器（维度轮换 + theta 追踪）
 - 全部题目已标定 difficulty
-- LLM 题目生成（Week 3）进行中
+- LLM 题目生成（DeepSeek SSE 流式 + Redis 缓存 + 限频）
 
 - 44 题题库（逻辑/速算/词汇），每测 20 题随机抽取
 - 三语言完整支持（中文 / English / 日本語）

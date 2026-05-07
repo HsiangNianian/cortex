@@ -176,7 +176,9 @@
       "Difficulty calibration on all questions",
       "Monolithic test-flow refactored into modular components",
       "Fixed: Redis browser errors, hydration mismatch, language switch not updating questions",
-      "Phase 1 Week 3: LLM Item Generation—DeepSeek API + OpenAI SDK + Redis caching + rate limiting"
+      "Phase 1 Week 3-4: LLM Question Generation (DeepSeek + OpenAI SDK + Redis caching + rate limiting)",
+      "SSE streaming (stream: true + token usage + keep-alive compatible)",
+      "LLM call logging system (traceId + latency + reasoning trace)"
     ],
     "roadmapNearItems": [],
     "roadmapLongItems": [

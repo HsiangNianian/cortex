@@ -176,7 +176,9 @@
       "全問題に難易度を設定",
       "モノリシックtest-flowをモジュール化",
       "修正：Redisブラウザエラー、Hydration不一致、言語切替で問題が更新されない問題",
-      "Phase 1 Week 3：LLM問題生成——DeepSeek API + OpenAI SDK + Redis キャッシュ + レート制限"
+      "Phase 1 Week 3-4：LLM問題生成（DeepSeek + OpenAI SDK + Redis キャッシュ + レート制限）",
+      "SSE ストリーミング（stream: true + トークン使用量 + keep-alive 互換）",
+      "LLM 呼び出しログ（traceId + 遅延時間 + 推論過程）"
     ],
     "roadmapNearItems": [],
     "roadmapLongItems": [
