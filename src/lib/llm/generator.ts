@@ -43,8 +43,12 @@ export interface GenerateResult {
 }
 
 /**
- * Generate a single MCQ question via LLM.
+ * Generate a single MCQ question via LLM (SSE streaming).
  * Retries up to `maxRetries` times on validation failure.
+ *
+ * DeepSeek sends SSE keep-alive comments (`: keep-alive`) during long
+ * thinking periods. The OpenAI SDK's EventStream parser ignores SSE
+ * comments transparently, so no special handling is needed.
  */
 export async function generateQuestion(
   input: GeneratePromptInput,
@@ -52,6 +56,9 @@ export async function generateQuestion(
 ): Promise<GenerateResult> {
   const { system, user } = buildGeneratePrompt(input);
   let lastError: string | null = null;
+
+  const traceId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  console.log(`[LLM:${traceId}] generating | locale=${input.locale} type=${input.type} difficulty=${input.difficulty}`);
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -62,6 +69,8 @@ export async function generateQuestion(
           { role: "user", content: user },
         ],
         response_format: { type: "json_object" },
+        stream: true,
+        stream_options: { include_usage: true },
         temperature: 0.7 + attempt * 0.1,
         max_tokens: 1024,
       };
@@ -71,9 +80,40 @@ export async function generateQuestion(
         params.extra_body = { thinking: { type: "enabled" } };
       }
 
-      const response = await client.chat.completions.create(params as any);
+      const start = performance.now();
+      const stream: any = await client.chat.completions.create(params as any);
 
-      const raw = response.choices[0]?.message?.content ?? "";
+      let raw = "";
+      let reasoning = "";
+      let finishReason: string | null = null;
+      let usage: { prompt_tokens?: number; completion_tokens?: number } | null = null;
+
+      for await (const chunk of stream) {
+        const delta = chunk.choices?.[0]?.delta;
+        if (delta?.content) raw += delta.content;
+        if (delta?.reasoning_content) reasoning += delta.reasoning_content;
+
+        if (chunk.choices?.[0]?.finish_reason) {
+          finishReason = chunk.choices[0].finish_reason;
+        }
+
+        // The `include_usage` chunk has choices=[] and usage populated
+        if (chunk.usage) {
+          usage = chunk.usage;
+        }
+      }
+
+      const elapsed = (performance.now() - start).toFixed(0);
+      const usageStr = usage
+        ? `prompt_tokens=${usage.prompt_tokens} completion_tokens=${usage.completion_tokens}`
+        : "";
+
+      console.log(`[LLM:${traceId}] attempt=${attempt} ${elapsed}ms finish_reason=${finishReason} ${usageStr}`);
+      if (reasoning) {
+        console.log(`[LLM:${traceId}] reasoning=${reasoning.slice(0, 300)}`);
+      }
+      console.log(`[LLM:${traceId}] <<< ${raw.slice(0, 500)}`);
+
       if (!raw) {
         lastError = "Empty response";
         continue;
@@ -87,9 +127,11 @@ export async function generateQuestion(
       question.guessing ??= 0.25;
       question.discrimination ??= 1.0;
 
+      console.log(`[LLM:${traceId}] ✓ validated | answer=${question.answer}`);
       return { question, raw };
     } catch (err) {
       lastError = err instanceof Error ? err.message : String(err);
+      console.error(`[LLM:${traceId}] attempt=${attempt} FAILED: ${lastError}`);
     }
   }
 
