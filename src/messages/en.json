@@ -170,14 +170,14 @@
       "Error Boundary global error handling"
     ],
     "roadmapNearItems": [
-      "Adaptive question selection (IRT + LLM dynamic generation)",
-      "Question bank expansion and new question type dimensions"
+      "Phase 1: Dynamic Assessment Engine—IRT adaptive testing + LLM item generation, single-Agent precision measurement"
     ],
     "roadmapLongItems": [
-      "Cognitive trend alerts—early warnings when sustained degradation is detected",
-      "Community benchmarks—comparison by industry, age group, etc."
+      "Phase 2: Micro-Intervention Engine—dual Agent (assessment + coaching) for personalized training",
+      "Phase 3: Cognitive Mirror—cross-dimensional analysis revealing blind spots",
+      "Phase 4: Cognitive Rustproof Economy—employer matching, insurance pricing, cognitive credit ecosystem"
     ],
-    "signature": "May 7, 2026\nJian Lüchun",
+    "signature": "May 7, 2026\nHsiang Nianian",
     "footerBack": "Back to Test"
   },
   "share": {
