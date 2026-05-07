@@ -39,6 +39,45 @@ type Phase = "landing" | "declaration" | "testing" | "processing" | "result";
 
 const LOCKED_SELECTION_MESSAGE = "不允许更改，毕竟真正的笨蛋就是没有后悔机会的";
 
+/* ─── Progress persistence (mid‑test save/resume) ─── */
+
+const PROGRESS_KEY = "cognitive-rust-progress";
+const PROGRESS_TTL = 24 * 60 * 60 * 1000; // 24h
+
+interface SavedProgress {
+  questions: Question[];
+  currentQ: number;
+  answers: (number | null)[];
+  timeouts: boolean[];
+  declared: boolean;
+  aiUsage: string | null;
+  timeLeft: number;
+  timestamp: number;
+}
+
+function saveProgress(data: SavedProgress) {
+  try {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
+  } catch { /* storage full – non‑critical */ }
+}
+
+function loadProgress(): SavedProgress | null {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as SavedProgress;
+    if (Date.now() - data.timestamp > PROGRESS_TTL) {
+      localStorage.removeItem(PROGRESS_KEY);
+      return null;
+    }
+    return data;
+  } catch { return null; }
+}
+
+function clearProgress() {
+  try { localStorage.removeItem(PROGRESS_KEY); } catch { /* ignore */ }
+}
+
 /* ─── SVG Circular Timer ─── */
 
 function QuestionTimer({
@@ -205,8 +244,12 @@ export default function TestFlow() {
   const [questions, setQuestions] = useState(() =>
     selectQuestions(QUESTIONS_PER_TEST),
   );
+  const [savedProgress, setSavedProgress] = useState<SavedProgress | null>(
+    () => loadProgress(),
+  );
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressRef = useRef<SavedProgress | null>(null);
   const isLastQuestion = currentQ === questions.length - 1;
 
   /* ─── Timer Management ─── */
@@ -218,9 +261,9 @@ export default function TestFlow() {
     }
   }, []);
 
-  const startTimer = useCallback(() => {
+  const startTimer = useCallback((initialTime?: number) => {
     stopTimer();
-    setTimeLeft(QUESTION_TIME);
+    setTimeLeft(initialTime ?? QUESTION_TIME);
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -232,13 +275,12 @@ export default function TestFlow() {
     }, 1000);
   }, [stopTimer]);
 
-  // Auto-submit null (timeout) when timer reaches 0 with no selection
+  // Auto-submit when timer reaches 0
   useEffect(() => {
     if (phase !== "testing") return;
     if (timeLeft > 0) return;
-    if (selected !== null) return;
     if (answers.length > currentQ) return; // already submitted for this question
-    submitAnswer(null);
+    submitAnswer(selected); // submits selected answer or null (timeout)
   }, [timeLeft, phase, selected, answers.length, currentQ]);
 
   // Calculate result when all questions answered
@@ -292,6 +334,9 @@ export default function TestFlow() {
       body: JSON.stringify(payload),
     }).catch(() => { });
 
+    clearProgress();
+    setSavedProgress(null);
+
     // Brief delay so user sees the processing state before results appear
     const timer = setTimeout(() => setPhase("result"), 600);
     return () => clearTimeout(timer);
@@ -305,6 +350,57 @@ export default function TestFlow() {
     setCurrentQ((prev) => prev + 1);
     startTimer();
   }, [answers, phase]);
+
+  // Save progress after each answer (checkpoint) + on tab hide
+  useEffect(() => {
+    if (phase !== "testing") return;
+    if (answers.length === 0) return;
+
+    const snapshot: SavedProgress = {
+      questions,
+      currentQ,
+      answers,
+      timeouts,
+      declared,
+      aiUsage: aiUsage,
+      timeLeft: QUESTION_TIME, // fresh timer for the current question on resume
+      timestamp: Date.now(),
+    };
+    progressRef.current = snapshot;
+    saveProgress(snapshot);
+  }, [answers, phase]); // fires after auto‑advance, captures stable state
+
+  useEffect(() => {
+    if (phase !== "testing") return;
+
+    // Keep ref up‑to‑date for the visibility handler
+    const snapshot: SavedProgress = {
+      questions,
+      currentQ,
+      answers,
+      timeouts,
+      declared,
+      aiUsage: aiUsage,
+      timeLeft,
+      timestamp: Date.now(),
+    };
+    progressRef.current = snapshot;
+
+    const onHide = () => {
+      if (document.visibilityState === "hidden" && progressRef.current) {
+        saveProgress(progressRef.current);
+      }
+    };
+    const onBeforeUnload = () => {
+      if (progressRef.current) saveProgress(progressRef.current);
+    };
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("beforeunload", onBeforeUnload);
+    };
+  }, [phase, questions, currentQ, answers, timeouts, declared, aiUsage, timeLeft]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -354,11 +450,33 @@ export default function TestFlow() {
   /* ─── Event Handlers ─── */
 
   function handleStart() {
+    clearProgress();
+    setSavedProgress(null);
     setPhase("declaration");
+  }
+
+  function handleResume() {
+    if (!savedProgress) return;
+    const s = savedProgress;
+    setQuestions(s.questions);
+    setCurrentQ(s.currentQ);
+    setAnswers(s.answers);
+    setTimeouts(s.timeouts);
+    setDeclared(s.declared);
+    setAiUsage(s.aiUsage);
+    clearProgress();
+    setSavedProgress(null);
+    setPhase("testing");
+    setSelected(null);
+    startTimer(); // full timer for the question they're resuming on
+    setToast("已恢复上次进度");
+    setTimeout(() => setToast(null), 2000);
   }
 
   function handleBeginTest() {
     if (!aiUsage) return;
+    clearProgress();
+    setSavedProgress(null);
     setPhase("testing");
     setCurrentQ(0);
     setAnswers([]);
@@ -394,6 +512,8 @@ export default function TestFlow() {
 
   function handleRestart() {
     stopTimer();
+    clearProgress();
+    setSavedProgress(null);
     setQuestions(selectQuestions(QUESTIONS_PER_TEST));
     setPhase("landing");
     setDeclared(false);
@@ -610,9 +730,28 @@ export default function TestFlow() {
           )}
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button size="lg" className="w-full text-base" onClick={handleStart}>
-            {savedResult ? "再测一次" : "开始测试"}
-          </Button>
+          {savedProgress && !isChallenge ? (
+            <>
+              <Button size="lg" className="w-full text-base" onClick={handleResume}>
+                继续上次测试
+                <span className="ml-2 text-sm opacity-70">
+                  （已完成 {savedProgress.answers.length}/{QUESTIONS_PER_TEST} 题）
+                </span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-sm text-muted-foreground"
+                onClick={handleStart}
+              >
+                重新开始
+              </Button>
+            </>
+          ) : (
+            <Button size="lg" className="w-full text-base" onClick={handleStart}>
+              {savedResult ? "再测一次" : "开始测试"}
+            </Button>
+          )}
           <a
             href="/stats"
             className="text-xs text-muted-foreground underline-offset-4 hover:underline"
