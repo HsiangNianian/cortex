@@ -256,9 +256,7 @@ export default function TestFlow() {
   const [questions, setQuestions] = useState(() =>
     selectQuestions(QUESTIONS_PER_TEST),
   );
-  const [savedProgress, setSavedProgress] = useState<SavedProgress | null>(() =>
-    loadProgress(),
-  );
+  const [savedProgress, setSavedProgress] = useState<SavedProgress | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef<SavedProgress | null>(null);
@@ -426,8 +424,11 @@ export default function TestFlow() {
     return () => stopTimer();
   }, [stopTimer]);
 
-  // Load previous result + challenge ref from URL
+  // Load saved progress + previous result from localStorage (after hydration)
   useEffect(() => {
+    const p = loadProgress();
+    if (p) setSavedProgress(p);
+
     try {
       const saved = localStorage.getItem("cognitive-rust-result");
       if (saved) {

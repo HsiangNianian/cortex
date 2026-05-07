@@ -1,7 +1,9 @@
 import { Redis } from "@upstash/redis"
 import { TIER_LABELS } from "./scoring"
 
-const redis = Redis.fromEnv()
+function getRedis(): Redis {
+  return Redis.fromEnv()
+}
 
 const PREFIX = "cortex:"
 
@@ -17,7 +19,7 @@ export interface StatsData {
 export const AI_CANONICAL_LEVELS = ["< 30 分钟", "30 分钟 - 2 小时", "2 - 5 小时", "> 5 小时"]
 
 export async function getStats(): Promise<StatsData> {
-  const p = redis.pipeline()
+  const p = getRedis().pipeline()
   p.get(PREFIX + "total")
   p.get(PREFIX + "sum_degradation")
   for (let i = 0; i < 10; i++) p.get(PREFIX + `dist:${i}`)
@@ -56,7 +58,7 @@ export async function saveResult(result: {
 }): Promise<void> {
   const bucket = Math.min(Math.floor(result.degradationIndex / 10), 9)
 
-  const p = redis.pipeline()
+  const p = getRedis().pipeline()
   p.incr(PREFIX + "total")
   p.incrby(PREFIX + "sum_degradation", result.degradationIndex)
   p.incr(PREFIX + `dist:${bucket}`)

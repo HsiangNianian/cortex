@@ -1,12 +1,12 @@
-import { getTranslations } from "next-intl/server"
-import { Link } from "@/i18n/navigation"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { QUESTIONS_PER_TEST, QUESTION_TIME } from "@/lib/questions"
-import { TIER_LABELS } from "@/lib/scoring"
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { QUESTIONS_PER_TEST, QUESTION_TIME } from "@/lib/questions";
+import { TIER_LABELS } from "@/lib/scoring";
 
 export default async function AboutPage() {
-  const t = await getTranslations("about")
+  const t = await getTranslations("about");
 
   return (
     <div className="min-h-dvh bg-gradient-to-b from-background to-muted/30">
@@ -19,7 +19,9 @@ export default async function AboutPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
+            <h1 className="text-lg font-semibold tracking-tight">
+              {t("title")}
+            </h1>
             <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
           </div>
         </div>
@@ -27,16 +29,27 @@ export default async function AboutPage() {
         <div className="space-y-8">
           {/* Origin */}
           <section className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">{t("originTitle")}</h2>
-            <p className="text-sm leading-relaxed text-muted-foreground">{t("originP1")}</p>
-            <p className="text-sm leading-relaxed text-muted-foreground">{t("originP2")}</p>
+            <h2 className="text-sm font-semibold text-foreground">
+              {t("originTitle")}
+            </h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {t("originP1")}
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {t("originP2")}
+            </p>
           </section>
 
           {/* How it works */}
           <section className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">{t("usageTitle")}</h2>
+            <h2 className="text-sm font-semibold text-foreground">
+              {t("usageTitle")}
+            </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              {t("usageP1", { count: QUESTIONS_PER_TEST, seconds: QUESTION_TIME })}
+              {t("usageP1", {
+                count: QUESTIONS_PER_TEST,
+                seconds: QUESTION_TIME,
+              })}
             </p>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {t("usageP2")}
@@ -45,36 +58,54 @@ export default async function AboutPage() {
 
           {/* Data & Privacy */}
           <section className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">{t("privacyTitle")}</h2>
-            <p className="text-sm leading-relaxed text-muted-foreground">{t("privacyP1")}</p>
+            <h2 className="text-sm font-semibold text-foreground">
+              {t("privacyTitle")}
+            </h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {t("privacyP1")}
+            </p>
           </section>
 
           {/* Roadmap */}
           <section className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">{t("roadmapTitle")}</h2>
+            <h2 className="text-sm font-semibold text-foreground">
+              {t("roadmapTitle")}
+            </h2>
             <div className="space-y-3 text-sm">
               <div>
-                <p className="font-medium text-foreground">{t("roadmapDone")}</p>
+                <p className="font-medium text-foreground">
+                  {t("roadmapDone")}
+                </p>
                 <ul className="mt-1 space-y-1 text-muted-foreground">
-                  {(t.raw("roadmapDoneItems") as string[]).map((item: string) => (
-                    <li key={item}>• {item}</li>
-                  ))}
+                  {(t.raw("roadmapDoneItems") as string[]).map(
+                    (item: string) => (
+                      <li key={item}>• {item}</li>
+                    ),
+                  )}
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-foreground">{t("roadmapNear")}</p>
+                <p className="font-medium text-foreground">
+                  {t("roadmapNear")}
+                </p>
                 <ul className="mt-1 space-y-1 text-muted-foreground">
-                  {(t.raw("roadmapNearItems") as string[]).map((item: string) => (
-                    <li key={item}>• {item}</li>
-                  ))}
+                  {(t.raw("roadmapNearItems") as string[]).map(
+                    (item: string) => (
+                      <li key={item}>• {item}</li>
+                    ),
+                  )}
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-foreground">{t("roadmapLong")}</p>
+                <p className="font-medium text-foreground">
+                  {t("roadmapLong")}
+                </p>
                 <ul className="mt-1 space-y-1 text-muted-foreground">
-                  {(t.raw("roadmapLongItems") as string[]).map((item: string) => (
-                    <li key={item}>• {item}</li>
-                  ))}
+                  {(t.raw("roadmapLongItems") as string[]).map(
+                    (item: string) => (
+                      <li key={item}>• {item}</li>
+                    ),
+                  )}
                 </ul>
               </div>
             </div>
@@ -103,5 +134,5 @@ export default async function AboutPage() {
         </p>
       </div>
     </div>
-  )
+  );
 }

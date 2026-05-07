@@ -6,4 +6,9 @@ export interface Question {
   options: string[];
   answer: number; // index into options
   explanation: string;
+  // Phase 1: IRT parameters
+  difficulty: number; // IRT b-parameter, logit scale -3 to +3
+  discrimination?: number; // IRT a-parameter, default 1.0 for 1PL
+  guessing?: number; // IRT c-parameter, default 0.25 for 4-option MCQ
+  source?: "static" | "llm"; // provenance marker
 }

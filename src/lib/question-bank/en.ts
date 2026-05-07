@@ -12,6 +12,7 @@ export const bank: Question[] = [
       'In a warehouse theft investigation, four suspects are questioned. Their statements are:\n\nA says: "It wasn\'t me."\nB says: "C did it."\nC says: "It wasn\'t me."\nD says: "A is telling the truth."\n\nIf only one of the four is telling the truth, who is the thief?',
     options: ["A", "B", "C", "D"],
     answer: 0,
+    difficulty: 0.0,
     explanation:
       "Working through each assumption:\nIf A is the thief: A lies, B lies, C tells truth, D lies → exactly one true ✅\nIf B is the thief: A tells truth, B lies, C tells truth, D tells truth → three true ❌\nIf C is the thief: A tells truth, B tells truth, C lies, D tells truth → three true ❌\nIf D is the thief: A tells truth, B lies, C tells truth, D tells truth → three true ❌\n\nTherefore the thief is A.",
   },
@@ -23,6 +24,7 @@ export const bank: Question[] = [
       "Observe the sequence and find the pattern:\n\n3, 8, 15, 24, 35, ?\n\nWhat number should replace the question mark?",
     options: ["42", "46", "48", "50"],
     answer: 2,
+    difficulty: -0.3,
     explanation:
       "Differences between consecutive terms:\n8 − 3 = 5, 15 − 8 = 7, 24 − 15 = 9, 35 − 24 = 11\nThe differences form an arithmetic sequence: 5, 7, 9, 11, 13...\nSo the next number = 35 + 13 = 48\n\nThis can also be seen as: 1×3, 2×4, 3×5, 4×6, 5×7, 6×8 = 48",
   },
@@ -34,6 +36,7 @@ export const bank: Question[] = [
       "At a class reunion, five old classmates meet and shake hands. Each pair shakes hands exactly once. How many handshakes occur in total?",
     options: ["8", "10", "12", "15"],
     answer: 1,
+    difficulty: -0.5,
     explanation:
       "Choosing 2 people out of 5 to shake hands uses the combination formula:\nC(5,2) = 5 × 4 ÷ 2 = 10\n\nAnother way: each person shakes hands with 4 others, but each handshake is counted twice:\n5 × 4 ÷ 2 = 10",
   },
@@ -50,6 +53,7 @@ export const bank: Question[] = [
       "Cannot be determined",
     ],
     answer: 1,
+    difficulty: 0.8,
     explanation:
       'If A were telling the truth, then A would be a liar — a contradiction, so A must be a liar.\nSince A is lying, "all three are liars" is false — there is at least one truth-teller.\nAssume B is telling the truth: exactly one person (B) is truthful, so A and C are liars. Then "all three are liars" is false (since B is truthful), and A lying holds. ✅\nAssume C is the only truth-teller: then B is lying, but B\'s statement "exactly one truth-teller" would actually be true (C), creating a contradiction.\n\nTherefore B is the truth-teller, and A and C are liars.',
   },
@@ -61,6 +65,7 @@ export const bank: Question[] = [
       "Using each of the digits 2, 3, 5, 9 exactly once, form a two-digit number multiplied by another two-digit number. Which multiplication gives the largest product?",
     options: ["32 × 59", "35 × 29", "39 × 25", "52 × 39"],
     answer: 3,
+    difficulty: 0.2,
     explanation:
       "To maximize the product, the two numbers should be as close as possible while keeping the tens digits large.\n32 × 59 = 1888\n35 × 29 = 1015\n39 × 25 = 975\n52 × 39 = 2028\n\n52 × 39 = 2028 is the largest combination.\n\nGeneral principle: place the largest digits in the tens place and keep the two numbers as close as possible.",
   },
@@ -72,6 +77,7 @@ export const bank: Question[] = [
       'A, B, and C participate in a 100-meter race. After the results are announced, each makes a statement:\n\nA says: "I am not in first place."\nB says: "C is in first place."\nC says: "I am not in first place."\n\nIf only one of them is telling the truth, who is truly in first place?',
     options: ["A", "B", "C", "Cannot be determined"],
     answer: 0,
+    difficulty: 0.0,
     explanation:
       'Assume A is first:\n- A says "I am not first" → false\n- B says "C is first" → false\n- C says "I am not first" → true (C is not first, A is)\n→ exactly one true ✅\n\nAssume B is first:\n- A says "I am not first" → true (A is not first, B is)\n- B says "C is first" → false\n- C says "I am not first" → true (C is not first)\n→ two true ❌\n\nAssume C is first:\n- A true (A is not first), B true (C is first), C false (C claims not first)\n→ two true ❌\n\nTherefore A is in first place.',
   },
@@ -83,6 +89,7 @@ export const bank: Question[] = [
       "Find the next number in the sequence:\n\n1, 1, 2, 3, 5, 8, 13, ?\n\nWhat number should replace the question mark?",
     options: ["18", "20", "21", "24"],
     answer: 2,
+    difficulty: -1.0,
     explanation:
       "This is the Fibonacci sequence, where each term is the sum of the two preceding terms:\n1 + 1 = 2\n1 + 2 = 3\n2 + 3 = 5\n3 + 5 = 8\n5 + 8 = 13\n8 + 13 = 21\n\nSo the next number is 21.",
   },
@@ -94,6 +101,7 @@ export const bank: Question[] = [
       "A company has 100 employees. 80 speak English, 60 speak French, and 5 speak neither language. How many employees speak both languages?",
     options: ["35", "40", "45", "50"],
     answer: 2,
+    difficulty: -0.3,
     explanation:
       "Number of employees who speak at least one language: 100 − 5 = 95\n\nUsing the set formula:\n|A ∪ B| = |A| + |B| − |A ∩ B|\n95 = 80 + 60 − |A ∩ B|\n|A ∩ B| = 140 − 95 = 45\n\nSo 45 employees speak both languages.",
   },
@@ -105,6 +113,7 @@ export const bank: Question[] = [
       'There are three boxes A, B, and C, one of which contains a prize. Each box has a statement written on it, and only one statement is true:\n\nA: "The prize is here."\nB: "The prize is not in A."\nC: "The prize is not in here."\n\nWhich box contains the prize?',
     options: ["A", "B", "C", "Cannot be determined"],
     answer: 2,
+    difficulty: 0.3,
     explanation:
       "Assume prize in A: A true, B false, C true → two true ❌\nAssume prize in B: A false, B true, C true → two true ❌\nAssume prize in C: A false, B true (prize not in A), C false (prize is in C) → exactly one true ✅\n\nSo the prize is in box C.",
   },
@@ -125,6 +134,7 @@ export const bank: Question[] = [
       "Cannot be determined",
     ],
     answer: 2,
+    difficulty: 0.6,
     explanation:
       "After 25% increase: 240 × 1.25 = $300\nAfter 20% discount: 300 × 0.8 = $240\nThe final price is the same as the original price.\n\nA 25% increase and a 20% discount are reciprocals — many people intuitively think the price must change, but mathematically they cancel out exactly.",
   },
@@ -136,6 +146,7 @@ export const bank: Question[] = [
       "A construction job can be completed by worker A alone in 6 days, and by worker B alone in 12 days. How many days will it take if they work together?",
     options: ["3 days", "4 days", "6 days", "9 days"],
     answer: 1,
+    difficulty: -1.0,
     explanation:
       "A completes 1/6 of the job per day, B completes 1/12 per day.\nTogether they complete: 1/6 + 1/12 = 2/12 + 1/12 = 3/12 = 1/4 of the job per day.\nDays needed: 1 ÷ 1/4 = 4 days.",
   },
@@ -147,6 +158,7 @@ export const bank: Question[] = [
       "A rope is folded in half 3 times, then cut through the middle with a single cut. How many pieces of rope result?",
     options: ["7", "8", "9", "12"],
     answer: 2,
+    difficulty: 0.4,
     explanation:
       "Folding 3 times creates 2³ = 8 layers. Cutting through the middle cuts all 8 layers, creating one cut.\n\nHowever, the folded ends remain connected. When folded n times and cut through the middle, you get 2ⁿ + 1 pieces.\n2³ + 1 = 8 + 1 = 9 pieces.\n\nIf this is hard to visualize, try it with a strip of paper folded 3 times and cut.",
   },
@@ -158,6 +170,7 @@ export const bank: Question[] = [
       "Tom rides his bike to school at 12 km/h and returns home at 8 km/h. Assuming the distance is the same both ways, what is the average speed for the round trip?",
     options: ["9.0 km/h", "9.6 km/h", "10.0 km/h", "10.5 km/h"],
     answer: 1,
+    difficulty: 0.7,
     explanation:
       "The average speed is NOT (12 + 8) ÷ 2 = 10! The time taken differs for each leg.\n\nUse the harmonic mean:\nLet the one-way distance be d.\nTime going = d/12, time returning = d/8\nTotal distance = 2d, total time = d/12 + d/8 = 2d/24 + 3d/24 = 5d/24\n\nAverage speed = 2d ÷ (5d/24) = 48/5 = 9.6 km/h\n\nMany people instinctively pick 10, but the correct answer is 9.6 — the slower leg takes more time, pulling the average down.",
   },
@@ -169,6 +182,7 @@ export const bank: Question[] = [
       "If the side length of a square increases by 50%, by what percentage does its area increase?",
     options: ["50%", "100%", "125%", "225%"],
     answer: 2,
+    difficulty: -0.2,
     explanation:
       "Let original side = a, original area = a².\nNew side = a × 1.5 = 1.5a\nNew area = (1.5a)² = 2.25a²\nIncrease = (2.25 − 1) × 100% = 125%",
   },
@@ -180,6 +194,7 @@ export const bank: Question[] = [
       "What is the sum of all numbers divisible by 3 between 1 and 100?",
     options: ["1583", "1683", "1783", "1883"],
     answer: 1,
+    difficulty: -0.5,
     explanation:
       "Numbers divisible by 3 from 1 to 100: 3, 6, 9, ..., 99\nThis is an arithmetic sequence: first term 3, last term 99, 33 terms.\n\nSum = (3 + 99) × 33 ÷ 2 = 102 × 33 ÷ 2 = 102 × 16.5 = 1683",
   },
@@ -191,6 +206,7 @@ export const bank: Question[] = [
       "Three apples and two pears cost $36. One apple and three pears cost $26. How much does one apple cost?",
     options: ["$6", "$8", "$10", "$12"],
     answer: 1,
+    difficulty: 0.2,
     explanation:
       "Let apple = a, pear = b\n3a + 2b = 36 … ①\na + 3b = 26 … ②\n\nMultiply ② by 3: 3a + 9b = 78\nSubtract ①: (3a + 9b) − (3a + 2b) = 78 − 36\n7b = 42 → b = 6\nSubstitute into ②: a + 18 = 26 → a = 8\n\nOne apple costs $8.",
   },
@@ -202,6 +218,7 @@ export const bank: Question[] = [
       "A bag contains 50 red and blue balls in total. After removing 5 red balls, the number of red balls is twice the number of blue balls. How many red balls were there originally?",
     options: ["30", "32", "35", "38"],
     answer: 2,
+    difficulty: -0.1,
     explanation:
       "Let the original number of red balls be x, and blue balls be (50 − x).\nAfter removing 5 red balls: red = x − 5, blue = 50 − x.\n\nx − 5 = 2(50 − x)\nx − 5 = 100 − 2x\n3x = 105\nx = 35\n\nThere were originally 35 red balls.",
   },
@@ -217,6 +234,7 @@ export const bank: Question[] = [
       "Which of the following words has a different connotation from the others?",
     options: ["thrifty", "stingy", "frugal", "economical"],
     answer: 1,
+    difficulty: -0.4,
     explanation:
       '"Stingy" has a negative connotation, describing someone unwilling to spend money.\n"Thrifty," "frugal," and "economical" are positive or neutral, describing careful and efficient use of resources.\n\nThis question tests the distinction between positive and negative connotations in word choice.',
   },
@@ -233,6 +251,7 @@ export const bank: Question[] = [
       "They dug a grave in the cemetery.",
     ],
     answer: 3,
+    difficulty: -0.6,
     explanation:
       'In A, B, and C, "grave" means "serious or solemn."\nIn D, "grave" refers to "a burial site," which is a different meaning entirely.\n\nThis tests the ability to distinguish between homonyms — words with the same spelling but different meanings.',
   },
@@ -249,6 +268,7 @@ export const bank: Question[] = [
       "To avoid answering a difficult question",
     ],
     answer: 1,
+    difficulty: 0.1,
     explanation:
       '"Beg the question" (from Latin petitio principii) is a logical fallacy where an argument assumes the very point it is trying to prove.\n\nThis is one of the most commonly misused phrases in English — many people use it to mean "raises the question," but its traditional meaning refers to circular reasoning.',
   },
@@ -259,6 +279,7 @@ export const bank: Question[] = [
     question: "Which word is a different part of speech from the others?",
     options: ["kindness", "happiness", "darkness", "cautious"],
     answer: 3,
+    difficulty: 0.3,
     explanation:
       '"Kindness," "happiness," and "darkness" are all nouns (formed by adding the suffix -ness to adjectives).\n"Cautious" is an adjective, making it the odd one out.',
   },
@@ -275,6 +296,7 @@ export const bank: Question[] = [
       'It comes from a Greek word meaning "coins stamped with metal"',
     ],
     answer: 1,
+    difficulty: 0.1,
     explanation:
       '"Salary" derives from Latin "salarium" (salt money), which was an allowance given to Roman soldiers to purchase salt. Salt was highly valuable in ancient times.\n\nOver centuries, the word came to mean any regular payment for work.',
   },
@@ -291,6 +313,7 @@ export const bank: Question[] = [
       "hot : cold",
     ],
     answer: 3,
+    difficulty: -0.4,
     explanation:
       '"Begin/commence," "quick/rapid," and "big/enormous" are all pairs of synonyms — words with similar meanings.\n\n"Hot/cold" are antonyms — words with opposite meanings. This makes option D the odd one out.',
   },
@@ -307,6 +330,7 @@ export const bank: Question[] = [
       "precise or accurate",
     ],
     answer: 1,
+    difficulty: 0.0,
     explanation:
       '"Nice" comes from Latin "nescius" meaning "ignorant" (ne- "not" + scire "to know").\nOver centuries, its meaning shifted dramatically: from "foolish" (13th c.) to "shy" to "precise" to "agreeable, pleasant" (18th c.).\n\nThis is a classic example of semantic drift in the English language.',
   },
@@ -323,6 +347,7 @@ export const bank: Question[] = [
       '"Do not go gentle into that good night / Old age should burn and rave at close of day" — Dylan Thomas',
     ],
     answer: 2,
+    difficulty: 0.2,
     explanation:
       'Wordsworth\'s "I wandered lonely as a cloud" describes the joyful memory of seeing a field of daffodils — a tone of peaceful happiness and appreciation of nature.\n\nThe other three all deal with death or mortality: Whitman mourns Abraham Lincoln, Dickinson calmly personifies Death, and Thomas urges defiant resistance against dying.',
   },
@@ -343,6 +368,7 @@ export const bank: Question[] = [
       "The deputy head is lying",
     ],
     answer: 0,
+    difficulty: 0.6,
     explanation:
       'The department head says "everyone is a member" and Johnson says "someone is not a member" — these two statements contradict each other, so one must be true and one false.\n\nSince exactly one person is lying, the lie must be between these two. Therefore the deputy head and Smith are both telling the truth.\n\nSmith says "I am not a party member" which is true, so the department head\'s claim that "everyone is a member" is false.',
   },
@@ -354,6 +380,7 @@ export const bank: Question[] = [
       "A, B, C, and D play a chess tournament where each pair plays exactly one game. A beats D, and A, B, and C all have the same number of wins. How many games does D win?",
     options: ["0", "1", "2", "3"],
     answer: 0,
+    difficulty: 0.5,
     explanation:
       "With four players, each pair plays once: 6 games total, so total wins = 6.\nA, B, and C have the same number of wins. They must each have 2 wins (0 or 1 would create contradictions).\nThat accounts for 3 × 2 = 6 wins among A, B, C, leaving D with 0 wins.",
   },
@@ -365,6 +392,7 @@ export const bank: Question[] = [
       "Find the pattern and determine the missing number:\n\n2, 6, 12, 20, 30, 42, ?",
     options: ["48", "52", "56", "60"],
     answer: 2,
+    difficulty: 0.0,
     explanation:
       "Consecutive differences: 4, 6, 8, 10, 12 → the next difference is 14.\nSo ? = 42 + 14 = 56\n\nThis can also be seen as: 1×2, 2×3, 3×4, 4×5, 5×6, 6×7, 7×8 = 56",
   },
@@ -381,6 +409,7 @@ export const bank: Question[] = [
       "They guessed randomly",
     ],
     answer: 0,
+    difficulty: 1.2,
     explanation:
       "If a student saw two blue hats, they would instantly know their own hat must be red (since only two blue hats exist) → but nobody immediately raised their hand.\n\nIf a student saw one red and one blue: if they themselves were blue, then the person wearing the red hat would have seen two blue hats and would have known their own color. Since no one spoke up, the student realizes they must be wearing red.\n\nIn reality, each student sees two red hats. After a moment of silence (eliminating the other possibilities), each can deduce they must be wearing red.",
   },
@@ -392,6 +421,7 @@ export const bank: Question[] = [
       'After an exam, a teacher writes four scores on the board: 85, 90, 95, 100. These belong to students A, B, C, and D.\n\nA says: "I am not the lowest."\nB says: "C scored higher than me."\nC says: "I scored higher than D."\nD says: "B scored higher than me."\n\nIf all four are telling the truth, what is D\'s score?',
     options: ["85", "90", "95", "100"],
     answer: 0,
+    difficulty: 0.8,
     explanation:
       "From B: B < C\nFrom C: C < D\nFrom D: D < B\nThis creates a cycle: B < C < D < B — contradictory!\n\nThe only resolution is that A is not the lowest — in fact, A is the highest. The true order is:\nD < B < C < A\n\nSo D = 85, B = 90, C = 95, A = 100.",
   },
@@ -403,6 +433,7 @@ export const bank: Question[] = [
       'A says: "I am 3 years older than B."\nB says: "I am 2 years older than C."\nC says: "I am 1 year older than D."\nD says: "I am 5 years younger than A."\n\nIf all four are telling the truth, who is the oldest?',
     options: ["A", "B", "C", "D"],
     answer: 0,
+    difficulty: -0.5,
     explanation:
       "A = B + 3, B = C + 2 → A = C + 5\nC = D + 1 → A = D + 6, B = D + 3\nD = A − 5 → consistent with A = D + 6 (not contradictory)\n\nAge order: A > B > C > D\nSo A is the oldest.",
   },
@@ -418,6 +449,7 @@ export const bank: Question[] = [
       "How many grams of water must be evaporated from 200 grams of a 10% saline solution to obtain a 25% saline solution?",
     options: ["80 g", "100 g", "120 g", "150 g"],
     answer: 2,
+    difficulty: 0.2,
     explanation:
       "The mass of salt remains constant: 200 × 10% = 20 grams.\n20 ÷ (200 − x) = 25%\n20 = 0.25(200 − x)\n20 = 50 − 0.25x\nx = 120\n\n120 grams of water must be evaporated.",
   },
@@ -429,6 +461,7 @@ export const bank: Question[] = [
       "A refrigerator's price increases by 10%, then decreases by 10%. The final price is what percent of the original price?",
     options: ["99%", "100%", "101%", "Cannot be determined"],
     answer: 0,
+    difficulty: 0.1,
     explanation:
       "P × 1.1 × 0.9 = P × 0.99\nThe final price is 99% of the original price.\nThe 10% decrease is applied to the increased price, resulting in a net loss of 1%.",
   },
@@ -440,6 +473,7 @@ export const bank: Question[] = [
       "Between 6:00 and 7:00, at what time do the hour and minute hands first overlap exactly?",
     options: ["6:30", "6:32 and 8/11 minutes", "6:33", "6:35"],
     answer: 1,
+    difficulty: 0.7,
     explanation:
       "At 6:00, the hands are 180° apart.\nThe minute hand moves 6°/min, the hour hand moves 0.5°/min, with a relative speed of 5.5°/min.\nCatch-up time = 180 ÷ 5.5 = 360/11 = 32 and 8/11 minutes.\n\nSo the hands overlap at 6:32 and 8/11 minutes.",
   },
@@ -451,6 +485,7 @@ export const bank: Question[] = [
       "A class of 40 students has an average score of 75. The boys' average is 70 and the girls' average is 80. How many boys are in the class?",
     options: ["16", "20", "24", "28"],
     answer: 1,
+    difficulty: -0.3,
     explanation:
       "Let x = number of boys:\n70x + 80(40 − x) = 75 × 40\n70x + 3200 − 80x = 3000\n−10x = −200\nx = 20\n\nThere are 20 boys and 20 girls.",
   },
@@ -462,6 +497,7 @@ export const bank: Question[] = [
       "A rectangle's length increases by 20% and its width decreases by 20%. The new area is what percent of the original area?",
     options: ["96%", "100%", "104%", "144%"],
     answer: 0,
+    difficulty: -0.2,
     explanation:
       "Original area = L × W.\nNew area = 1.2L × 0.8W = 0.96 × L × W = 96% of the original area.\n\nThe net effect is a 4% decrease in area.",
   },
@@ -473,6 +509,7 @@ export const bank: Question[] = [
       "The product of two consecutive odd numbers is 323. What are the two numbers?",
     options: ["15 and 17", "17 and 19", "19 and 21", "13 and 15"],
     answer: 1,
+    difficulty: -0.8,
     explanation:
       "Let the numbers be n and n + 2:\nn(n + 2) = 323 → n² + 2n − 323 = 0 → (n − 17)(n + 19) = 0\nn = 17\n\nSo the numbers are 17 and 19 (17 × 19 = 323).",
   },
@@ -484,6 +521,7 @@ export const bank: Question[] = [
       "A father is 45 years old and his son is 15. How many years ago was the father exactly five times as old as his son?",
     options: ["5 years ago", "7.5 years ago", "10 years ago", "Never"],
     answer: 1,
+    difficulty: -0.5,
     explanation:
       "Let x be the number of years ago:\n45 − x = 5(15 − x)\n45 − x = 75 − 5x\n4x = 30\nx = 7.5\n\nSo it was 7.5 years ago.",
   },
@@ -503,6 +541,7 @@ export const bank: Question[] = [
       "To cool down a tense or heated argument",
     ],
     answer: 1,
+    difficulty: 0.0,
     explanation:
       '"Break the ice" means to do or say something that reduces tension and helps people feel more relaxed when meeting for the first time or in an awkward social situation. The phrase likely originates from the idea of breaking ice to create a passage for ships.',
   },
@@ -518,6 +557,7 @@ export const bank: Question[] = [
       "To complete a construction task efficiently",
     ],
     answer: 1,
+    difficulty: 0.0,
     explanation:
       '"Hit the nail on the head" means to describe exactly what is causing a situation or problem, or to be precisely correct about something. The metaphor comes from carpentry — striking the nail\'s head squarely drives it in perfectly.',
   },
@@ -533,6 +573,7 @@ export const bank: Question[] = [
       "He has finished his homework already.",
     ],
     answer: 1,
+    difficulty: -0.5,
     explanation:
       '"She go" is incorrect. The third-person singular subject "she" requires the verb "goes" (with the -s ending). The correct sentence is "She goes to school by bus every day."\n\nThis is a common error for English language learners, as most other verb forms do not change for person.',
   },
@@ -548,6 +589,7 @@ export const bank: Question[] = [
       "He will finish his work and then go home.",
     ],
     answer: 2,
+    difficulty: -0.4,
     explanation:
       '"Yesterday" establishes a past time frame, so "I walk" should be "I walked." The sentence mixes present tense ("walk") with past tense ("played"), creating a tense inconsistency.\n\nThe corrected sentence: "Yesterday, I walked to the park and played soccer."',
   },
@@ -559,6 +601,7 @@ export const bank: Question[] = [
       "Which of the following plays was NOT written by William Shakespeare?",
     options: ["Hamlet", "Macbeth", "Doctor Faustus", "Romeo and Juliet"],
     answer: 2,
+    difficulty: 0.2,
     explanation:
       '"Doctor Faustus" was written by Christopher Marlowe, a contemporary of Shakespeare who also wrote "Tamburlaine the Great" and "The Jew of Malta."\n\n"Hamlet," "Macbeth," and "Romeo and Juliet" are all among Shakespeare\'s most famous plays.',
   },
@@ -569,6 +612,7 @@ export const bank: Question[] = [
     question: 'Who wrote the dystopian novel "1984"?',
     options: ["Aldous Huxley", "George Orwell", "Jules Verne", "H. G. Wells"],
     answer: 1,
+    difficulty: -0.8,
     explanation:
       'George Orwell (Eric Blair) wrote "1984," published in 1949. It is a dystopian novel about totalitarianism, surveillance, and government control.\n\nAldous Huxley wrote "Brave New World" (another famous dystopian novel), Jules Verne wrote adventure sci-fi, and H. G. Wells wrote "The War of the Worlds."',
   },
@@ -580,6 +624,7 @@ export const bank: Question[] = [
       'Which word correctly completes the sentence: "The weather will _____ our travel plans."',
     options: ["affect", "effect", "infect", "defect"],
     answer: 0,
+    difficulty: -0.3,
     explanation:
       '"Affect" (verb) means to influence or have an impact on something. "Effect" is most commonly used as a noun (e.g., "the effect was dramatic") and rarely as a verb meaning "to bring about."\n\n"Affect" and "effect" are among the most commonly confused word pairs in English.',
   },
@@ -590,6 +635,7 @@ export const bank: Question[] = [
     question: 'Which word is a synonym of "ubiquitous"?',
     options: ["omnipresent", "rare", "unique", "scarce"],
     answer: 0,
+    difficulty: 0.0,
     explanation:
       '"Ubiquitous" means present, appearing, or found everywhere at once. "Omnipresent" is its direct synonym.\n\n"Rare," "unique," and "scarce" are all antonyms of "ubiquitous" — they describe things that are not commonly found.',
   },
@@ -605,6 +651,7 @@ export const bank: Question[] = [
       "To prepare oneself for physical combat or a fight",
     ],
     answer: 1,
+    difficulty: 0.0,
     explanation:
       '"Bite the bullet" means to face a difficult, unpleasant, or painful situation with bravery and determination.\n\nThe phrase originates from battlefield surgery before anesthesia, where soldiers would literally bite on a bullet to cope with the pain during operations.',
   },
@@ -620,6 +667,7 @@ export const bank: Question[] = [
       "Excited about the trip, the children packed their bags.",
     ],
     answer: 1,
+    difficulty: 0.5,
     explanation:
       'In option B, the modifier "Having finished dinner" logically should refer to a person, but the subject of the main clause is "the dishes," which cannot finish dinner. This is a dangling modifier — a modifying phrase that does not clearly and logically attach to the word it is meant to modify.\n\nThe corrected version: "Having finished dinner, she washed the dishes."',
   },
@@ -635,6 +683,7 @@ export const bank: Question[] = [
       "William Faulkner",
     ],
     answer: 1,
+    difficulty: -0.8,
     explanation:
       'F. Scott Fitzgerald wrote "The Great Gatsby" in 1925, a novel that explores themes of wealth, love, and the American Dream during the Jazz Age.\n\nAll four options are famous 20th-century American novelists: Hemingway wrote "The Old Man and the Sea," Steinbeck wrote "The Grapes of Wrath," and Faulkner wrote "The Sound and the Fury."',
   },
@@ -645,6 +694,7 @@ export const bank: Question[] = [
     question: 'Which word is an antonym of "ephemeral"?',
     options: ["temporary", "fleeting", "permanent", "brief"],
     answer: 2,
+    difficulty: -0.3,
     explanation:
       '"Ephemeral" means lasting for a very short time or fleeting. "Permanent" is its direct antonym, meaning lasting indefinitely.\n\n"Temporary," "fleeting," and "brief" are all synonyms of "ephemeral" — they all describe things that do not last long.',
   },
@@ -660,6 +710,7 @@ export const bank: Question[] = [
       "To play a harmless prank or trick on someone",
     ],
     answer: 1,
+    difficulty: 0.0,
     explanation:
       '"Let the cat out of the bag" means to reveal a secret, usually unintentionally or prematurely.\n\nThe phrase likely originates from an old market trick where a dishonest seller would place a cat in a bag instead of a pig; if someone "let the cat out of the bag," the deception would be exposed.',
   },
@@ -671,6 +722,7 @@ export const bank: Question[] = [
       'Which pronoun correctly completes the sentence: "She is the person _____ won the award."',
     options: ["who", "whom", "which", "whose"],
     answer: 0,
+    difficulty: 0.2,
     explanation:
       '"Who" is the subject of the relative clause "who won the award" — the person performed the action of winning.\n\n"Whom" is the objective case, used for the object of a verb or preposition (e.g., "the person to whom the award was given"). "Which" refers to things, not people. "Whose" indicates possession.',
   },
@@ -686,6 +738,7 @@ export const bank: Question[] = [
       "John Keats",
     ],
     answer: 1,
+    difficulty: 0.1,
     explanation:
       'John Milton wrote "Paradise Lost" (first published in 1667), an epic poem in blank verse that tells the biblical story of the Fall of Man — the temptation of Adam and Eve by Satan and their expulsion from the Garden of Eden.\n\nChaucer wrote "The Canterbury Tales" (Middle English), while Wordsworth and Keats were Romantic poets of the 19th century.',
   },
@@ -701,6 +754,7 @@ export const bank: Question[] = [
       "Moving or acting without a clear purpose or direction",
     ],
     answer: 1,
+    difficulty: -1.0,
     explanation:
       '"Ambiguous" describes something that can be understood or interpreted in more than one way, making its meaning unclear or uncertain. It is commonly used to describe language, statements, or situations that are open to multiple interpretations.\n\nFor example: "The ending of the film was ambiguous, leaving viewers to decide what really happened."',
   },
