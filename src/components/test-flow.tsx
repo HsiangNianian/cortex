@@ -537,7 +537,7 @@ export default function TestFlow() {
               </>
             ) : (
               <>
-                你的认知状态怎么样？5 道题拍一张快照。
+                你的认知状态怎么样？{QUESTIONS_PER_TEST} 道题拍一张快照。
                 <br />
                 定期测量，看看趋势怎么说。
               </>
@@ -547,10 +547,10 @@ export default function TestFlow() {
         <CardContent className="space-y-4">
           <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground">5</span> 道混合题型
+              <span className="font-medium text-foreground">{QUESTIONS_PER_TEST}</span> 道混合题型
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground">~3</span> 分钟完成
+              <span className="font-medium text-foreground">~{Math.ceil(QUESTIONS_PER_TEST * QUESTION_TIME / 60)}</span> 分钟完成
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium text-foreground">
@@ -628,7 +628,7 @@ export default function TestFlow() {
             </li>
             <li className="flex gap-2">
               <span className="text-foreground">•</span>
-              你有连续 3-5 分钟的完整时间
+              你有连续 {Math.ceil(QUESTIONS_PER_TEST * QUESTION_TIME / 60)} 分钟的完整时间
             </li>
             <li className="flex gap-2">
               <span className="text-foreground">•</span>
@@ -687,10 +687,10 @@ export default function TestFlow() {
           <Button
             size="lg"
             className="w-full text-base"
-            disabled={!declared}
+            disabled={!declared || !aiUsage}
             onClick={handleBeginTest}
           >
-            开始答题
+            {aiUsage ? "开始答题" : "请先选择 AI 使用量"}
           </Button>
           <Button
             variant="ghost"

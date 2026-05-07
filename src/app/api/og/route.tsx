@@ -1,4 +1,5 @@
 import { ImageResponse } from "@vercel/og"
+import { QUESTIONS_PER_TEST } from "@/lib/questions"
 
 export const runtime = "edge"
 
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
   const index = Math.min(100, Math.max(0, Number(searchParams.get("i") ?? 50)))
   const tierLabel = searchParams.get("t") ?? "中度退化"
   const correct = searchParams.get("c") ?? "?"
-  const total = searchParams.get("n") ?? "5"
+  const total = searchParams.get("n") ?? String(QUESTIONS_PER_TEST)
 
   const tier = TIER_CONFIG[tierLabel] ?? TIER_CONFIG["中度退化"]
 

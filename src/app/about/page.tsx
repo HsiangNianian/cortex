@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QUESTIONS_PER_TEST, QUESTION_TIME } from "@/lib/questions";
 
 export default function AboutPage() {
   return (
@@ -42,7 +43,7 @@ export default function AboutPage() {
           <section className="space-y-2">
             <h2 className="text-sm font-semibold text-foreground">怎么用</h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              完成 5 道混合题型（逻辑推理 / 速算 / 词汇语义），每道题限时 40
+              完成 {QUESTIONS_PER_TEST} 道混合题型（逻辑推理 / 速算 / 词汇语义），每道题限时 {QUESTION_TIME}
               秒。 完成后你会得到一个认知活跃度评分（0-100）。 分数越低越活跃。
             </p>
             <p className="text-sm leading-relaxed text-muted-foreground">
