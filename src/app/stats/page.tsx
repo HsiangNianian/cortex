@@ -14,7 +14,6 @@ interface StatsData {
   distribution: number[]
   tierCounts: Record<string, number>
   aiUsageCounts: Record<string, number>
-  aiUsageAvgDegradation?: Record<string, number>
 }
 
 interface HistoryEntry {
@@ -185,25 +184,17 @@ export default function StatsPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base">按 AI 使用量分组</CardTitle>
                   <CardDescription>
-                    人数 · 各组平均退化指数
+                    各 AI 使用量区间的人数分布
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     {Object.entries(data.aiUsageCounts).map(([label, count]) => {
-                      const avg = data.aiUsageAvgDegradation?.[label]
                       return (
                         <div key={label} className="space-y-1">
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">{label}</span>
-                            <span className="tabular-nums">
-                              <span className="font-medium text-foreground">{count}</span>
-                              {avg !== undefined && (
-                                <span className="ml-2 text-muted-foreground">
-                                  平均 {avg}
-                                </span>
-                              )}
-                            </span>
+                            <span className="font-medium text-foreground tabular-nums">{count}</span>
                           </div>
                           <div className="h-2 overflow-hidden rounded-full bg-muted">
                             <div
