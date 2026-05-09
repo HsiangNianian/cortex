@@ -56,10 +56,7 @@ export function renderEmphasized(text: string): ReactNode {
     if (part.startsWith("**") && part.endsWith("**")) {
       const ch = part.slice(2, -2);
       return (
-        <span
-          key={i}
-          className="[text-emphasis:dot] [text-emphasis-position:over]"
-        >
+        <span key={i} className="font-bold">
           {ch}
         </span>
       );

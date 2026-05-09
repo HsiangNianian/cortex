@@ -233,7 +233,7 @@ export const bank: Question[] = [
     id: 19,
     type: "vocab",
     category: "vocab",
-    question: "下列选项中，加点字含义与其他三项不同的是：",
+    question: "下列选项中，加粗字含义与其他三项不同的是：",
     options: [
       "引以为**戒**（警戒）",
       "**戒**备森严（防备）",
@@ -1125,7 +1125,7 @@ export const bank: Question[] = [
     type: "vocab",
     category: "vocab",
     question:
-      "下列句子中加点的“间”字含义与其他三项不同的一项是？",
+      "下列句子中加粗的“间”字含义与其他三项不同的一项是？",
     options: [
       "中间力拉崩倒之声（《口技》）",
       "其间千二百里（《三峡》）",
