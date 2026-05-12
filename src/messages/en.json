@@ -106,7 +106,9 @@
     "downloadButton": "Save Result Image",
     "author": "Hsiang Nianian",
     "aboutLink": "About",
-    "otherGame": "Another Game"
+    "otherGame": "Another Game",
+    "logicGameTitle": "Room for Logic Improvement",
+    "logicGameDesc": "Try playing <game>Cyber Deduction</game> to improve your focus and logical thinking through case-solving!"
   },
   "stats": {
     "pageTitle": "Platform-wide Statistics",

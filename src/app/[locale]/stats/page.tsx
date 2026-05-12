@@ -14,6 +14,7 @@ import DistributionChart from "@/components/distribution-chart";
 import { Link } from "@/i18n/navigation";
 import { ArrowLeft, Users, Brain, BarChart3 } from "lucide-react";
 import { TIER_COLOR_MAP, TIER_KEYS } from "@/lib/scoring";
+import { AI_CANONICAL_LEVELS } from "@/lib/constants";
 
 interface StatsPageData {
   totalTests: number;
@@ -45,6 +46,7 @@ interface UserResult {
 export default function StatsPage() {
   const t = useTranslations("stats");
   const tierLabel = useTranslations("tier");
+  const decl = useTranslations("declaration");
   const [data, setData] = useState<StatsPageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -265,17 +267,28 @@ export default function StatsPage() {
                 <CardContent>
                   <div className="space-y-2">
                     {Object.entries(data.aiUsageCounts).map(
-                      ([level, count]) => (
-                        <div
-                          key={level}
-                          className="flex items-center justify-between text-sm"
-                        >
-                          <span className="text-muted-foreground">{level}</span>
-                          <span className="font-medium tabular-nums">
-                            {count} {t("aiLevelSuffix")}
-                          </span>
-                        </div>
-                      ),
+                      ([level, count]) => {
+                        const idx = AI_CANONICAL_LEVELS.indexOf(
+                          level as (typeof AI_CANONICAL_LEVELS)[number],
+                        );
+                        const label =
+                          idx >= 0
+                            ? (decl.raw("aiLevels") as string[])[idx]
+                            : level;
+                        return (
+                          <div
+                            key={level}
+                            className="flex items-center justify-between text-sm"
+                          >
+                            <span className="text-muted-foreground">
+                              {label}
+                            </span>
+                            <span className="font-medium tabular-nums">
+                              {count} {t("aiLevelSuffix")}
+                            </span>
+                          </div>
+                        );
+                      },
                     )}
                   </div>
                 </CardContent>

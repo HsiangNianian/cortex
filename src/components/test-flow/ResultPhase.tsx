@@ -192,6 +192,30 @@ export function ResultPhase({
           return null;
         })()}
 
+        {/* Logic game suggestion for low logic scores */}
+        {result.dimensionScores.logic !== null &&
+          result.dimensionScores.logic < 60 && (
+            <div className="rounded-lg border border-dashed border-blue-300/30 bg-blue-50/50 p-4 text-center dark:bg-blue-950/10">
+              <p className="text-sm font-medium text-foreground">
+                {n("result.logicGameTitle")}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {n.rich("result.logicGameDesc", {
+                  game: (chunks) => (
+                    <a
+                      href="https://deadpan.hydroroll.team"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-blue-600 underline-offset-2 hover:underline"
+                    >
+                      {chunks}
+                    </a>
+                  ),
+                })}
+              </p>
+            </div>
+          )}
+
         {/* 7-day retest reminder */}
         <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 text-center">
           <p className="text-sm font-medium text-foreground">

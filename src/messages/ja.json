@@ -106,7 +106,9 @@
     "downloadButton": "結果画像を保存",
     "author": "簡律純",
     "aboutLink": "このアプリについて",
-    "otherGame": "別のゲーム"
+    "otherGame": "別のゲーム",
+    "logicGameTitle": "論理的思考力に向上の余地があります",
+    "logicGameDesc": "<game>サイバー推理</game>で推理事件を解決し、集中力と論理的思考力を高めましょう！"
   },
   "stats": {
     "pageTitle": "全体統計",
