@@ -331,7 +331,7 @@ export default function StatsPage() {
             )}
 
             {/* Country distribution */}
-            {Object.keys(data.countryCounts).length > 0 && (
+            {data.countryCounts && Object.keys(data.countryCounts).length > 0 && (
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base">
