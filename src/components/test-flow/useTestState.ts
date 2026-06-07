@@ -39,6 +39,7 @@ type Phase = "landing" | "declaration" | "testing" | "processing" | "result";
 export function useTestState() {
   const n = useTranslations();
   const locale = useLocale();
+  const testStartTime = useRef<number>(0);
   const [phase, setPhase] = useState<Phase>("landing");
   const [declared, setDeclared] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
@@ -176,6 +177,7 @@ export function useTestState() {
     } catch {
       // ignore
     }
+    const elapsedMs = testStartTime.current ? Date.now() - testStartTime.current : null;
     const payload = {
       degradationIndex: r.degradationIndex,
       tierLabel: r.tier.tierKey,
@@ -183,6 +185,7 @@ export function useTestState() {
       totalQuestions: r.totalQuestions,
       aiUsageLevel: aiUsage !== null ? AI_CANONICAL_LEVELS[aiUsage] : null,
       estimationMethod: r.estimationMethod,
+      elapsedMs,
     };
     fetch("/api/results", {
       method: "POST",
@@ -352,6 +355,7 @@ export function useTestState() {
 
   function handleResume() {
     if (!savedProgress) return;
+    testStartTime.current = Date.now();
     // In adaptive mode, saved progress is incompatible — restart instead
     if (ADAPTIVE_MODE) {
       const resumedAiUsage =
@@ -389,6 +393,7 @@ export function useTestState() {
 
   function handleBeginTest() {
     if (aiUsage === null) return;
+    testStartTime.current = Date.now();
     clearProgress();
     setSavedProgress(null);
     setPhase("testing");

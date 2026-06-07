@@ -77,6 +77,18 @@ export async function getStats(): Promise<StatsData> {
   }
 }
 
+const RATE_LIMIT_MAX = 5 // max submissions per hour per IP
+const RATE_LIMIT_WINDOW = 3600 // 1 hour in seconds
+
+export async function checkRateLimit(ip: string): Promise<boolean> {
+  const key = PREFIX + `rate:${ip}`
+  const count = await getRedis().incr(key)
+  if (count === 1) {
+    await getRedis().expire(key, RATE_LIMIT_WINDOW)
+  }
+  return count <= RATE_LIMIT_MAX
+}
+
 export async function saveResult(result: {
   degradationIndex: number
   tierLabel: string
