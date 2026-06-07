@@ -167,7 +167,7 @@ export default function StatsPage() {
         {data && !loading && data.totalTests > 0 && (
           <div className="space-y-6">
             {/* Summary cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
               <Card>
                 <CardContent className="flex items-center gap-3 p-4 min-w-0">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/5">
