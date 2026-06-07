@@ -353,7 +353,7 @@ export default function StatsPage() {
 
         {/* Personal trend */}
         {history.length >= 2 && (
-          <Card>
+          <Card className="mt-6">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">{t("trendTitle")}</CardTitle>
               <CardDescription>
