@@ -334,35 +334,39 @@ export default function StatsPage() {
             )}
 
             {/* Country distribution */}
-            {data.countryCounts && Object.keys(data.countryCounts).length > 0 && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">
-                    {t("countryTitle")}
-                  </CardTitle>
-                  <CardDescription>{t("countryDesc")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {Object.entries(data.countryCounts)
-                      .sort((a, b) => b[1] - a[1])
-                      .map(([code, count]) => (
-                        <div
-                          key={code}
-                          className="flex items-center justify-between text-sm"
-                        >
-                          <span className="text-muted-foreground">
-                            {countryFlag(code)} {getCountryName(code)}
-                          </span>
-                          <span className="font-medium tabular-nums">
-                            {count}
-                          </span>
-                        </div>
-                      ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {t("countryTitle")}
+                </CardTitle>
+                <CardDescription>{t("countryDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {data.countryCounts && Object.keys(data.countryCounts).length > 0
+                    ? Object.entries(data.countryCounts)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([code, count]) => (
+                          <div
+                            key={code}
+                            className="flex items-center justify-between text-sm"
+                          >
+                            <span className="text-muted-foreground">
+                              {countryFlag(code)} {getCountryName(code)}
+                            </span>
+                            <span className="font-medium tabular-nums">
+                              {count}
+                            </span>
+                          </div>
+                        ))
+                    : (
+                      <p className="text-sm text-muted-foreground">
+                        {t("noData")}
+                      </p>
+                    )}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Tier breakdown */}
             <Card>
