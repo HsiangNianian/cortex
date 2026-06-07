@@ -24,6 +24,7 @@ export default function TestFlow() {
             questionMarkRef={s.questionMarkRef}
             handleStart={s.handleStart}
             handleResume={s.handleResume}
+            handleViewLastResult={s.handleViewLastResult}
           />
         )}
         {s.phase === "declaration" && (

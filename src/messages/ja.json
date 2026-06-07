@@ -36,6 +36,7 @@
     "ctaButton": "テスト開始",
     "retakeButton": "もう一度測定",
     "viewStats": "全体統計を見る",
+    "viewLastResult": "前回の結果詳細を見る",
     "footerTagline": "認知能力は筋肉と同じ——使わなければ衰えます。定期的に測定して、AIがあなたに何を残したのかを知りましょう。"
   },
   "declaration": {

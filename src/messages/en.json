@@ -36,6 +36,7 @@
     "ctaButton": "Start Test",
     "retakeButton": "Test Again",
     "viewStats": "View platform-wide stats",
+    "viewLastResult": "View last result details",
     "footerTagline": "Cognitive ability is like a muscle—use it or lose it. Measure regularly\nto see what AI has left on you."
   },
   "declaration": {

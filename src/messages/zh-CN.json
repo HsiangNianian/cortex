@@ -36,6 +36,7 @@
     "ctaButton": "开始测试",
     "retakeButton": "再测一次",
     "viewStats": "查看全平台统计",
+    "viewLastResult": "查看上次测试详情",
     "footerTagline": "认知能力就像肌肉——用进废退。定期测量，才能知道 AI\n在你身上留下了什么。"
   },
   "declaration": {

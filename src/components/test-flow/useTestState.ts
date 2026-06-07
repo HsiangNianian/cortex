@@ -169,6 +169,7 @@ export function useTestState() {
         estimationMethod: r.estimationMethod,
       };
       localStorage.setItem("cognitive-rust-result", JSON.stringify(entry));
+      localStorage.setItem("cognitive-rust-full-result", JSON.stringify({ result: r, aiUsage }));
       const raw = localStorage.getItem("cognitive-rust-history");
       const history = raw ? JSON.parse(raw) : [];
       history.push(entry);
@@ -485,6 +486,30 @@ export function useTestState() {
     setShowExplanations(false);
   }
 
+  function handleViewLastResult() {
+    try {
+      const raw = localStorage.getItem("cognitive-rust-full-result");
+      if (!raw) return;
+      const { result: fullResult, aiUsage: savedAiUsage } = JSON.parse(raw) as {
+        result: TestResult;
+        aiUsage: number | null;
+      };
+
+      // Load prevResult from history for comparison
+      const historyRaw = localStorage.getItem("cognitive-rust-history");
+      const historyParsed: any[] = historyRaw ? JSON.parse(historyRaw) : [];
+      if (historyParsed.length >= 2) {
+        setPrevResult(historyParsed[historyParsed.length - 2]);
+      }
+
+      setResult(fullResult);
+      setAiUsage(savedAiUsage ?? null);
+      setPhase("result");
+    } catch {
+      // ignore
+    }
+  }
+
   async function handleShare() {
     if (!result) return;
     const tierKey = result.tier.tierKey;
@@ -668,6 +693,7 @@ export function useTestState() {
     handleSelectOption,
     handleNext,
     handleRestart,
+    handleViewLastResult,
     handleShare,
     handleSetReminder,
     handleDownloadImage,

@@ -31,6 +31,7 @@ interface LandingPhaseProps {
   questionMarkRef: RefObject<HTMLDivElement | null>;
   handleStart: () => void;
   handleResume: () => void;
+  handleViewLastResult: () => void;
   children?: ReactNode;
 }
 
@@ -41,6 +42,7 @@ export function LandingPhase({
   questionMarkRef,
   handleStart,
   handleResume,
+  handleViewLastResult,
 }: LandingPhaseProps) {
   const n = useTranslations();
   const isChallenge = challengeRef !== null;
@@ -132,6 +134,13 @@ export function LandingPhase({
                   : savedResult.tierLabel}
               </span>
             </div>
+            <button
+              onClick={handleViewLastResult}
+              className="mt-2 text-xs underline underline-offset-4 transition-colors hover:text-foreground"
+              style={{ color: savedResult.tierColor }}
+            >
+              {n("landing.viewLastResult")}
+            </button>
           </div>
         )}
       </CardContent>
