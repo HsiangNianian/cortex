@@ -55,6 +55,9 @@ export default function StatsPage() {
   const radar = useTranslations("radar");
   const locale = useLocale();
 
+  const countryFlag = (code: string) =>
+    String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
+
   const getCountryName = (code: string) => {
     try {
       const names = new Intl.DisplayNames([locale], { type: "region" });
@@ -349,7 +352,7 @@ export default function StatsPage() {
                           className="flex items-center justify-between text-sm"
                         >
                           <span className="text-muted-foreground">
-                            {getCountryName(code)}
+                            {countryFlag(code)} {getCountryName(code)}
                           </span>
                           <span className="font-medium tabular-nums">
                             {count}
