@@ -148,6 +148,8 @@
     "trendAria": "Personal degradation index trend",
     "estimationTitle": "Estimation Method",
     "estimationIRT": "IRT Adaptive",
+    "noData": "No data",
+    "notEnough": "Not enough data",
     "estimationFixed": "Fixed Percentage",
     "aboutLink": "About",
     "otherGame": "Another Game",

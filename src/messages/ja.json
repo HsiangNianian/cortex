@@ -148,6 +148,8 @@
     "trendAria": "個人の退化指数の傾向",
     "estimationTitle": "評価方式分布",
     "estimationIRT": "IRT 適応型評価",
+    "noData": "データなし",
+    "notEnough": "データ不足",
     "estimationFixed": "固定パーセント評価",
     "aboutLink": "このアプリについて",
     "otherGame": "別のゲーム",

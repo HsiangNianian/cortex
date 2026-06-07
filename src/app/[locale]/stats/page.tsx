@@ -167,32 +167,32 @@ export default function StatsPage() {
         {data && !loading && data.totalTests > 0 && (
           <div className="space-y-6">
             {/* Summary cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
               <Card>
-                <CardContent className="flex items-center gap-3 p-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5">
+                <CardContent className="flex items-center gap-3 p-4 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/5">
                     <Users className="h-5 w-5 text-primary" />
                   </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">
+                  <div className="min-w-0">
+                    <div className="text-xs text-muted-foreground truncate">
                       {t("totalTests")}
                     </div>
-                    <div className="text-xl font-bold tracking-tight">
+                    <div className="text-xl font-bold tracking-tight truncate">
                       {data.totalTests.toLocaleString()}
                     </div>
                   </div>
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="flex items-center gap-3 p-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5">
+                <CardContent className="flex items-center gap-3 p-4 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/5">
                     <Brain className="h-5 w-5 text-primary" />
                   </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">
+                  <div className="min-w-0">
+                    <div className="text-xs text-muted-foreground truncate">
                       {t("avgDegradation")}
                     </div>
-                    <div className="text-xl font-bold tracking-tight">
+                    <div className="text-xl font-bold tracking-tight truncate">
                       {data.avgDegradation !== null ? data.avgDegradation : "—"}
                     </div>
                   </div>
@@ -213,9 +213,9 @@ export default function StatsPage() {
                     "#888";
                   return (
                     <Card>
-                      <CardContent className="flex items-center gap-3 p-4">
+                      <CardContent className="flex items-center gap-3 p-4 min-w-0">
                         <div
-                          className="flex h-10 w-10 items-center justify-center rounded-full"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
                           style={{ backgroundColor: c + "15" }}
                         >
                           <span
@@ -226,11 +226,11 @@ export default function StatsPage() {
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-xs text-muted-foreground truncate">
                             {t("yourRank")}
                           </div>
                           <div className="flex items-baseline gap-1.5">
-                            <span className="text-xl font-bold tracking-tight">
+                            <span className="text-xl font-bold tracking-tight shrink-0">
                               {pct}%
                             </span>
                             <span className="text-xs text-muted-foreground truncate">
@@ -255,23 +255,23 @@ export default function StatsPage() {
                   );
                 })()}
               {/* Avg elapsed */}
-              {data.avgElapsedMs !== null && (
-                <Card>
-                  <CardContent className="flex items-center gap-3 p-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5">
-                      <Clock className="h-5 w-5 text-primary" />
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/5">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs text-muted-foreground truncate">
+                      {t("avgElapsed")}
                     </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        {t("avgElapsed")}
-                      </div>
-                      <div className="text-xl font-bold tracking-tight">
-                        {Math.round(data.avgElapsedMs / 60000)}min
-                      </div>
+                    <div className="text-xl font-bold tracking-tight truncate">
+                      {data.avgElapsedMs != null
+                        ? `${Math.round(data.avgElapsedMs / 60000)}min`
+                        : t("noData")}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Distribution chart */}
@@ -395,52 +395,42 @@ export default function StatsPage() {
             </Card>
 
             {/* Dimension averages */}
-            {(data.avgLogic !== null ||
-              data.avgMath !== null ||
-              data.avgVocab !== null) && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">
-                    {t("dimAvgTitle")}
-                  </CardTitle>
-                  <CardDescription>{t("dimAvgDesc")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {data.avgLogic !== null && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {radar("logic")}
-                        </span>
-                        <span className="font-medium tabular-nums">
-                          {data.avgLogic}%
-                        </span>
-                      </div>
-                    )}
-                    {data.avgMath !== null && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {radar("math")}
-                        </span>
-                        <span className="font-medium tabular-nums">
-                          {data.avgMath}%
-                        </span>
-                      </div>
-                    )}
-                    {data.avgVocab !== null && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {radar("vocab")}
-                        </span>
-                        <span className="font-medium tabular-nums">
-                          {data.avgVocab}%
-                        </span>
-                      </div>
-                    )}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {t("dimAvgTitle")}
+                </CardTitle>
+                <CardDescription>{t("dimAvgDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {radar("logic")}
+                    </span>
+                    <span className="font-medium tabular-nums">
+                      {data.avgLogic != null ? `${data.avgLogic}%` : t("noData")}
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {radar("math")}
+                    </span>
+                    <span className="font-medium tabular-nums">
+                      {data.avgMath != null ? `${data.avgMath}%` : t("noData")}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {radar("vocab")}
+                    </span>
+                    <span className="font-medium tabular-nums">
+                      {data.avgVocab != null ? `${data.avgVocab}%` : t("noData")}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             </div>
           )}
 
