@@ -6,6 +6,11 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { degradationIndex, tierLabel, aiUsageLevel, estimationMethod } = body
 
+    // Reject automated requests (Vercel BotID)
+    if (request.headers.get("x-vercel-bot") === "1") {
+      return NextResponse.json({ error: "forbidden" }, { status: 403 })
+    }
+
     if (typeof degradationIndex !== "number") {
       return NextResponse.json({ error: "invalid payload" }, { status: 400 })
     }
