@@ -241,5 +241,79 @@
     "downloadFailed": "Failed to generate image",
     "notifConfirmTitle": "Notification Set",
     "notifConfirmBody": "We'll remind you to retest in 7 days"
+  },
+  "articles": {
+    "list": {
+      "title": "Articles",
+      "subtitle": "Explore the science behind cognitive health, AI dependency, and independent thinking.",
+      "readMore": "Read more",
+      "cta": "Take the test",
+      "publishedOn": "Published",
+      "backToTest": "Back to Test",
+      "intro": "Thoughts on cognitive health, AI dependency, and reclaiming independent thinking."
+    },
+    "ai-making-you-dumber": {
+      "title": "Is AI Making You Dumber?",
+      "excerpt": "A 5-minute cognitive snapshot that reveals what AI has left on your brain.",
+      "body": [
+        "<p>Since 2024, a quiet shift has happened. The first instinct when facing a hard problem is no longer 'let me think' — it's 'let me ask.' This shift is comfortable. It's also unsettling.</p>",
+        "<h2>The 'Use It or Lose It' Problem</h2>",
+        "<p>Cognitive ability works like a muscle. When you outsource thinking, the muscle atrophies. This isn't speculation — it's a well-established principle in cognitive neuroscience. The brain strengthens neural pathways it uses and prunes the ones it doesn't.</p>",
+        "<p>AI tools are incredible. They make us faster, more productive, and more capable. But when we use them to <em>replace</em> thinking rather than <em>augment</em> it, something is lost. The question is: how much?</p>",
+        "<h2>Making the Invisible Visible</h2>",
+        "<p>That's why we built Cognitive Rustproof. It's not an IQ test. It's a baseline measurement of your current cognitive state — a snapshot of how well your brain works when there's no AI to help.</p>",
+        "<p>20 questions. 40 seconds each. Logic, mental math, vocabulary. No AI assistance allowed. At the end, you get a 'degradation index' — a number between 0 and 100. Lower is better.</p>",
+        "<h2>The Real Value Is the Trend</h2>",
+        "<p>One score tells you little. Two scores, taken weeks apart, tell you everything. Is your index going up? That's a signal. Is it going down? Also a signal. Trends matter more than snapshots.</p>",
+        "<p>Think of it like stepping on a scale — except it measures cognitive activity, not body weight. The point isn't to judge. The point is to see.</p>",
+        "<div style='margin-top:2rem;text-align:center'><a href='/' style='display:inline-block;padding:10px 24px;background:#111;color:#fff;border-radius:8px;text-decoration:none;font-weight:500'>Take the Test →</a></div>"
+      ]
+    },
+    "brain-fitness-guide": {
+      "title": "Brain Fitness: Reclaim Independent Thinking in 7 Days",
+      "excerpt": "Seven daily habits to rebuild cognitive independence, whether you're showing early signs of AI dependency or just want to stay sharp.",
+      "body": [
+        "<p>Cognitive ability is like a muscle — use it or lose it. When AI does your thinking for you, neural pathways weaken. The good news: they can be rebuilt. Here's a 7-day program to reclaim independent thinking.</p>",
+        "<h2>Day 1: The 'Think First' Rule</h2>",
+        "<p>Before opening ChatGPT, Claude, or any AI tool, spend 60 seconds thinking independently. Write down your own answer first — even if it's incomplete. This simple habit creates a mental checkpoint that prevents automatic outsourcing of thinking.</p>",
+        "<h2>Day 2: Read a Physical Book for 20 Minutes</h2>",
+        "<p>No screens. No notifications. Just you and printed words. Physical reading activates different neural circuits than scrolling — it demands sustained attention, linear reasoning, and active imagination. Pick something slightly challenging.</p>",
+        "<h2>Day 3: Do Mental Math</h2>",
+        "<p>Calculate your grocery total before reaching the register. Split the dinner bill without your phone. Multiply two-digit numbers in your head while waiting for coffee. Mental math is one of the first cognitive skills to atrophy with calculator/AI dependency.</p>",
+        "<h2>Day 4: Write 500 Words Without AI Assistance</h2>",
+        "<p>No grammar checkers. No AI suggestions. No rewriting tools. Just you and a blank page. Write about something you care about. The goal isn't quality — it's the act of organizing thoughts into words without algorithmic assistance.</p>",
+        "<h2>Day 5: Solve a Logic Puzzle</h2>",
+        "<p>Sudoku. A chess problem. A riddle. A coding challenge on paper. Something that requires multi-step reasoning. Don't reach for hints. Sit with the discomfort of not knowing — this is where cognitive growth happens.</p>",
+        "<h2>Day 6: Have a Deep Conversation</h2>",
+        "<p>Talk to someone for an hour — no phones, no distractions. Argue a point. Explain something complex. Listen carefully and respond thoughtfully. Real-time conversation is the ultimate cognitive workout: you must think, process, and articulate simultaneously.</p>",
+        "<h2>Day 7: Retest and Reflect</h2>",
+        "<p>Take the Cognitive Rustproof test again. Compare your score to baseline. Did it change? What felt different this time? The number matters less than your awareness of it. Trends > snapshots.</p>",
+        "<p>Cognitive fitness isn't about rejecting AI — it's about maintaining the choice to think independently when it matters. Keep measuring. Keep noticing.</p>",
+        "<div style='margin-top:2rem;text-align:center'><a href='/' style='display:inline-block;padding:10px 24px;background:#111;color:#fff;border-radius:8px;text-decoration:none;font-weight:500'>Check Your Baseline →</a></div>"
+      ]
+    },
+    "how-cognitive-test-works": {
+      "title": "How IRT-Based Cognitive Testing Actually Works",
+      "excerpt": "Behind the 20 questions is an Item Response Theory engine that adapts to your ability level. Here's how it produces a meaningful score.",
+      "body": [
+        "<p>Most online tests give you a fixed set of questions and a percentage score. Cognitive Rustproof does something different — it uses Item Response Theory (IRT), the same framework behind SAT, GRE, and professional certification exams.</p>",
+        "<h2>What Is IRT?</h2>",
+        "<p>Item Response Theory models the probability of a correct answer based on two things: the person's ability (theta) and the question's characteristics (difficulty, discrimination). Unlike percentage-correct scoring, IRT accounts for <em>which</em> questions you got right, not just <em>how many</em>.</p>",
+        "<p>Getting an easy question wrong hurts your score more than missing a hard one. Getting a hard question right boosts your score more than acing an easy one. This makes the score more informative than a simple percentage.</p>",
+        "<h2>The Three Dimensions</h2>",
+        "<p>The test covers three cognitive domains:</p>",
+        "<ul><li><strong>Logic Reasoning</strong> — pattern recognition, logical deduction, sequential thinking</li><li><strong>Mental Math</strong> — arithmetic fluency, numerical estimation, computational speed</li><li><strong>Vocabulary</strong> — word knowledge, semantic understanding, verbal reasoning</li></ul>",
+        "<p>Each dimension is calibrated independently, and the test rotates through them to build a balanced profile.</p>",
+        "<h2>Adaptive Question Selection</h2>",
+        "<p>As you answer questions, the system updates its estimate of your ability and selects the next question to maximize information gain. This is called EAP (Expected A Posteriori) estimation with Fisher information maximization.</p>",
+        "<p>In plain English: the test gets harder when you're doing well and easier when you're struggling — not to be cruel or kind, but because questions near your ability level provide the most information.</p>",
+        "<h2>From Theta to Degradation Index</h2>",
+        "<p>Your final theta estimate is mapped to a percentile using the normal distribution (standard normal CDF). The degradation index is simply 100 minus your percentile. A score of 50 means you're at the population average. A score of 10 means you're in the top 10%.</p>",
+        "<h2>Why Trends Matter</h2>",
+        "<p>No test is perfect. Measurement error exists. That's why we emphasize retesting — the trend across multiple measurements is far more reliable than any single score. Think of it like tracking your weight: one reading tells you little, but the trend over time tells you everything.</p>",
+        "<p>The goal isn't a number. It's awareness. Because what you can't measure, you won't improve.</p>",
+        "<div style='margin-top:2rem;text-align:center'><a href='/' style='display:inline-block;padding:10px 24px;background:#111;color:#fff;border-radius:8px;text-decoration:none;font-weight:500'>Take the Test →</a></div>"
+      ]
+    }
   }
 }
