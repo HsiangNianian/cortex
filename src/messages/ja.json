@@ -129,7 +129,6 @@
     "aiGroupTitle": "AI使用量別グループ",
     "aiGroupDesc": "各グループの人数と平均退化指数",
     "tierTitle": "階級分布",
-    "avgElapsed": "平均所要時間",
     "trendTitle": "個人の傾向",
     "trendDesc": "あなたの{count}回のテスト記録",
     "trendOverall": "総合",

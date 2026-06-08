@@ -129,7 +129,6 @@
     "aiGroupTitle": "Grouped by AI Usage",
     "aiGroupDesc": "Group sizes and average degradation index",
     "tierTitle": "Tier Distribution",
-    "avgElapsed": "Avg Duration",
     "trendTitle": "Personal Trend",
     "trendDesc": "Your {count} test records",
     "trendOverall": "Overall",

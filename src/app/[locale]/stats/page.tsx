@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import DistributionChart from "@/components/distribution-chart";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, Users, Brain, BarChart3, Clock, Globe } from "lucide-react";
+import { ArrowLeft, Users, Brain, BarChart3 } from "lucide-react";
 import { TIER_COLOR_MAP, TIER_KEYS } from "@/lib/scoring";
 import { AI_CANONICAL_LEVELS } from "@/lib/constants";
 
@@ -25,7 +25,6 @@ interface StatsPageData {
   irtCount: number;
   pctCount: number;
   countryCounts: Record<string, number>;
-  avgElapsedMs: number | null;
 }
 
 interface HistoryEntry {
@@ -198,7 +197,7 @@ export default function StatsPage() {
                     tierColorMap[userTier?.label ?? ""] ??
                     "#888";
                   return (
-                    <Card>
+                    <Card className="col-span-2">
                       <CardContent className="flex items-center gap-3 p-4 min-w-0">
                         <div
                           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -240,24 +239,6 @@ export default function StatsPage() {
                     </Card>
                   );
                 })()}
-              {/* Avg elapsed */}
-              <Card>
-                <CardContent className="flex items-center gap-3 p-4 min-w-0">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/5">
-                    <Clock className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs text-muted-foreground truncate">
-                      {t("avgElapsed")}
-                    </div>
-                    <div className="text-xl font-bold tracking-tight truncate">
-                      {data.avgElapsedMs != null
-                        ? `${Math.round(data.avgElapsedMs / 60000)}min`
-                        : t("noData")}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Distribution chart */}
