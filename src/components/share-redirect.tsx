@@ -3,15 +3,15 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export function AutoRedirect({ ref }: { ref: string }) {
+export function AutoRedirect({ queryRef }: { queryRef: string }) {
   const router = useRouter();
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (ref) params.set("ref", ref);
-    const dest = "/" + (ref ? "?" + params.toString() : "");
+    if (queryRef) params.set("ref", queryRef);
+    const dest = "/" + (queryRef ? "?" + params.toString() : "");
     router.replace(dest);
-  }, [router, ref]);
+  }, [router, queryRef]);
 
   return null;
 }
