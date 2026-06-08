@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   other: {
     "theme-color": "#1a1a1a",
   },
+  openGraph: {
+    locale: "zh_CN",
+    alternateLocale: ["en_US", "ja_JP"],
+  },
 }
 
 export default async function RootLayout({
