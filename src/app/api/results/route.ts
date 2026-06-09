@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 import { saveResult, checkRateLimit } from "@/lib/storage"
+import { TIER_KEYS } from "@/lib/scoring"
+import { AI_CANONICAL_LEVELS } from "@/lib/constants"
 
 export async function POST(request: Request) {
   try {
@@ -11,8 +13,20 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { degradationIndex, tierLabel, aiUsageLevel, estimationMethod, elapsedMs } = body
 
-    // Score bounds check
-    if (typeof degradationIndex !== "number" || degradationIndex < 0 || degradationIndex > 100) {
+    if (
+      typeof degradationIndex !== "number" ||
+      !Number.isInteger(degradationIndex) ||
+      degradationIndex < 0 ||
+      degradationIndex > 100 ||
+      !(TIER_KEYS as readonly string[]).includes(tierLabel) ||
+      (aiUsageLevel !== null &&
+        aiUsageLevel !== undefined &&
+        !(AI_CANONICAL_LEVELS as readonly string[]).includes(aiUsageLevel)) ||
+      (estimationMethod !== undefined &&
+        estimationMethod !== "percentage" &&
+        estimationMethod !== "irt") ||
+      (elapsedMs !== undefined && elapsedMs !== null && typeof elapsedMs !== "number")
+    ) {
       return NextResponse.json({ error: "invalid payload" }, { status: 400 })
     }
 

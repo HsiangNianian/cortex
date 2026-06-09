@@ -37,6 +37,11 @@
     "retakeButton": "Test Again",
     "viewStats": "View platform-wide stats",
     "viewLastResult": "View last result details",
+    "communityTitle": "Join the QQ group: Deadpan Case Editorial Room",
+    "communityDesc": "Group ID 751476984. Discuss AI games, AI cognitive testing, and how to keep your own thinking sharp while using AI heavily.",
+    "communityJoinCta": "Join QQ Group",
+    "communityGameCta": "Play Cyber Deduction",
+    "communityDismiss": "Dismiss community notice",
     "footerTagline": "Cognitive ability is like a muscle—use it or lose it. Measure regularly\nto see what AI has left on you."
   },
   "declaration": {

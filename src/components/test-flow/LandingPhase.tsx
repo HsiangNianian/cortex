@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode, RefObject } from "react";
+import { useState, type ReactNode, type RefObject } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { ExternalLink, Gamepad2, MessageCircle, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -46,6 +47,7 @@ export function LandingPhase({
 }: LandingPhaseProps) {
   const n = useTranslations();
   const isChallenge = challengeRef !== null;
+  const [showCommunityBanner, setShowCommunityBanner] = useState(true);
 
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -76,6 +78,58 @@ export function LandingPhase({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {showCommunityBanner && (
+          <div className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-left">
+            <div className="flex gap-3">
+              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-background text-primary shadow-sm">
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {n("landing.communityTitle")}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      {n("landing.communityDesc")}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="-mr-1 -mt-1 text-muted-foreground hover:text-foreground"
+                    aria-label={n("landing.communityDismiss")}
+                    onClick={() => setShowCommunityBanner(false)}
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    href="https://qm.qq.com/q/Hhh3B2E68S"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-primary px-2.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    {n("landing.communityJoinCta")}
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                  <a
+                    href="https://deadpan.hydroroll.team"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    <Gamepad2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    {n("landing.communityGameCta")}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <span className="font-medium text-foreground">

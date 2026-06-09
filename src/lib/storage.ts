@@ -1,21 +1,101 @@
 import { Redis } from "@upstash/redis"
-import { TIER_LABELS, RESULT_TIERS } from "./scoring"
+import { TIER_KEYS, RESULT_TIERS } from "./scoring"
 import { AI_CANONICAL_LEVELS } from "./constants"
 
+let redis: Redis | null = null
+type RedisScript<TResult> = {
+  exec(keys: string[], args: string[]): Promise<TResult>
+}
+let statsScripts: {
+  read: RedisScript<[unknown, number[], unknown]>
+  write: RedisScript<number>
+} | null = null
+
 function getRedis(): Redis {
-  return Redis.fromEnv()
+  redis ??= Redis.fromEnv()
+  return redis
+}
+
+function getStatsScripts() {
+  const redis = getRedis()
+  statsScripts ??= {
+    read: redis.createScript<[unknown, number[], unknown], true>(READ_STATS_SCRIPT, {
+      readonly: true,
+    }),
+    write: redis.createScript<number>(WRITE_STATS_SCRIPT),
+  }
+  return statsScripts
 }
 
 const PREFIX = "cortex:"
+const STATS_HASH_KEY = PREFIX + "stats"
+const COUNTRIES_SET_KEY = PREFIX + "countries"
 
-// Legacy Chinese label ↔ canonical key mapping for Redis backward compat
+// Legacy Chinese label -> canonical key mapping for Redis backward compat.
 const TIER_LABEL_TO_KEY: Record<string, string> = {}
-const TIER_KEY_TO_LABEL: Record<string, string> = {}
 for (const t of RESULT_TIERS) {
   TIER_LABEL_TO_KEY[t.label] = t.tierKey
-  TIER_KEY_TO_LABEL[t.tierKey] = t.label
 }
 const TIER_LEGACY_LABELS = Object.keys(TIER_LABEL_TO_KEY)
+
+const LEGACY_KEYS = [
+  PREFIX + "total",
+  PREFIX + "sum_degradation",
+  ...Array.from({ length: 10 }, (_, i) => PREFIX + `dist:${i}`),
+  ...TIER_KEYS.map((key) => PREFIX + `tier:${key}`),
+  ...TIER_LEGACY_LABELS.map((label) => PREFIX + `tier:${label}`),
+  ...AI_CANONICAL_LEVELS.map((level) => PREFIX + `ai:${level}`),
+  PREFIX + "irt_count",
+  PREFIX + "pct_count",
+  PREFIX + "sum_elapsed",
+  PREFIX + "elapsed_count",
+]
+
+const READ_STATS_SCRIPT = `
+local hash_pairs = redis.call("HGETALL", KEYS[1])
+local legacy_values = {}
+for i = 3, #KEYS do
+  legacy_values[#legacy_values + 1] = tonumber(redis.call("GET", KEYS[i]) or "0") or 0
+end
+
+local legacy_country_pairs = {}
+local countries = redis.call("SMEMBERS", KEYS[2])
+for _, code in ipairs(countries) do
+  legacy_country_pairs[#legacy_country_pairs + 1] = code
+  legacy_country_pairs[#legacy_country_pairs + 1] = tonumber(redis.call("GET", ARGV[1] .. "country:" .. code) or "0") or 0
+end
+
+return { hash_pairs, legacy_values, legacy_country_pairs }
+`
+
+const WRITE_STATS_SCRIPT = `
+local key = KEYS[1]
+local degradation = tonumber(ARGV[1])
+local bucket = ARGV[2]
+local tier = ARGV[3]
+local ai = ARGV[4]
+local method = ARGV[5]
+local country = ARGV[6]
+local elapsed = tonumber(ARGV[7])
+
+redis.call("HINCRBY", key, "total", 1)
+redis.call("HINCRBY", key, "sum_degradation", degradation)
+redis.call("HINCRBY", key, "dist:" .. bucket, 1)
+redis.call("HINCRBY", key, "tier:" .. tier, 1)
+if ai ~= "" then
+  redis.call("HINCRBY", key, "ai:" .. ai, 1)
+end
+redis.call("HINCRBY", key, "method:" .. method, 1)
+if country ~= "" then
+  redis.call("HINCRBY", key, "country:" .. country, 1)
+end
+if elapsed > 0 then
+  redis.call("HINCRBY", key, "sum_elapsed", elapsed)
+  redis.call("HINCRBY", key, "elapsed_count", 1)
+end
+
+return 1
+`
 
 export interface StatsData {
   totalTests: number
@@ -30,73 +110,89 @@ export interface StatsData {
   avgElapsedMs: number | null
 }
 
-export async function getStats(): Promise<StatsData> {
-  const redis = getRedis()
+function pairListToRecord(value: unknown): Record<string, number> {
+  if (!value) return {}
 
-  // First, get the set of known country codes
-  let countries: string[] = []
-  try {
-    countries = await redis.smembers(PREFIX + "countries")
-  } catch {
-    // ignore (set may not exist yet)
-  }
-  if (countries.length === 0) {
-    try {
-      const keys = await redis.keys(PREFIX + "country:*")
-      countries = keys.map((k: string) => k.slice(PREFIX.length + "country:".length))
-    } catch {
-      // ignore
+  if (!Array.isArray(value) && typeof value === "object") {
+    const record: Record<string, number> = {}
+    for (const [key, raw] of Object.entries(value)) {
+      record[key] = Number(raw) || 0
     }
+    return record
   }
 
-  const p = redis.pipeline()
-  p.get(PREFIX + "total")
-  p.get(PREFIX + "sum_degradation")
-  for (let i = 0; i < 10; i++) p.get(PREFIX + `dist:${i}`)
-  for (const label of TIER_LABELS) p.get(PREFIX + `tier:${label}`)
-  // Also read legacy Chinese keys for backward compat
-  for (const cnLabel of TIER_LEGACY_LABELS) p.get(PREFIX + `tier:${cnLabel}`)
-  for (const level of AI_CANONICAL_LEVELS) p.get(PREFIX + `ai:${level}`)
-  p.get(PREFIX + "irt_count")
-  p.get(PREFIX + "pct_count")
-  for (const code of countries) p.get(PREFIX + `country:${code}`)
-  // Elapsed time
-  p.get(PREFIX + "sum_elapsed")
-  p.get(PREFIX + "elapsed_count")
+  if (!Array.isArray(value)) return {}
 
-  const results = await p.exec<(number | null)[]>()
+  const record: Record<string, number> = {}
+  for (let i = 0; i < value.length; i += 2) {
+    const key = String(value[i] ?? "")
+    if (key) record[key] = Number(value[i + 1]) || 0
+  }
+  return record
+}
+
+export async function getStats(): Promise<StatsData> {
+  const [hashPairs, legacyValues, legacyCountryPairs] = await getStatsScripts().read.exec(
+    [STATS_HASH_KEY, COUNTRIES_SET_KEY, ...LEGACY_KEYS],
+    [PREFIX],
+  )
+  const hash = pairListToRecord(hashPairs)
   let idx = 0
 
-  const total = (results[idx++] as number) ?? 0
-  const sumDegradation = (results[idx++] as number) ?? 0
+  const legacyTotal = legacyValues[idx++] ?? 0
+  const legacySumDegradation = legacyValues[idx++] ?? 0
 
   const distribution: number[] = []
-  for (let i = 0; i < 10; i++) distribution.push((results[idx++] as number) ?? 0)
+  for (let i = 0; i < 10; i++) {
+    distribution.push((hash[`dist:${i}`] ?? 0) + (legacyValues[idx++] ?? 0))
+  }
 
   const tierCounts: Record<string, number> = {}
-  for (const label of TIER_LABELS) tierCounts[label] = (results[idx++] as number) ?? 0
-  // Merge legacy Chinese key counts into canonical keys
+  const legacyCanonicalTierCounts: Record<string, number> = {}
+  for (const key of TIER_KEYS) {
+    tierCounts[key] = hash[`tier:${key}`] ?? 0
+    legacyCanonicalTierCounts[key] = legacyValues[idx++] ?? 0
+  }
+
+  const legacyChineseTierCounts: Record<string, number> = {}
+  for (const cnLabel of TIER_LEGACY_LABELS) {
+    legacyChineseTierCounts[cnLabel] = legacyValues[idx++] ?? 0
+  }
+
   for (const cnLabel of TIER_LEGACY_LABELS) {
     const key = TIER_LABEL_TO_KEY[cnLabel]
     if (key) {
-      tierCounts[key] = (tierCounts[key] ?? 0) + ((results[idx++] as number) ?? 0)
+      const canonical = legacyCanonicalTierCounts[key] ?? 0
+      const legacy = legacyChineseTierCounts[cnLabel] ?? 0
+      tierCounts[key] = (tierCounts[key] ?? 0) + Math.max(canonical, legacy)
     }
   }
 
   const aiUsageCounts: Record<string, number> = {}
-  for (const level of AI_CANONICAL_LEVELS) aiUsageCounts[level] = (results[idx++] as number) ?? 0
-
-  const irtCount = (results[idx++] as number) ?? 0
-  const pctCount = (results[idx++] as number) ?? 0
-
-  const countryCounts: Record<string, number> = {}
-  for (const code of countries) {
-    countryCounts[code] = (results[idx++] as number) ?? 0
+  for (const level of AI_CANONICAL_LEVELS) {
+    aiUsageCounts[level] = (hash[`ai:${level}`] ?? 0) + (legacyValues[idx++] ?? 0)
   }
 
-  // Elapsed time
-  const sumElapsed = (results[idx++] as number) ?? 0
-  const elapsedCount = (results[idx++] as number) ?? 0
+  const irtCount = (hash["method:irt"] ?? 0) + (legacyValues[idx++] ?? 0)
+  const pctCount = (hash["method:pct"] ?? 0) + (legacyValues[idx++] ?? 0)
+  const legacySumElapsed = legacyValues[idx++] ?? 0
+  const legacyElapsedCount = legacyValues[idx++] ?? 0
+
+  const countryCounts: Record<string, number> = {}
+  for (const [field, count] of Object.entries(hash)) {
+    if (field.startsWith("country:")) {
+      countryCounts[field.slice("country:".length)] = count
+    }
+  }
+  const legacyCountryCounts = pairListToRecord(legacyCountryPairs)
+  for (const [code, count] of Object.entries(legacyCountryCounts)) {
+    countryCounts[code] = (countryCounts[code] ?? 0) + count
+  }
+
+  const total = (hash.total ?? 0) + legacyTotal
+  const sumDegradation = (hash.sum_degradation ?? 0) + legacySumDegradation
+  const sumElapsed = (hash.sum_elapsed ?? 0) + legacySumElapsed
+  const elapsedCount = (hash.elapsed_count ?? 0) + legacyElapsedCount
 
   return {
     totalTests: total,
@@ -132,34 +228,17 @@ export async function saveResult(result: {
   country?: string | null
   elapsedMs?: number | null
 }): Promise<void> {
-  const bucket = Math.min(Math.floor(result.degradationIndex / 10), 9)
+  const bucket = Math.max(0, Math.min(Math.floor(result.degradationIndex / 10), 9))
+  const tierKey = TIER_LABEL_TO_KEY[result.tierLabel] ?? result.tierLabel
+  const method = result.estimationMethod === "irt" ? "irt" : "pct"
 
-  const redis = getRedis()
-  const p = redis.pipeline()
-  p.incr(PREFIX + "total")
-  p.incrby(PREFIX + "sum_degradation", result.degradationIndex)
-  p.incr(PREFIX + `dist:${bucket}`)
-  // Write primary key + legacy counterpart for backward compat
-  p.incr(PREFIX + `tier:${result.tierLabel}`)
-  const legacyLabel = TIER_KEY_TO_LABEL[result.tierLabel]
-  if (legacyLabel) p.incr(PREFIX + `tier:${legacyLabel}`)
-  const canonicalKey = TIER_LABEL_TO_KEY[result.tierLabel]
-  if (canonicalKey) p.incr(PREFIX + `tier:${canonicalKey}`)
-  if (result.aiUsageLevel) {
-    p.incr(PREFIX + `ai:${result.aiUsageLevel}`)
-  }
-  if (result.estimationMethod === "irt") {
-    p.incr(PREFIX + "irt_count")
-  } else {
-    p.incr(PREFIX + "pct_count")
-  }
-  if (result.country) {
-    p.incr(PREFIX + `country:${result.country}`)
-    p.sadd(PREFIX + "countries", result.country)
-  }
-  if (result.elapsedMs && result.elapsedMs > 0) {
-    p.incrby(PREFIX + "sum_elapsed", Math.round(result.elapsedMs))
-    p.incr(PREFIX + "elapsed_count")
-  }
-  await p.exec()
+  await getStatsScripts().write.exec([STATS_HASH_KEY], [
+    String(result.degradationIndex),
+    String(bucket),
+    tierKey,
+    result.aiUsageLevel ?? "",
+    method,
+    result.country ?? "",
+    String(result.elapsedMs && result.elapsedMs > 0 ? Math.round(result.elapsedMs) : 0),
+  ])
 }
