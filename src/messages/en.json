@@ -115,7 +115,10 @@
     "otherGame": "Another Game",
     "logicGameTitle": "Room for Logic Improvement",
     "logicGameDesc": "Try playing <game>Cyber Deduction</game> to improve your focus and logical thinking through case-solving!",
-    "ddlRoast": "DDL Roast"
+    "ddlRoast": "DDL Roast",
+    "otherXingce": "Another XingCe",
+    "logicGoodTitle": "Great Logic Score!",
+    "logicGoodDesc": "Are you a programmer? Try <lcti>Another XingCe</lcti> and check your open-source karma!"
   },
   "stats": {
     "pageTitle": "Platform-wide Statistics",
@@ -154,7 +157,8 @@
     "estimationFixed": "Fixed Percentage",
     "aboutLink": "About",
     "otherGame": "Another Game",
-    "ddlRoast": "DDL Roast"
+    "ddlRoast": "DDL Roast",
+    "otherXingce": "Another XingCe"
   },
   "about": {
     "title": "About",

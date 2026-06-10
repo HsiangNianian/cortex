@@ -115,7 +115,10 @@
 		"otherGame": "別のゲーム",
 		"logicGameTitle": "論理的思考力に向上の余地があります",
 		"logicGameDesc": "<game>サイバー推理</game>で推理事件を解決し、集中力と論理的思考力を高めましょう！",
-		"ddlRoast": "DDL Roast"
+		"ddlRoast": "DDL Roast",
+		"otherXingce": "もう一つの行測",
+		"logicGoodTitle": "論理スコア良好！",
+		"logicGoodDesc": "プログラマーですか？<lcti>もう一つの行測</lcti>でオープンソースの実力を試してみませんか！"
 	},
 	"stats": {
 		"pageTitle": "全体統計",
@@ -154,7 +157,8 @@
 		"estimationFixed": "固定パーセント評価",
 		"aboutLink": "このアプリについて",
 		"otherGame": "別のゲーム",
-		"ddlRoast": "DDL Roast"
+		"ddlRoast": "DDL Roast",
+		"otherXingce": "もう一つの行測"
 	},
 	"about": {
 		"title": "このアプリについて",

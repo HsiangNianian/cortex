@@ -105,6 +105,15 @@ export default function TestFlow() {
         </a>
         <span className="text-muted-foreground/40">|</span>
         <a
+          href="https://lcti.hydroroll.team"
+          target="_blank"
+          rel="noreferrer"
+          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+        >
+          {n("result.otherXingce")}
+        </a>
+        <span className="text-muted-foreground/40">|</span>
+        <a
           href="https://ddlroast.hydroroll.team"
           target="_blank"
           rel="noreferrer"
