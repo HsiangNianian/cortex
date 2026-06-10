@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import DistributionChart from "@/components/distribution-chart";
 import { Link } from "@/i18n/navigation";
+import { SiteFooter } from "@/components/site-footer";
 import { ArrowLeft, Users, Brain, BarChart3 } from "lucide-react";
 import { TIER_COLOR_MAP, TIER_KEYS } from "@/lib/scoring";
 import { AI_CANONICAL_LEVELS } from "@/lib/constants";
@@ -621,41 +622,8 @@ export default function StatsClient() {
       {/* Footer */}
       <div className="mt-8 text-center text-xs text-muted-foreground">
         <p>{t("privacyNote")}</p>
-        <div className="mt-3 flex flex-col items-center gap-2">
-          <Link
-            href="/about"
-            className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-          >
-            {t("aboutLink")}
-          </Link>
-          <div className="flex items-center justify-center gap-3">
-            <a
-              href="https://deadpan.hydroroll.team"
-              target="_blank"
-              rel="noreferrer"
-              className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-            >
-              {t("otherGame")}
-            </a>
-            <span className="text-muted-foreground/40">|</span>
-            <a
-              href="https://lcti.hydroroll.team"
-              target="_blank"
-              rel="noreferrer"
-              className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-            >
-              {t("otherXingce")}
-            </a>
-            <span className="text-muted-foreground/40">|</span>
-            <a
-              href="https://ddlroast.hydroroll.team"
-              target="_blank"
-              rel="noreferrer"
-              className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-            >
-              {t("ddlRoast")}
-            </a>
-          </div>
+        <div className="mt-3">
+          <SiteFooter namespace="stats" />
         </div>
       </div>
     </>
