@@ -1,59 +1,52 @@
 import { NextResponse } from "next/server"
-import { getStats } from "@/lib/storage"
+import { getAll } from "@vercel/edge-config"
+import { getStats, type StatsData } from "@/lib/storage"
 
 export const dynamic = "force-dynamic"
 
-interface CachedStats {
-  body: Record<string, unknown>
-  timestamp: number
+function formatStats(s: StatsData) {
+  return {
+    totalTests: s.totalTests,
+    avgDegradation: s.avgDegradation,
+    distribution: s.distribution,
+    tierCounts: s.tierCounts,
+    aiUsageCounts: s.aiUsageCounts,
+    irtCount: s.irtCount,
+    pctCount: s.pctCount,
+  }
 }
-
-let cache: CachedStats | null = null
-const CACHE_TTL = 30_000 // 30s in-memory cache
 
 export async function GET() {
   try {
-    const now = Date.now()
-    if (cache && now - cache.timestamp < CACHE_TTL) {
-      return NextResponse.json(cache.body, {
-        headers: { "x-cache": "HIT" },
+    // Read from Edge Config — free, ultra-low latency, no Redis cost
+    const edgeItems = await getAll<Record<string, unknown>>()
+    if (edgeItems && edgeItems.totalTests !== undefined) {
+      return NextResponse.json(edgeItems, {
+        headers: { "x-cache": "EDGE_CONFIG" },
       })
     }
 
+    // Fallback: Edge Config empty (not yet synced), read from Redis
     const stats = await getStats()
-
-    const body = {
-      totalTests: stats.totalTests,
-      avgDegradation: stats.avgDegradation,
-      distribution: stats.distribution,
-      tierCounts: stats.tierCounts,
-      aiUsageCounts: stats.aiUsageCounts,
-      irtCount: stats.irtCount,
-      pctCount: stats.pctCount,
-    }
-
-    cache = { body, timestamp: now }
-
-    return NextResponse.json(body, {
-      headers: {
-        "x-cache": "MISS",
-        "cache-control": "public, s-maxage=30, stale-while-revalidate=60",
-      },
+    return NextResponse.json(formatStats(stats), {
+      headers: { "x-cache": "REDIS_FALLBACK" },
     })
   } catch (err) {
     console.error("GET /api/stats error:", err)
-    // Serve stale cache on error if available
-    if (cache) {
-      return NextResponse.json(cache.body, {
-        headers: { "x-cache": "STALE" },
+    // Last-resort fallback: try Redis directly if Edge Config fails
+    try {
+      const stats = await getStats()
+      return NextResponse.json(formatStats(stats), {
+        headers: { "x-cache": "REDIS_FALLBACK" },
+      })
+    } catch (_) {
+      return NextResponse.json({
+        totalTests: 0,
+        avgDegradation: null,
+        distribution: Array(10).fill(0),
+        tierCounts: {},
+        aiUsageCounts: {},
       })
     }
-    return NextResponse.json({
-      totalTests: 0,
-      avgDegradation: null,
-      distribution: Array(10).fill(0),
-      tierCounts: {},
-      aiUsageCounts: {},
-    })
   }
 }

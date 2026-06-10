@@ -322,9 +322,36 @@ export async function saveResultWithRateLimit(
       method,
       result.country ?? "",
       String(result.elapsedMs && result.elapsedMs > 0 ? Math.round(result.elapsedMs) : 0),
-      String(RATE_LIMIT_MAX),
+    String(RATE_LIMIT_MAX),
       String(RATE_LIMIT_WINDOW),
     ],
   )
   return ok === 1
+}
+
+const EDGE_CONFIG_ID = "ecfg_u1649pkjevm409mhfgpmyxny5nfs"
+
+export async function syncStatsToEdgeConfig(): Promise<void> {
+  const token = process.env.VERCEL_API_TOKEN
+  if (!token) return
+
+  const stats = await getStats()
+  const items = [
+    { operation: "upsert", key: "totalTests", value: stats.totalTests },
+    { operation: "upsert", key: "avgDegradation", value: stats.avgDegradation },
+    { operation: "upsert", key: "distribution", value: stats.distribution },
+    { operation: "upsert", key: "tierCounts", value: stats.tierCounts },
+    { operation: "upsert", key: "aiUsageCounts", value: stats.aiUsageCounts },
+    { operation: "upsert", key: "irtCount", value: stats.irtCount },
+    { operation: "upsert", key: "pctCount", value: stats.pctCount },
+  ]
+
+  await fetch(`https://api.vercel.com/v1/edge-config/${EDGE_CONFIG_ID}/items`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ items }),
+  })
 }
