@@ -13,7 +13,6 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { execSync } from "child_process";
 
 const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
 const OUTPUT_DIR = path.resolve(SCRIPT_DIR, "output");
@@ -44,25 +43,6 @@ function loadGenerated(locale: string): Question[] {
   const p = path.join(OUTPUT_DIR, `${locale}.json`);
   if (!fs.existsSync(p)) return [];
   return JSON.parse(fs.readFileSync(p, "utf-8"));
-}
-
-function loadExistingBank(locale: string): Question[] {
-  const p = path.join(BANK_DIR, `${locale}.ts`);
-  const content = fs.readFileSync(p, "utf-8");
-
-  // Extract all question objects by matching `{` ... `},` patterns
-  // Simpler approach: find all question IDs
-  const idMatches = content.matchAll(/id:\s*(\d+)/g);
-  const ids = [...idMatches].map((m) => parseInt(m[1], 10));
-  const maxId = ids.length > 0 ? Math.max(...ids) : 0;
-
-  // Count questions by type
-  const typeMatches = content.matchAll(/type:\s*"(logic|math|vocab)"/g);
-  const types = [...typeMatches].map((m) => m[1]);
-  const typeCount: Record<string, number> = { logic: 0, math: 0, vocab: 0 };
-  for (const t of types) typeCount[t]++;
-
-  return { maxId, typeCount } as any;
 }
 
 /**

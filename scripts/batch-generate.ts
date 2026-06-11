@@ -481,7 +481,6 @@ const client = new OpenAI({
 async function generateSingleQuestion(
   config: CellConfig,
   usedQuestions: string[],
-  attempt: number = 0,
 ): Promise<GeneratedQuestion> {
   const system = buildSystemPrompt(config.locale, config.type, config.difficulty);
   const user = buildUserPrompt(config.locale, config.type, config.difficulty, usedQuestions);

@@ -18,7 +18,6 @@ export function validateGeneratedQuestion(
   expectedType: "logic" | "math" | "vocab",
 ): Question {
   const errors: ValidationError[] = [];
-  const TYPES = ["logic", "math", "vocab"] as const;
 
   // --- question ---
   const question = raw.question;

@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { SiteFooter } from "@/components/site-footer";
 import { useTestState } from "./test-flow/useTestState";
 import { LandingPhase } from "./test-flow/LandingPhase";
@@ -11,7 +10,6 @@ import { ResultPhase } from "./test-flow/ResultPhase";
 
 export default function TestFlow() {
   const s = useTestState();
-  const n = useTranslations();
 
   return (
     <div className="flex min-h-dvh flex-col px-4 py-4 md:px-8 md:py-8">

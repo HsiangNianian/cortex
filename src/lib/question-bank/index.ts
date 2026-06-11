@@ -14,7 +14,8 @@ const BANKS: Record<string, Question[]> = {
  * All banks are statically imported to avoid Turbopack compilation
  * delays in dev mode from dynamic import() of large TS files.
  */
-export async function ensureBank(_locale: string): Promise<void> {
+export async function ensureBank(locale: string): Promise<void> {
+  void locale;
   // All banks are already loaded at module level
 }
 
