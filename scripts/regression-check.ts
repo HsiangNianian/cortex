@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   buildOgImageUrl,
   buildShareMetadataText,
@@ -27,4 +29,23 @@ assert.match(
   share.description,
   /42/,
   "share metadata description should include the challenge score",
+);
+
+const root = process.cwd();
+assert.equal(
+  existsSync(join(root, "src", "middleware.ts")),
+  false,
+  "Next.js 16 proxy convention should replace src/middleware.ts",
+);
+assert.equal(
+  existsSync(join(root, "src", "proxy.ts")),
+  true,
+  "Next.js 16 proxy convention should use src/proxy.ts",
+);
+
+const ogRoute = readFileSync(join(root, "src", "app", "api", "og", "route.tsx"), "utf8");
+assert.equal(
+  /runtime\s*=\s*["']edge["']/.test(ogRoute),
+  false,
+  "OG route should not opt into Edge runtime when build warnings require static generation compatibility",
 );

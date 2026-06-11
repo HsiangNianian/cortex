@@ -2,8 +2,6 @@ import { ImageResponse } from "@vercel/og"
 import { QUESTIONS_PER_TEST } from "@/lib/questions"
 import { RESULT_TIERS } from "@/lib/scoring"
 
-export const runtime = "edge"
-
 const TIER_CONFIG: Record<string, { label: string; color: string }> = {}
 for (const t of RESULT_TIERS) {
   TIER_CONFIG[t.tierKey] = { label: t.label, color: t.ringColor }
