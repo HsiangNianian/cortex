@@ -556,7 +556,7 @@ export function useTestState() {
     if (!result) return;
     const tierKey = result.tier.tierKey;
     const text = generateShareText(result, {
-      site: n("landing.title"),
+      site: n("share.titleLine"),
       degradation: n("stats.avgDegradation"),
       correct: n("result.reviewCorrect"),
       tier: n("tier." + tierKey),

@@ -232,7 +232,8 @@
 	},
 	"share": {
 		"loading": "正在跳转...",
-		"clickHere": "点击这里"
+		"clickHere": "点击这里",
+		"titleLine": "测测你是不是被 AI 变成了笨蛋!"
 	},
 	"distribution": {
 		"ariaLabel": "退化指数分布直方图",

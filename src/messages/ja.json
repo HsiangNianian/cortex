@@ -232,7 +232,8 @@
 	},
 	"share": {
 		"loading": "リダイレクト中...",
-		"clickHere": "ここをクリック"
+		"clickHere": "ここをクリック",
+		"titleLine": "AIがあなたをバカにしたか試してみよう!"
 	},
 	"distribution": {
 		"ariaLabel": "退化指数分布ヒストグラム",

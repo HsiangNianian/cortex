@@ -232,7 +232,8 @@
 	},
 	"share": {
 		"loading": "Redirecting...",
-		"clickHere": "Click here"
+		"clickHere": "Click here",
+		"titleLine": "See if AI has turned you into an idiot!"
 	},
 	"distribution": {
 		"ariaLabel": "Degradation index distribution histogram",
