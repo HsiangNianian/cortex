@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { saveResultWithRateLimit } from "@/lib/storage"
+import { saveResult } from "@/lib/storage"
 import { TIER_KEYS } from "@/lib/scoring"
 import { AI_CANONICAL_LEVELS } from "@/lib/constants"
 
@@ -35,17 +35,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "too fast" }, { status: 400 })
     }
 
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"
-
-    const ok = await saveResultWithRateLimit(ip, {
+    await saveResult({
       degradationIndex,
       tierLabel,
       aiUsageLevel: aiUsageLevel ?? null,
       estimationMethod: estimationMethod === "irt" ? "irt" : "percentage",
     })
-    if (!ok) {
-      return NextResponse.json({ error: "rate limited" }, { status: 429 })
-    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {

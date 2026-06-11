@@ -93,6 +93,22 @@ export default async function AboutPage() {
             </p>
           </section>
 
+          {/* Disclaimer */}
+          <section className="space-y-2">
+            <h2 className="text-sm font-semibold text-foreground">
+              {t("disclaimerTitle")}
+            </h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {t("disclaimerP1")}
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {t("disclaimerP2")}
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {t("disclaimerP3")}
+            </p>
+          </section>
+
           {/* Roadmap */}
           <section className="space-y-2">
             <h2 className="text-sm font-semibold text-foreground">

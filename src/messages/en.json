@@ -113,7 +113,8 @@
 		"ddlRoast": "DDL Roast",
 		"otherXingce": "Another Test",
 		"logicGoodTitle": "Great Logic Score!",
-		"logicGoodDesc": "Are you a programmer? Try <lcti>Another XingCe</lcti> and check your open-source karma!"
+		"logicGoodDesc": "Are you a programmer? Try <lcti>Another XingCe</lcti> and check your open-source karma!",
+		"disclaimer": "Some questions are AI-generated in real-time and may contain errors. If you find any issues, feel free to join our community via the homepage. This is just a snapshot—one score doesn't define you. Don't take it too seriously."
 	},
 	"stats": {
 		"pageTitle": "Platform-wide Statistics",
@@ -167,6 +168,10 @@
 		"usageP2": "A single test score has limited meaning—the real value lies in retesting. Leave at least 7 days between tests and connect the dots to see the trend.",
 		"privacyTitle": "Data & Privacy",
 		"privacyP1": "We do not collect any personally identifiable information (no cookies, no user IDs). Each test result is stored anonymously and only used to generate platform-wide statistical distributions. Your personal history is saved in your browser locally and is not uploaded.",
+		"disclaimerTitle": "Disclaimer",
+		"disclaimerP1": "Some question types are AI-generated in real-time with adaptive difficulty. There may be errors or imprecise wording—please bear with us.",
+		"disclaimerP2": "If you spot incorrect questions, feel free to join our community via the homepage to give feedback and help us improve the question bank.",
+		"disclaimerP3": "This is a self-awareness tool, not a clinical assessment. A single score means little—don't take it too seriously. Trends matter more than any one result.",
 		"roadmapTitle": "Roadmap",
 		"roadmapDone": "Live",
 		"roadmapNear": "Upcoming",

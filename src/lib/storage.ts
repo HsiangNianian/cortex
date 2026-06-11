@@ -94,26 +94,14 @@ export async function getStats(): Promise<StatsData> {
   }
 }
 
-const RATE_LIMIT_MAX = 5
-const RATE_LIMIT_WINDOW = 3600
-
-export async function saveResultWithRateLimit(
-  ip: string,
+export async function saveResult(
   result: {
     degradationIndex: number
     tierLabel: string
     aiUsageLevel: string | null
     estimationMethod?: "percentage" | "irt"
   },
-): Promise<boolean> {
-  // Rate limit check
-  const rateKey = `rate:${ip}`
-  const raw = await kvGet(rateKey)
-  const count = raw ? parseInt(raw, 10) : 0
-  if (count >= RATE_LIMIT_MAX) return false
-
-  await kvPut(rateKey, String(count + 1), RATE_LIMIT_WINDOW)
-
+): Promise<void> {
   // Read current stats
   const s = (await kvGetJson<StatsStore>("stats")) ?? EMPTY_STATS
 
@@ -135,8 +123,6 @@ export async function saveResultWithRateLimit(
   }
 
   await kvPut("stats", JSON.stringify(s))
-
-  return true
 }
 
 // Legacy exports kept for API route compatibility

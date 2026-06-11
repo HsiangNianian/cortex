@@ -472,6 +472,9 @@ export function ResultPhase({
           </button>
         </div>
         <p className="mt-2 text-center text-xs text-muted-foreground">
+          {n("result.disclaimer")}
+        </p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
           {n("landing.footerTagline")}
         </p>
       </CardFooter>
