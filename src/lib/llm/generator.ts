@@ -4,6 +4,7 @@
  * Generates single MCQ questions, validates them, and returns structured Question objects.
  */
 import OpenAI from "openai";
+import type { ChatCompletionCreateParamsStreaming } from "openai/resources/chat/completions";
 import { buildGeneratePrompt, type GeneratePromptInput } from "./prompts";
 import { validateGeneratedQuestion } from "./validator";
 import type { Question } from "@/lib/question-bank/types";
@@ -14,6 +15,19 @@ const client = new OpenAI({
 });
 
 const MODEL = process.env.OPENAI_MODEL ?? "deepseek-v4-flash";
+
+type DeepSeekStreamingParams = Omit<
+  ChatCompletionCreateParamsStreaming,
+  "reasoning_effort"
+> & {
+  reasoning_effort?: "high" | "max";
+  extra_body?: { thinking: { type: "enabled" } };
+};
+
+type ReasoningDelta = {
+  content?: string | null;
+  reasoning_content?: string | null;
+};
 
 /* ─── Thinking / reasoning config from env ─── */
 
@@ -62,7 +76,7 @@ export async function generateQuestion(
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const params: Record<string, unknown> = {
+      const params: DeepSeekStreamingParams = {
         model: MODEL,
         messages: [
           { role: "system", content: system },
@@ -81,7 +95,9 @@ export async function generateQuestion(
       }
 
       const start = performance.now();
-      const stream: any = await client.chat.completions.create(params as any);
+      const stream = await client.chat.completions.create(
+        params as unknown as ChatCompletionCreateParamsStreaming,
+      );
 
       let raw = "";
       let reasoning = "";
@@ -89,7 +105,7 @@ export async function generateQuestion(
       let usage: { prompt_tokens?: number; completion_tokens?: number } | null = null;
 
       for await (const chunk of stream) {
-        const delta = chunk.choices?.[0]?.delta;
+        const delta = chunk.choices?.[0]?.delta as ReasoningDelta | undefined;
         if (delta?.content) raw += delta.content;
         if (delta?.reasoning_content) reasoning += delta.reasoning_content;
 
