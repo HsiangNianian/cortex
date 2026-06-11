@@ -401,7 +401,7 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "A teacher brings three red hats and two blue hats. Three students each put on a hat (all three end up wearing red), and the remaining two hats are hidden. Each student can see the others' hats but not their own. The teacher asks if anyone knows their hat color. After a few seconds of silence, someone raises their hand. How did they figure it out?",
+      "A teacher brings three red hats and two blue hats. Three students each put on a hat, and the remaining two hats are hidden. Each student can see the others' hats but not their own, and all students are perfectly logical and know that everyone else is perfectly logical. The teacher asks if anyone knows their hat color. After a few seconds of silence, someone raises their hand. How did they figure it out?",
     options: [
       "They saw two red hats",
       "They saw two blue hats",
@@ -411,7 +411,7 @@ export const bank: Question[] = [
     answer: 0,
     difficulty: 1.2,
     explanation:
-      "If a student saw two blue hats, they would instantly know their own hat must be red (since only two blue hats exist) → but nobody immediately raised their hand.\n\nIf a student saw one red and one blue: if they themselves were blue, then the person wearing the red hat would have seen two blue hats and would have known their own color. Since no one spoke up, the student realizes they must be wearing red.\n\nIn reality, each student sees two red hats. After a moment of silence (eliminating the other possibilities), each can deduce they must be wearing red.",
+      "Premise: every student is perfectly logical and knows the others are too.\n\nThree levels of reasoning:\n\u2460 If a student saw two blue hats, they would instantly know their own hat is red (only two blue hats exist), and raise their hand immediately. No one did → nobody saw two blue hats.\n\u2461 If a student saw one red and one blue: suppose their own hat were blue. Then the person wearing red would see two blue hats and, by \u2460, would raise their hand immediately. After a brief pause with no hand raised → the assumption \"I am blue\" is false → they must be red. Someone at this level would raise their hand after a short delay.\n\u2462 In reality, all three wear red, so everyone sees two red hats. Each thinks: if I were blue, the other two would be in scenario \u2461 and someone would raise their hand shortly. After a few seconds of silence → the \"I am blue\" assumption fails → I must be red.\n\nSo the student who raised their hand saw two red hats and deduced through three-level recursive reasoning.",
   },
   {
     id: 30,
@@ -423,7 +423,7 @@ export const bank: Question[] = [
     answer: 0,
     difficulty: 0.8,
     explanation:
-      "From B: B < C\nFrom C: C < D\nFrom D: D < B\nThis creates a cycle: B < C < D < B — contradictory!\n\nThe only resolution is that A is not the lowest — in fact, A is the highest. The true order is:\nD < B < C < A\n\nSo D = 85, B = 90, C = 95, A = 100.",
+      "From B: B < C (C scored higher)\nFrom C: D < C (C scored higher than D)\nFrom D: D < B (B scored higher than D)\nCombining: D < B < C. A is not the lowest, and since D is the lowest, this is satisfied.\nAssigning scores 85/90/95/100 to D/B/C/A: A = 100, C = 95, B = 90, D = 85.\nSo D's score is 85.",
   },
   {
     id: 31,
@@ -1119,7 +1119,7 @@ export const bank: Question[] = [
     ],
     answer: 0,
     explanation:
-      "The first premise states that all dogs belong to the set of mammals. The second premise states that Buddy is a dog. Therefore, Buddy must belong to the set of mammals. Option A correctly concludes that Buddy is a mammal. Option B contradicts the deduction. Options C and D are not necessarily true based only on the given statements.",
+      "The first premise states that all dogs belong to the set of mammals. The second premise states that Buddy is a dog. Therefore, Buddy must belong to the set of mammals. Option A is the most direct conclusion. Option C overreaches (the converse). While option D ('some mammals are dogs') is also logically valid (Buddy is both a dog and a mammal), A is the most direct and strongest deduction.",
     difficulty: -1.7,
     discrimination: 1,
     guessing: 0.25,
@@ -1243,17 +1243,17 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "Four friends—Alice, Bob, Carol, and Dave—each study a different subject: Math, English, History, and Science. They make the following statements:\n\n- Alice says: \"Bob studies History.\"\n- Bob says: \"Carol does not study Math.\"\n- Carol says: \"Dave studies Science.\"\n- Dave says: \"Alice does not study English.\"\n\nOnly one of them is telling the truth. Which subject does Alice study?",
+      "Four friends—Alice, Bob, Carol, and Dave—each ordered a different dish: pizza, pasta, salad, and soup. All of them are telling the truth.\n\n- Alice says: \"I did not order pizza or pasta.\"\n- Bob says: \"I ordered soup.\"\n- Carol says: \"I did not order salad.\"\n\nWhich dish did Alice order?",
     options: [
-      "Math",
-      "English",
-      "History",
-      "Science"
+      "pizza",
+      "pasta",
+      "salad",
+      "soup"
     ],
-    answer: 1,
+    answer: 2,
     explanation:
-      "Assume each statement is false because only one is true. Then:\n- Alice's statement false => Bob does NOT study History.\n- Bob's false => Carol studies Math.\n- Carol's false => Dave does NOT study Science.\n- Dave's false => Alice studies English.\n\nSince Carol studies Math, and Alice studies English, the remaining subjects (History and Science) go to Bob and Dave. But Bob does not study History (from Alice's false), so Bob must study Science, and Dave studies History. This assignment satisfies all false statements, and no contradictions arise. Therefore Alice studies English.",
-    difficulty: 1,
+      "Bob ordered soup. Alice did not order pizza or pasta, so Alice must have ordered salad or soup. Since Bob ordered soup, Alice cannot have soup — so Alice ordered salad.\n\nCarol did not order salad (consistent). The remaining dishes (pizza and pasta) go to Carol and Dave. Dave's dish is not constrained, so either assignment works, but Alice's dish is uniquely salad.",
+    difficulty: 0.5,
     discrimination: 1,
     guessing: 0.25,
   },
@@ -1319,17 +1319,17 @@ export const bank: Question[] = [
     type: "math",
     category: "math",
     question:
-      "A store offers a 'buy two, get one free' promotion on items priced at $15 each. You buy 5 items. You have a coupon for 15% off your total purchase after the promotion. Sales tax is 7%. How much do you pay in total? (Round to the nearest cent.)",
+      "A store offers a 'buy two, get one free' promotion on items priced at $15 each. You buy 6 items. You have a coupon for 15% off your total purchase after the promotion. Sales tax is 7%. How much do you pay in total? (Round to the nearest cent.)",
     options: [
-      "$38.25",
-      "$40.93",
-      "$42.75",
-      "$45.00"
+      "$54.57",
+      "$64.20",
+      "$45.00",
+      "$48.15"
     ],
-    answer: 1,
+    answer: 0,
     explanation:
-      "The 'buy two, get one free' promotion means for every 2 items you pay for, you get 1 free. With 5 items, you pay for 3 (since 2 paid give 1 free, and the remaining 2 also give 1 free, but you only need 1 more, so you effectively pay for 3). Cost before coupon: 3 × $15 = $45. Coupon gives 15% off: $45 × 0.85 = $38.25. Sales tax of 7%: $38.25 × 1.07 = $40.9275, rounded to $40.93.",
-    difficulty: 2,
+      "With 'buy two, get one free', for every 2 items you pay for, you get 1 free. For 6 items, you pay for 4 and get 2 free: 4 × $15 = $60. After the 15% coupon: $60 × 0.85 = $51. Sales tax of 7%: $51 × 1.07 = $54.57.",
+    difficulty: 1.5,
     discrimination: 1,
     guessing: 0.25,
   },
@@ -1885,25 +1885,6 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 114,
-    type: "logic",
-    category: "logic",
-    question:
-      "On an island where every inhabitant is either a knight (always tells the truth) or a knave (always lies), you meet two people: Alex and Bailey. Alex says: 'Bailey is a knave.' Bailey says: 'We are both knights.' Which of the following is correct?",
-    options: [
-      "Alex is a knight, Bailey is a knave.",
-      "Alex is a knave, Bailey is a knight.",
-      "Both are knights.",
-      "Both are knaves."
-    ],
-    answer: 0,
-    explanation:
-      "Assume Alex is a knight. Then his statement is true, so Bailey is a knave. Bailey's claim (we are both knights) would be false, which is consistent with Bailey being a knave. Now assume Alex is a knave. Then his statement is false, so Bailey is not a knave, i.e., Bailey is a knight. Then Bailey's claim (both knights) would be true, but Alex is a knave, so the claim is false. This is a contradiction. Therefore, Alex must be a knight and Bailey a knave.",
-    difficulty: -0.7,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
     id: 115,
     type: "logic",
     category: "logic",
@@ -1919,25 +1900,6 @@ export const bank: Question[] = [
     explanation:
       "Assume A is true. Then B is false. Since B is false, its statement 'C is false' is false, so C is true. Then C says 'A and B are both false', but A is true, contradiction. So A cannot be true.\n\nAssume B is true. Then C is false, so C's statement is false, meaning it is not the case that both A and B are false, i.e., at least one of A or B is true. Since B is true, that condition holds. Also, A says 'B is false', which is false because B is true, so A is false. All conditions are satisfied: only B is true.\n\nAssume C is true. Then A and B are both false. But if A is false, its statement 'B is false' is false, meaning B is actually true, which contradicts B being false. So C cannot be true.\n\nThus, only B is true.",
     difficulty: 0.8,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 116,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "What does the idiom 'to bite the bullet' mean?",
-    options: [
-      "to show bravery",
-      "to endure a painful or unpleasant situation",
-      "to take a risk",
-      "to make a quick decision"
-    ],
-    answer: 1,
-    explanation:
-      "The idiom 'to bite the bullet' means to face and endure a difficult or painful situation with courage. It originates from historical battlefield medical procedures where soldiers would literally bite on a bullet to cope with the pain of surgery without anesthesia.",
-    difficulty: -1.7,
     discrimination: 1,
     guessing: 0.25,
   },
@@ -2113,25 +2075,6 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 126,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "What does the word 'ambiguous' mean?",
-    options: [
-      "Having multiple possible meanings",
-      "Indifferent or unconcerned",
-      "Unclear or vague",
-      "Contradictory"
-    ],
-    answer: 0,
-    explanation:
-      "The word 'ambiguous' refers to something that can be interpreted in more than one way, often leading to uncertainty. Option A correctly captures this meaning. Option B describes 'ambivalent' or 'indifferent'. Option C (unclear or vague) is a related but less precise synonym; ambiguity specifically involves multiple interpretations. Option D (contradictory) implies conflict between two things, not openness to interpretation.",
-    difficulty: -1.5,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
     id: 127,
     type: "math",
     category: "math",
@@ -2185,25 +2128,6 @@ export const bank: Question[] = [
     explanation:
       "From clue (3), Jack is older than Ryan, and Ryan is older than Emily, so the age order among these three is Jack > Ryan > Emily. Since Emily is not the youngest (clue 1), the youngest person (22) must be Olivia. Then Emily can be 25, Ryan 28, and Jack 31, satisfying all clues. Thus Ryan is 28.",
     difficulty: 0,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 130,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "Which of the following words means 'impartial' or 'unbiased'?",
-    options: [
-      "disinterested",
-      "uninterested",
-      "indifferent",
-      "bored"
-    ],
-    answer: 0,
-    explanation:
-      "'Disinterested' means impartial or unbiased, often used in contexts requiring fairness. 'Uninterested' means lacking interest or not engaged. 'Indifferent' means having no particular interest or concern. 'Bored' means feeling weary due to lack of stimulation. Only 'disinterested' carries the sense of neutrality.",
-    difficulty: 0.1,
     discrimination: 1,
     guessing: 0.25,
   },
@@ -2436,25 +2360,6 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 143,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "Which of the following best defines the word 'enervate'?",
-    options: [
-      "To weaken or drain of energy",
-      "To invigorate or energize",
-      "To provoke or annoy",
-      "To refine or purify"
-    ],
-    answer: 0,
-    explanation:
-      "The word 'enervate' comes from the Latin 'enervare' meaning 'to cut the sinews of,' and it means to weaken or drain of vitality. It is often confused with 'energize,' which has the opposite meaning. The other options are incorrect: invigorate is an antonym, provoke is unrelated, and refine is not a synonym.",
-    difficulty: 1.3,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
     id: 144,
     type: "logic",
     category: "logic",
@@ -2527,25 +2432,6 @@ export const bank: Question[] = [
     explanation:
       "Since John is taller than Mary, and Mary is taller than Sue, we can deduce that John is taller than Sue as well. Therefore, John is the tallest among the three.",
     difficulty: -2.8,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 148,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "What does the idiom 'hit the nail on the head' mean?",
-    options: [
-      "to be exactly correct",
-      "to make a loud noise",
-      "to injure oneself",
-      "to work very hard"
-    ],
-    answer: 0,
-    explanation:
-      "The idiom 'hit the nail on the head' means to be exactly right or to describe the precise nature of something. It originates from carpentry, where hitting the nail directly on its head ensures it goes in straight. The distractors are plausible misinterpretations: 'to make a loud noise' relates to the sound, 'to injure oneself' to missing the nail, and 'to work very hard' to the effort involved.",
-    difficulty: -2.2,
     discrimination: 1,
     guessing: 0.25,
   },
