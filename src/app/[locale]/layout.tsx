@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
-import { getMessages, getTranslations } from "next-intl/server"
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { ServiceWorkerRegister } from "@/components/service-worker-register"
@@ -83,6 +83,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>
 }>) {
   const { locale } = await params
+  setRequestLocale(locale)
   const messages = await getMessages()
 
   return (
