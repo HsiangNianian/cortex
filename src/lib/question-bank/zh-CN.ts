@@ -392,7 +392,7 @@ export const bank: Question[] = [
     answer: 0,
     difficulty: 0.8,
     explanation:
-      "B < C, C < D, D < B → 形成 B < C < D < B 的矛盾循环。\n这说明 A 不是最低的 —— 实际上 A 是最高的，排序为 D < B < C < A。\n所以 D=85, B=90, C=95, A=100。",
+      "C > B > D 成立（B 说 C 更高，D 说 B 更高），故 D 最低。\n以分数 85/90/95/100 代入：D 只能为 85 或 90。若 D=90，则 B 至少 95，C 至少 100，A=85，但 A 说\"我不是最低的\"矛盾。故 D=85，B=90，C=95，A=100。",
   },
   {
     id: 31,
@@ -628,25 +628,6 @@ export const bank: Question[] = [
   },
   {
     id: 47,
-    type: "logic",
-    category: "logic",
-    question:
-      "某公司有甲、乙、丙、丁四名员工，他们的职位分别是经理、主管、文员和销售。已知：①甲和乙的职位都不是经理；②丙的职位不是主管；③如果丁是销售，那么甲是文员；④乙不是销售。根据以上条件，以下哪项一定为真？",
-    options: [
-      "甲是文员",
-      "乙是主管",
-      "丙是经理",
-      "丁是销售"
-    ],
-    answer: 2,
-    explanation:
-      "根据条件①，经理是丙或丁；根据条件②，丙不是主管，所以丙可能是经理、文员或销售；根据条件④，乙不是销售，那么销售是甲、丙或丁。假设丁是销售，由③得甲是文员，则乙是主管（因为经理只能是丙），丙是经理，符合所有条件。若丁不是销售，则销售是甲或丙，但若甲是销售，则乙是主管或文员，丙是经理或文员，丁是经理或文员，存在多种可能，无法唯一确定。因此丁是销售时所有条件满足且唯一，故丙一定是经理。",
-    difficulty: 0.3,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 48,
     type: "vocab",
     category: "vocab",
     question:
@@ -665,26 +646,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 49,
-    type: "logic",
-    category: "logic",
-    question:
-      "某公司有甲、乙、丙、丁四名员工，他们的座位排成一排。已知：甲不坐在最左边；乙紧挨着丙的左边；丁坐在丙的右边，但丁不是最右边。请问，谁坐在最左边？",
-    options: [
-      "甲",
-      "乙",
-      "丙",
-      "丁"
-    ],
-    answer: 1,
-    explanation:
-      "根据条件，乙紧挨着丙的左边，即乙-丙相邻且乙在左。丁坐在丙的右边，即丙-丁相邻且丙在左。因此三人顺序为乙-丙-丁。甲不坐在最左边，且丁不是最右边，则最右边只能是甲（因为只剩甲），所以从右到左为甲、丁、丙、乙，最左边是乙。",
-    difficulty: 0.5,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 50,
+    id: 48,
     type: "logic",
     category: "logic",
     question:
@@ -703,7 +665,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 51,
+    id: 49,
     type: "math",
     category: "math",
     question:
@@ -722,7 +684,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 52,
+    id: 50,
     type: "logic",
     category: "logic",
     question:
@@ -741,7 +703,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 53,
+    id: 51,
     type: "logic",
     category: "logic",
     question:
@@ -760,7 +722,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 54,
+    id: 52,
     type: "logic",
     category: "logic",
     question:
@@ -779,7 +741,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 55,
+    id: 53,
     type: "math",
     category: "math",
     question:
@@ -798,7 +760,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 56,
+    id: 54,
     type: "math",
     category: "math",
     question:
@@ -817,7 +779,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 57,
+    id: 55,
     type: "math",
     category: "math",
     question:
@@ -836,7 +798,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 58,
+    id: 56,
     type: "logic",
     category: "logic",
     question:
@@ -855,7 +817,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 59,
+    id: 57,
     type: "vocab",
     category: "vocab",
     question:
@@ -874,7 +836,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 60,
+    id: 58,
     type: "math",
     category: "math",
     question:
@@ -893,7 +855,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 61,
+    id: 59,
     type: "logic",
     category: "logic",
     question:
@@ -912,26 +874,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 62,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对“七月流火”的解释，正确的一项是？",
-    options: [
-      "形容天气炎热",
-      "形容天气转凉",
-      "形容火势凶猛",
-      "形容时光流逝"
-    ],
-    answer: 1,
-    explanation:
-      "七月流火”出自《诗经·豳风·七月》：“七月流火，九月授衣。”“火”指大火星（即心宿），每年夏历六月黄昏时出现在正南方，位置最高，到了七月黄昏时开始西沉，天气逐渐转凉。因此，“七月流火”实际是指天气转凉，而非炎热。常被误用为形容天气炎热。",
-    difficulty: -0.1,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 63,
+    id: 60,
     type: "logic",
     category: "logic",
     question:
@@ -950,7 +893,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 64,
+    id: 61,
     type: "vocab",
     category: "vocab",
     question:
@@ -969,7 +912,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 65,
+    id: 62,
     type: "math",
     category: "math",
     question:
@@ -988,26 +931,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 66,
-    type: "logic",
-    category: "logic",
-    question:
-      "某班有三位同学：小明、小红、小刚，分别担任班长、学习委员和劳动委员中的一个职务。已知：①班长不是小明；②学习委员不是小红；③小刚担任的是劳动委员。请问谁担任班长？",
-    options: [
-      "小明",
-      "小红",
-      "小刚",
-      "无法确定"
-    ],
-    answer: 1,
-    explanation:
-      "由条件③可知小刚是劳动委员，因此班长和学习委员由小明和小红担任。条件①说班长不是小明，所以班长只能是小红。条件②学习委员不是小红，可验证学习委员是小明。因此班长是小红。",
-    difficulty: -2,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 67,
+    id: 63,
     type: "vocab",
     category: "vocab",
     question:
@@ -1026,7 +950,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 68,
+    id: 64,
     type: "vocab",
     category: "vocab",
     question:
@@ -1045,7 +969,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 69,
+    id: 65,
     type: "logic",
     category: "logic",
     question:
@@ -1064,7 +988,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 70,
+    id: 66,
     type: "vocab",
     category: "vocab",
     question:
@@ -1083,7 +1007,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 71,
+    id: 67,
     type: "logic",
     category: "logic",
     question:
@@ -1102,26 +1026,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 72,
-    type: "logic",
-    category: "logic",
-    question:
-      "小明、小红和小刚三人一起去超市，每人购买了一样日用品：牙膏、牙刷和毛巾。已知：小明没有买牙刷，小红没有买毛巾，小刚买了牙膏。请问小明买了什么？",
-    options: [
-      "牙膏",
-      "牙刷",
-      "毛巾",
-      "无法确定"
-    ],
-    answer: 2,
-    explanation:
-      "小刚买了牙膏，所以小明和小红只能从牙刷和毛巾中选择。小明没有买牙刷，因此小明只能买毛巾。小红没有买毛巾，因此小红买牙刷。所以小明买了毛巾。因此正确答案是毛巾。",
-    difficulty: -1.9,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 73,
+    id: 68,
     type: "vocab",
     category: "vocab",
     question:
@@ -1140,7 +1045,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 74,
+    id: 69,
     type: "math",
     category: "math",
     question:
@@ -1159,26 +1064,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 75,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“首当其冲”的解释，正确的一项是？",
-    options: [
-      "比喻最先受到攻击或遭遇灾难",
-      "比喻冲在最前面",
-      "比喻第一个受到奖励",
-      "比喻首要人物"
-    ],
-    answer: 0,
-    explanation:
-      "“首当其冲”出自《汉书·五行志》，意为最先受到攻击或遭遇灾难。其中“冲”指要冲、交通要道。常被误用为“冲在最前面”或“首要”，实际上并无褒义色彩。选项B、C、D均为常见误解。",
-    difficulty: -2.2,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 76,
+    id: 70,
     type: "math",
     category: "math",
     question:
@@ -1197,26 +1083,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 77,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“不刊之论”的解释，正确的一项是？",
-    options: [
-      "不能刊登的言论",
-      "无法修改的言论",
-      "不合理的言论",
-      "不光彩的言论"
-    ],
-    answer: 1,
-    explanation:
-      "“不刊之论”指不可磨灭、不可改动的言论，比喻不能改动或不可磨灭的言论。其中“刊”是古代指削除刻错了的字，“不刊”意为不可更改。选项A将“刊”误解为“刊登”，选项C和D更是曲解其意，只有选项B正确。",
-    difficulty: -1.3,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 78,
+    id: 71,
     type: "math",
     category: "math",
     question:
@@ -1235,7 +1102,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 79,
+    id: 72,
     type: "vocab",
     category: "vocab",
     question:
@@ -1254,7 +1121,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 80,
+    id: 73,
     type: "vocab",
     category: "vocab",
     question:
@@ -1273,7 +1140,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 81,
+    id: 74,
     type: "logic",
     category: "logic",
     question:
@@ -1292,7 +1159,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 82,
+    id: 75,
     type: "math",
     category: "math",
     question:
@@ -1311,7 +1178,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 83,
+    id: 76,
     type: "logic",
     category: "logic",
     question:
@@ -1330,26 +1197,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 84,
-    type: "logic",
-    category: "logic",
-    question:
-      "办公室里有三个文件柜，分别标记为甲、乙、丙，里面分别存放了三种不同类别的文件：人事档案、财务凭证和项目资料。已知：①甲柜不是人事档案；②乙柜不是财务凭证；③丙柜里存放的是项目资料。请问财务凭证放在哪个柜子里？",
-    options: [
-      "甲柜",
-      "乙柜",
-      "丙柜",
-      "无法确定"
-    ],
-    answer: 0,
-    explanation:
-      "由条件③可知丙柜是项目资料。条件①甲柜不是人事档案，则甲柜只能是财务凭证或项目资料，但项目资料已被丙柜占用，所以甲柜是财务凭证。条件②乙柜不是财务凭证，验证一致（乙柜是人事档案）。因此财务凭证放在甲柜。",
-    difficulty: -1.2,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 85,
+    id: 77,
     type: "logic",
     category: "logic",
     question:
@@ -1368,26 +1216,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 86,
-    type: "logic",
-    category: "logic",
-    question:
-      "某公司有四名员工：陈刚、林涛、刘洋、周敏。他们分别来自北京、上海、广州、深圳四个城市，每人只来自一个城市。已知：①陈刚不是来自北京；②林涛不是来自上海；③刘洋不是来自广州；④周敏来自深圳；⑤林涛不是来自广州。请问谁来自北京？",
-    options: [
-      "陈刚",
-      "林涛",
-      "刘洋",
-      "周敏"
-    ],
-    answer: 1,
-    explanation:
-      "根据条件④，周敏来自深圳，排除D。剩下的城市是北京、上海、广州，对应陈刚、林涛、刘洋。由条件③刘洋不是广州，条件⑤林涛不是广州，可知广州只能由陈刚担任。因此陈刚来自广州。此时剩余北京和上海，对应林涛和刘洋。由条件②林涛不是上海，可知林涛来自北京，刘洋来自上海。所以来自北京的是林涛。",
-    difficulty: -0.4,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 87,
+    id: 78,
     type: "vocab",
     category: "vocab",
     question:
@@ -1406,7 +1235,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 88,
+    id: 79,
     type: "math",
     category: "math",
     question:
@@ -1425,7 +1254,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 89,
+    id: 80,
     type: "math",
     category: "math",
     question:
@@ -1444,7 +1273,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 90,
+    id: 81,
     type: "logic",
     category: "logic",
     question:
@@ -1463,26 +1292,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 91,
-    type: "logic",
-    category: "logic",
-    question:
-      "张伟、王芳和李强三人去超市，每人购买了一样物品：杯子、盘子、碗。已知：张伟没有买杯子，王芳没有买盘子，李强买了碗。请问王芳买了什么？",
-    options: [
-      "杯子",
-      "盘子",
-      "碗",
-      "不确定"
-    ],
-    answer: 0,
-    explanation:
-      "李强买了碗，所以张伟和王芳购买的是杯子和盘子。张伟没有买杯子，因此张伟买了盘子，王芳买了杯子。",
-    difficulty: -1.7,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 92,
+    id: 82,
     type: "vocab",
     category: "vocab",
     question:
@@ -1501,7 +1311,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 93,
+    id: 83,
     type: "math",
     category: "math",
     question:
@@ -1520,7 +1330,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 94,
+    id: 84,
     type: "logic",
     category: "logic",
     question:
@@ -1539,26 +1349,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 95,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“差强人意”的解释，正确的一项是？",
-    options: [
-      "让人十分不满意",
-      "大体上还能让人满意",
-      "让人感到失望",
-      "形容事物很优秀"
-    ],
-    answer: 1,
-    explanation:
-      "差强人意出自《后汉书·吴汉传》，原指还能振奋人的意志，后表示大体上还能让人满意。常被误用为“让人不满意”或“失望”，实际含义是基本满意，但并非完美。",
-    difficulty: 0.3,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 96,
+    id: 85,
     type: "math",
     category: "math",
     question:
@@ -1577,7 +1368,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 97,
+    id: 86,
     type: "vocab",
     category: "vocab",
     question:
@@ -1596,7 +1387,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 98,
+    id: 87,
     type: "vocab",
     category: "vocab",
     question:
@@ -1615,7 +1406,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 99,
+    id: 88,
     type: "math",
     category: "math",
     question:
@@ -1634,7 +1425,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 100,
+    id: 89,
     type: "math",
     category: "math",
     question:
@@ -1653,45 +1444,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 101,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列关于成语“文不加点”的解释，正确的一项是？",
-    options: [
-      "文章没有加标点符号",
-      "文章一气呵成，无需修改",
-      "文章内容不加点缀",
-      "文章没有缺陷"
-    ],
-    answer: 1,
-    explanation:
-      "“文不加点”中的“点”指涂改，意为文章一气呵成，不需要修改。该成语形容文思敏捷，写作技巧纯熟。选项A将“点”误解为标点符号，选项C将“点”误解为点缀，选项D则偏离了成语的本义。",
-    difficulty: -0.4,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 102,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“万人空巷”的解释，正确的一项是？",
-    options: [
-      "形容街上空无一人，非常冷清。",
-      "形容家家户户的人都从巷子里出来了，多用来形容庆祝、欢迎等盛况。",
-      "形容战争或灾难后一片荒凉的景象。",
-      "形容人们因害怕而躲在家里不敢出门。"
-    ],
-    answer: 1,
-    explanation:
-      "“万人空巷”出自苏轼《八月十七日复登望海楼》，原意是家家户户的人都从巷里出来了，形容庆祝、欢迎等盛况，并非指街上空无一人。选项A是常见误解，C和D也是望文生义。",
-    difficulty: 0.1,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 103,
+    id: 90,
     type: "logic",
     category: "logic",
     question:
@@ -1710,26 +1463,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 104,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“七月流火”的解释，正确的一项是？",
-    options: [
-      "形容天气非常炎热",
-      "指火星向西移动，天气转凉",
-      "形容流星划过夜空",
-      "指火灾蔓延的态势"
-    ],
-    answer: 1,
-    explanation:
-      "“七月流火”出自《诗经·豳风·七月》，其中“火”指大火星（心宿二），“流”指西沉。原意是农历七月大火星西移，天气开始转凉。现代常被误用为形容天气炎热，但正确含义是天气变凉。选项A是常见误用，C和D均不符合典故原意。",
-    difficulty: 0.7,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 105,
+    id: 91,
     type: "math",
     category: "math",
     question:
@@ -1748,26 +1482,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 106,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“不刊之论”的解释，正确的一项是？",
-    options: [
-      "不能刊登的言论，多指内容敏感或观点偏激",
-      "不能更改的言论，形容论断或意见非常正确",
-      "不切实际的言论，指空谈或脱离现实的议论",
-      "不公正的言论，带有偏见的评价"
-    ],
-    answer: 1,
-    explanation:
-      "成语'不刊之论'中'刊'指古代削除错字，引申为修改。'不刊'即不可更改。整个成语比喻不能改动或不可磨灭的言论，形容言论确当，无懈可击。选项A将'刊'误解为'刊登'，属于望文生义；选项C和D则完全偏离原义。",
-    difficulty: -0.5,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 107,
+    id: 92,
     type: "math",
     category: "math",
     question:
@@ -1786,7 +1501,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 108,
+    id: 93,
     type: "math",
     category: "math",
     question:
@@ -1805,7 +1520,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 109,
+    id: 94,
     type: "math",
     category: "math",
     question:
@@ -1824,7 +1539,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 110,
+    id: 95,
     type: "vocab",
     category: "vocab",
     question:
@@ -1843,7 +1558,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 111,
+    id: 96,
     type: "logic",
     category: "logic",
     question:
@@ -1862,26 +1577,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 112,
-    type: "logic",
-    category: "logic",
-    question:
-      "某公司年终考核，张经理对四位员工说：“今年优秀员工将从我、小王、小李和小赵中产生。你们每人猜测一下谁会当选，猜中的人有奖励。”四人发言如下：\n\n小王说：“不是我，也不是小李。”\n小李说：“不是小赵，也不是小王。”\n小赵说：“不是小李，也不是我。”\n小周说：“不是小赵，也不是小李。”\n\n已知只有一人猜对了，请问谁当选优秀员工？",
-    options: [
-      "小王",
-      "小李",
-      "小赵",
-      "小周"
-    ],
-    answer: 0,
-    explanation:
-      "假设小王当选，则小王的话（不是我）为假，但（也不是小李）为真，整体为假？注意小王的话是联言命题“不是我也不是小李”，两个分句都真才真。所以小王当选时，小王的话为假（因为第一个分句假）；小李的话：“不是小赵，也不是小王”中，第二个分句“不是小王”假，所以小李的话假；小赵的话：“不是小李，也不是我”中，“不是我”假，所以小赵的话假；小周的话：“不是小赵，也不是小李”中，两个分句都真（小赵不是，小李不是），所以小周的话真。此时只有小周一人猜对，符合条件。验证其他假设：若小李当选，则小王的话（不是小李）假，整体假；小李的话（不是小李）假，整体假；小赵的话（不是小李）真？小赵的话是“不是小李和不是我”，前者真，后者真（因为小李当选，小赵不是），所以小赵的话真；小周的话（不是小赵，也不是小李）中，后者假，整体假。这样小赵一人猜对，但条件说只有一人猜对，这里小赵也符合？但需要检查是否唯一。实际上若小李当选，则小赵的话真，其他假，也满足一人对。但题目要求只有一人猜对，存在两个可能？我们需要进一步排除。再假设小赵当选：小王的话（不是小李）真？小赵当选，小李不是，所以“不是我也不是小李”中第一个分句“不是我”假，整体假；小李的话：不是小赵（假），不是小王（真），整体假；小赵的话：不是小李（真），不是自己（假），整体假；小周的话：不是小赵（假），整体假。全部假，不符合一人对。假设小周当选：小王的话：不是小李（真），不是自己？小王说不是自己，但小王不是小周，所以“不是我也不是小李”中“不是我”真（因为小王不是小周），“不是小李”真，整体真；小李的话：不是小赵（小周当选，小赵不是，真），不是小王（真），整体真；小赵的话：不是小李（真），不是自己（真），整体真；小周的话：不是小赵（真），不是小李（真），整体真。全部真，不符合。所以只有小王当选时，小周一人猜对；小李当选时，小赵一人猜对。但条件说只有一人猜对，这两个都满足，题目可能有两个答案？我们需要重新审题。题目说“只有一人猜对了”，我们推导出两种可能。但通常这种题设计应唯一。检查是否我理解有误？再仔细读题：四人发言，但发言者是小王、小李、小赵、小周，优秀员工从张经理、小王、小李、小赵中产生？题干说“今年优秀员工将从我、小王、小李和小赵中产生”，其中“我”指张经理本人。那么候选人包括张经理、小王、小李、小赵。小周不是候选人。那么小王的话“不是我也不是小李”中，“不是我也不是小李”意思是“不是我（小王），也不是小李”，如果小王当选，则他的第一个分句假，所以整体假。小李的话“不是小赵也不是小王”如果小王当选，则“不是小王”假，所以假。小赵的话“不是小李也不是我”如果小王当选，则“不是我”真（小赵不是），第一个分句“不是小李”真（小李不是），整体真。小周的话“不是小赵也不是小李”两个都真，整体真。这样有两个真（小赵和小周），不符合。我之前的分析错了，因为小赵的话在假设小王当选时，两个分句都真？小赵说“不是小李，也不是我”，小赵不是小王，所以“不是我”真，小李不是小王，所以“不是小李”真，整体真。小周的话也真。所以小王当选时，两人猜对。假设小李当选：小王的话“不是我也不是小李”中，“不是小李”假，整体假；小李的话“不是小赵也不是小王”中，“不是小李”假，整体假；小赵的话“不是小李也不是我”中，“不是小李”假，整体假；小周的话“不是小赵也不是小李”中，“不是小李”假，整体假。全部假，不符合一人对。所以小李当选无人猜对。假设小赵当选：小王的话“不是我也不是小李”中，第一个分句“不是我”真（小王不是小赵），第二个分句“不是小李”真（小李不是小赵），整体真；小李的话“不是小赵也不是小王”中，“不是小赵”假，整体假；小赵的话“不是小李也不是我”中，“不是我”假，整体假；小周的话“不是小赵也不是小李”中，“不是小赵”假，整体假。只有小王猜对，符合一人对。假设张经理当选：则小王的话“不是我也不是小李”中两个分句都真（小王不是张经理，小李不是张经理），真；小李的话“不是小赵也不是小王”中两个都真，真；小赵的话“不是小李也不是我”中两个都真，真；小周的话“不是小赵也不是小李”中两个都真，真。全部真。所以只有小赵当选时，只有小王一人猜对。因此答案是“小赵”。注意选项是四人名字，但小赵是候选人之一。正确答案是“小赵”，对应选项索引2。",
-    difficulty: 0.8,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 113,
+    id: 97,
     type: "logic",
     category: "logic",
     question:
@@ -1900,7 +1596,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 114,
+    id: 98,
     type: "math",
     category: "math",
     question:
@@ -1919,7 +1615,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 115,
+    id: 99,
     type: "math",
     category: "math",
     question:
@@ -1938,7 +1634,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 116,
+    id: 100,
     type: "vocab",
     category: "vocab",
     question:
@@ -1957,7 +1653,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 117,
+    id: 101,
     type: "math",
     category: "math",
     question:
@@ -1976,7 +1672,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 118,
+    id: 102,
     type: "math",
     category: "math",
     question:
@@ -1995,26 +1691,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 119,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“差强人意”的解释，正确的一项是？",
-    options: [
-      "比喻非常令人满意",
-      "比喻完全令人满意",
-      "比喻勉强令人满意",
-      "比喻很不令人满意"
-    ],
-    answer: 2,
-    explanation:
-      "“差强人意”出自《后汉书·吴汉传》，原指还算能振奋人的意志，后用来表示大体上还能让人满意。其中“差”意为稍微、大致，“强”意为振奋、满意。因此，该成语的正确解释是“勉强令人满意”，而非“非常满意”或“完全不满意”。常见误用为形容“非常满意”或“不满意”，需注意其精确含义。",
-    difficulty: 1.1,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 120,
+    id: 103,
     type: "logic",
     category: "logic",
     question:
@@ -2033,7 +1710,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 121,
+    id: 104,
     type: "math",
     category: "math",
     question:
@@ -2052,7 +1729,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 122,
+    id: 105,
     type: "math",
     category: "math",
     question:
@@ -2071,7 +1748,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 123,
+    id: 106,
     type: "logic",
     category: "logic",
     question:
@@ -2090,7 +1767,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 124,
+    id: 107,
     type: "logic",
     category: "logic",
     question:
@@ -2109,7 +1786,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 125,
+    id: 108,
     type: "logic",
     category: "logic",
     question:
@@ -2128,7 +1805,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 126,
+    id: 109,
     type: "logic",
     category: "logic",
     question:
@@ -2147,26 +1824,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 127,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“不刊之论”的理解，正确的一项是？",
-    options: [
-      "不能刊登的言论",
-      "指不能修改的言论，形容文章或言论精当，无懈可击",
-      "指没有刊登价值的文章",
-      "指言论尖锐，不留情面"
-    ],
-    answer: 1,
-    explanation:
-      "\"不刊之论\"中的\"刊\"是削除、修改的意思，古代指把错字刻掉。所以\"不刊之论\"比喻不能改动或不可磨灭的言论，形容言论精当正确。选项A和C错误理解了\"刊\"为\"刊登\"，属于望文生义；选项D则曲解为\"不留情面\"，不符合原意。",
-    difficulty: 0.2,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 128,
+    id: 110,
     type: "math",
     category: "math",
     question:
@@ -2185,7 +1843,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 129,
+    id: 111,
     type: "logic",
     category: "logic",
     question:
@@ -2204,7 +1862,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 130,
+    id: 112,
     type: "math",
     category: "math",
     question:
@@ -2223,7 +1881,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 131,
+    id: 113,
     type: "vocab",
     category: "vocab",
     question:
@@ -2242,7 +1900,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 132,
+    id: 114,
     type: "vocab",
     category: "vocab",
     question:
@@ -2261,7 +1919,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 133,
+    id: 115,
     type: "logic",
     category: "logic",
     question:
@@ -2280,26 +1938,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 134,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“万人空巷”的理解，正确的一项是？",
-    options: [
-      "形容街道上冷冷清清，空无一人",
-      "形容人们纷纷走出家门，聚集在一起，形容庆祝、欢迎等盛况",
-      "形容人山人海，非常拥挤，水泄不通",
-      "形容人们都回到家中，不再外出"
-    ],
-    answer: 1,
-    explanation:
-      "“万人空巷”出自苏轼《八月十七复登望海楼》诗：“赖有明朝看潮在，万人空巷斗新妆。”本意是指家家户户的人都从巷子里出来了，多形容庆祝、欢迎等盛况。而选项中，①“形容街道上冷冷清清，空无一人”恰恰相反，是望文生义；③“形容人山人海，非常拥挤”侧重于拥挤，但“空巷”强调原本在家的都出来了，并不强调拥挤程度；④“形容人们都回到家中”与“空巷”字面矛盾。因此只有选项②最准确。",
-    difficulty: 0.5,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 135,
+    id: 116,
     type: "vocab",
     category: "vocab",
     question:
@@ -2318,7 +1957,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 136,
+    id: 117,
     type: "math",
     category: "math",
     question:
@@ -2337,45 +1976,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 137,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“炙手可热”的解释，正确的一项是？",
-    options: [
-      "形容事物很热门，广受欢迎",
-      "形容权势大，气焰盛，使人不敢接近",
-      "形容温度很高，烫手",
-      "形容非常抢手，供不应求"
-    ],
-    answer: 1,
-    explanation:
-      "“炙手可热”出自唐代杜甫《丽人行》：“炙手可热势绝伦，慎莫近前丞相嗔。”原指杨国忠权势极大，气焰嚣张，使人不敢接近。现多用来比喻气焰很盛，权势很大，含贬义。常被误用为形容事物热门或抢手，属于望文生义。",
-    difficulty: 1.4,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 138,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“首当其冲”的解释，正确的一项是？",
-    options: [
-      "比喻最先受到攻击或遭遇灾难",
-      "比喻首先站出来冲锋陷阵",
-      "比喻前面的人挡住了冲击",
-      "比喻冲到最前面"
-    ],
-    answer: 0,
-    explanation:
-      "首当其冲”出自《三国志·吴书·陆逊传》：“今臣所统，千里受敌，首当其冲。”原指处于要冲位置，最先受到攻击。现多比喻最先受到攻击或遭遇灾难。常被误用为“首先冲锋”，所以选项B、D是常见错误理解。选项C“前面的人挡住冲击”也是曲解。因此只有A项正确。",
-    difficulty: -1.3,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 139,
+    id: 118,
     type: "logic",
     category: "logic",
     question:
@@ -2394,26 +1995,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 140,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“差强人意”的解释，正确的一项是？",
-    options: [
-      "形容让人很不满意",
-      "形容勉强还能使人满意",
-      "形容事物非常完美",
-      "形容使人感到失望"
-    ],
-    answer: 1,
-    explanation:
-      "“差强人意”出自《后汉书·吴汉传》，原指还算能振奋人的意志，现在表示大体上还能让人满意。其中“差”意为稍微、大致，“强”意为振奋。常见误用为“让人不满意”或“令人失望”，实际上它表达的是虽然不完美但尚可接受的意思。",
-    difficulty: 0.1,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 141,
+    id: 119,
     type: "logic",
     category: "logic",
     question:
@@ -2432,26 +2014,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 142,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“七月流火”的理解，正确的一项是？",
-    options: [
-      "指农历七月天气炎热，如同火烤",
-      "指农历七月天气开始转凉，大火星西沉",
-      "形容火势凶猛，蔓延迅速",
-      "比喻人心焦虑，如同火烧"
-    ],
-    answer: 1,
-    explanation:
-      "\"七月流火\"出自《诗经·豳风·七月》，\"流火\"指的是大火星（心宿二）向西移动，表明天气开始转凉。常被误用为形容天气炎热。正确含义是天气转凉，大火星西沉。",
-    difficulty: 0.9,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-  {
-    id: 143,
+    id: 120,
     type: "logic",
     category: "logic",
     question:
@@ -2470,7 +2033,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 144,
+    id: 121,
     type: "vocab",
     category: "vocab",
     question:
@@ -2489,7 +2052,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 145,
+    id: 122,
     type: "math",
     category: "math",
     question:
@@ -2508,7 +2071,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 146,
+    id: 123,
     type: "math",
     category: "math",
     question:
@@ -2527,7 +2090,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 147,
+    id: 124,
     type: "math",
     category: "math",
     question:
@@ -2546,7 +2109,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 148,
+    id: 125,
     type: "math",
     category: "math",
     question:
@@ -2565,7 +2128,7 @@ export const bank: Question[] = [
     guessing: 0.25,
   },
   {
-    id: 149,
+    id: 126,
     type: "vocab",
     category: "vocab",
     question:
@@ -2582,24 +2145,4 @@ export const bank: Question[] = [
     difficulty: -1,
     discrimination: 1,
     guessing: 0.25,
-  },
-  {
-    id: 150,
-    type: "vocab",
-    category: "vocab",
-    question:
-      "下列对成语“不刊之论”的解释，正确的一项是？",
-    options: [
-      "不能刊登的言论",
-      "无法改变的言论",
-      "没有价值的言论",
-      "不合时宜的言论"
-    ],
-    answer: 1,
-    explanation:
-      "“不刊之论”出自汉代扬雄《答刘歆书》，其中“刊”指古代在竹简上刻字，有误则用刀削去，引申为修改。故“不刊”比喻不可更改，整个成语比喻不能改动或不可磨灭的言论，形容言论确当，无懈可击。选项B正确。A项误解“刊”为“刊登”，C项理解为“没有价值”，D项理解为“不合时宜”，均不正确。",
-    difficulty: -0.9,
-    discrimination: 1,
-    guessing: 0.25,
-  },
-];
+  },];
