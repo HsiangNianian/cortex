@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import StatsClient from "./stats-client"
+import { buildOgImageUrl } from "@/lib/metadata-utils"
 
 export async function generateMetadata({
   params,
@@ -9,7 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "stats" })
-  const ogUrl = `/api/og?i=50&t=moderateDecline&c=?&n=5`
+  const ogUrl = buildOgImageUrl({ index: 50, tierKey: "moderateDecline", correct: "?" })
 
   return {
     title: t("pageTitle") + " · Cognitive Rustproof",

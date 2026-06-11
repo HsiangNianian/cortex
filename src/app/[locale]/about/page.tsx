@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QUESTIONS_PER_TEST, QUESTION_TIME } from "@/lib/questions";
+import { buildOgImageUrl } from "@/lib/metadata-utils";
 
 export async function generateMetadata({
   params,
@@ -12,7 +13,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "about" })
-  const ogUrl = `/api/og?i=50&t=moderateDecline&c=?&n=5`
+  const ogUrl = buildOgImageUrl({ index: 50, tierKey: "moderateDecline", correct: "?" })
 
   return {
     title: t("title") + " · Cognitive Rustproof",

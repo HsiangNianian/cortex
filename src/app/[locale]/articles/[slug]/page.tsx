@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { notFound } from "next/navigation"
+import { buildOgImageUrl } from "@/lib/metadata-utils"
 
 const ARTICLES = [
   "ai-making-you-dumber",
@@ -51,7 +52,7 @@ export async function generateMetadata({
   const title = t.raw(`${slug}.title`) as string
   const excerpt = t.raw(`${slug}.excerpt`) as string
 
-  const ogUrl = `/api/og?i=50&t=moderateDecline&c=?&n=5`
+  const ogUrl = buildOgImageUrl({ index: 50, tierKey: "moderateDecline", correct: "?" })
 
   return {
     title: title + " · Cognitive Rustproof",
