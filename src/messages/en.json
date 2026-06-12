@@ -272,6 +272,10 @@
 		"multiSelectHint": "Select all correct answers"
 	},
 	"lockedSelection": "No changing your answer—after all, real fools don't get do-overs.",
+	"handSlipButton": "I slipped!",
+	"handSlipButton2": "You can't be slipping again!",
+	"handSlipFirst": "Alright, I'll trust you this once",
+	"handSlipSecond": "Wash those hands—no more slipping!",
 	"toast": {
 		"resumeRestored": "Previous progress restored",
 		"resultCopied": "Result copied ✓",

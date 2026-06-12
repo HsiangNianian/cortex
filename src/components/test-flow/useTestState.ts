@@ -38,6 +38,8 @@ import {
 
 type Phase = "landing" | "declaration" | "testing" | "processing" | "result";
 
+type ToastState = string | { message: string; action: { label: string; onPress: () => void } } | null;
+
 interface StoredResultSummary {
   degradationIndex: number;
   tierLabel: string;
@@ -69,7 +71,8 @@ export function useTestState() {
   const [savedResult, setSavedResult] = useState<StoredResultSummary | null>(null);
   const [showExplanations, setShowExplanations] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
+  const handSlipsRef = useRef(0);
   const [challengeRef, setChallengeRef] = useState<number | null>(null);
   const [prevResult, setPrevResult] = useState<StoredResultSummary | null>(null);
   const [aiUsage, setAiUsage] = useState<number | null>(null);
@@ -446,6 +449,7 @@ export function useTestState() {
     setAnswers([]);
     setTimeouts([]);
     setSelected(null);
+    handSlipsRef.current = 0;
 
     if (ADAPTIVE_MODE) {
       const session = createTestSession(QUESTIONS_PER_TEST);
@@ -474,8 +478,27 @@ export function useTestState() {
     // Single-select mode (original behavior)
     if (selected !== null) {
       if (selected !== index) {
-        setToast(n("lockedSelection"));
-        setTimeout(() => setToast(null), 2000);
+        if (handSlipsRef.current < 2) {
+          setToast({
+            message: n("lockedSelection"),
+            action: {
+              label: n(handSlipsRef.current === 0 ? "handSlipButton" : "handSlipButton2"),
+              onPress: () => {
+                handSlipsRef.current += 1;
+                setSelected(index);
+                if (handSlipsRef.current === 1) {
+                  setToast(n("handSlipFirst"));
+                } else {
+                  setToast(n("handSlipSecond"));
+                }
+                setTimeout(() => setToast(null), 2000);
+              },
+            },
+          });
+        } else {
+          setToast(n("lockedSelection"));
+          setTimeout(() => setToast(null), 2000);
+        }
       }
       return;
     }
@@ -541,6 +564,7 @@ export function useTestState() {
     setTimeLeft(QUESTION_TIME);
     setResult(null);
     setShowExplanations(false);
+    handSlipsRef.current = 0;
   }
 
   function handleViewLastResult() {

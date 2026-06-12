@@ -272,6 +272,10 @@
 		"multiSelectHint": "请勾选所有正确答案"
 	},
 	"lockedSelection": "不允许更改，毕竟真正的笨蛋就是没有后悔机会的",
+	"handSlipButton": "我手滑了",
+	"handSlipButton2": "你总不能又手滑了吧",
+	"handSlipFirst": "好的我信你一次",
+	"handSlipSecond": "去洗洗手吧，别再手滑了！",
 	"toast": {
 		"resumeRestored": "已恢复上次进度",
 		"resultCopied": "结果已复制 ✓",

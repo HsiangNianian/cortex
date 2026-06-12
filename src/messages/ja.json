@@ -272,6 +272,10 @@
 		"multiSelectHint": "正しい答えをすべて選んでください"
 	},
 	"lockedSelection": "変更はできません。本当のバカには後悔するチャンスすらないのですから",
+	"handSlipButton": "手が滑った！",
+	"handSlipButton2": "まさかまた滑ったなんて言わないよね",
+	"handSlipFirst": "わかりました、今回だけ信じます",
+	"handSlipSecond": "手を洗ってきてください、もう滑らせないで！",
 	"toast": {
 		"resumeRestored": "前回の進行状況を復元しました",
 		"resultCopied": "結果をコピーしました ✓",

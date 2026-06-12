@@ -384,3 +384,108 @@ NEXT_PUBLIC_ADAPTIVE_MODE=true
 pnpm create next-app . --typescript --tailwind --app --src-dir --import-alias "@/*"
 pnpm dev
 ```
+
+---
+
+# 收费模式计划（2026-06 讨论）
+
+## 背景
+
+6 万用户，完全免费，无账户系统。引入 To C 一次性付费模式。
+
+## 核心决策
+
+### 账户：License Key 即身份
+
+**不做传统邮箱/手机注册。** 付款后获得 License Key，输入即激活。Key 就是身份标识。
+
+- 理由：中国用户不常用邮箱，微信登录需企业资质；¥29.9 的价格点，用户容忍度较高
+- 恢复：联系作者通过爱发电私信找回
+
+### 支付：爱发电（微信 + 支付宝）
+
+- 国内平台，零门槛，不需营业执照
+- 创作者创建赞助方案（¥29.90 一次性），用户扫码付款
+- 核心 API：`query-order`（按订单号查订单）、`query-sponsor`（查赞助者列表）
+- 签名方式：`md5(user_id + token + timestamp)` 小写 32 位
+- **不依赖 Webhook**（爱发电 Webhook 无签名验证，不可靠用于发 Key）
+
+### 支付 → Key 兑换流程
+
+```
+用户点"解锁高级版" → 跳转爱发电赞助页 → 微信/支付宝付款
+    → 爱发电显示订单号 → 用户复制订单号
+    → 回到网站输入订单号 → 服务器调用 query-order API 验证
+    → 验证通过 → 生成 License Key → 展示 + 自动激活
+```
+
+### 数据库：D1（新增）+ KV（保留）
+
+- D1：用户数据、License、设备绑定、云端测试记录
+- KV：保留全局统计数据（单 key 极快读取）
+- 全在 Cloudflare 生态内，不增成本
+
+### 现有用户：不迁移
+
+60k 匿名用户数据在 localStorage，无法迁移。免费版加限制（冷却 + 水印），付费用户输入 Key 后升级。
+
+### 功能开关
+
+`NEXT_PUBLIC_PREMIUM_MODE`，关闭时所有人等同 Premium（向后兼容）。
+
+---
+
+## 免费 vs 付费
+
+| | 免费 | 付费（¥29.9 一次性） |
+|---|---|---|
+| 测试频率 | 7 天一次 | 无限次 |
+| 数据存储 | localStorage | 云端同步（跨设备） |
+| 维度分析 | 仅总分 | 逐维度趋势 + 改善速度 |
+| 数据导出 | 无 | CSV / PDF |
+| 分享图片 | 带 "免费版" 水印 | 无水印 |
+| 历史记录 | 最多 20 条 | 全量 + 云端永久 |
+| 个性化训练 | 基础建议 | 弱项针对推送（Phase 2） |
+
+---
+
+## 实施 6 个 Phase
+
+### Phase 1：基础设施
+- D1 建表（licenses / devices / test_results）+ `d1-client.ts`
+- License 生成/验证/设备管理（`src/lib/auth/license.ts`）
+- 爱发电 API 封装（`src/lib/payment/afdian.ts`）：query-order 订单查询 + 签名逻辑
+- API：`/api/verify-order`（验证爱发电订单号并生成 Key）、`/api/license/validate`
+
+### Phase 2：功能门控
+- `PremiumProvider` + `usePremium` hook
+- 7 天冷却检查（`useTestState.handleStart()`）
+- CooldownBanner + 集成 LandingPhase
+- SVG 水印（下载图）+ 文本水印（分享）+ PremiumGuard
+
+### Phase 3：支付流程 UI
+- UnlockButton → 跳转爱发电赞助页
+- LicenseKeyForm：输入爱发电订单号 → 后端验证 → 拿到 License Key → 自动激活
+- 支付说明页（`/unlock`）：流程图 + 订单号输入 + LicenseKeyForm
+
+### Phase 4：云端同步
+- `GET/POST /api/results/sync` + `sync-engine.ts`
+- 激活时首次全量上传、完成测试即时同步、每 30 分钟自动同步
+
+### Phase 5：付费功能
+- 逐维度分析（趋势线、弱项识别）
+- CSV 导出
+- 统计页 Premium 增强
+
+### Phase 6：上线打磨
+- Turnstile 防刷、速率限制、i18n、错误处理、测试
+
+---
+
+## 关键未决问题
+
+1. **爱发电账号** — 需要注册并创建赞助方案。有账号了吗？还是需要新注册？
+2. **Cloudflare D1** — Workers Paid $5/月 已包含，需在 dashboard 创建 D1 数据库
+3. **定价最终确认** — ¥29.90 是否合适？还是 ¥19.90 / ¥39.90？
+4. **Phase 2 微干预** — 训练内容还没做，这影响付费版的价值感。是否需要先把 Phase 2 做出一个 MVP 再上线收费？
+5. **爱发电 API 限制** — `query-order` 按 `out_trade_no` 查询，如果用户输入错误的订单号会查不到。需要错误提示清晰

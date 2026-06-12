@@ -72,7 +72,17 @@ export default function TestFlow() {
             : "pointer-events-none -translate-y-4 opacity-0"
           }`}
       >
-        {s.toast}
+        {typeof s.toast === "string"
+          ? s.toast
+          : s.toast?.message}
+        {s.toast && typeof s.toast === "object" && s.toast.action && (
+          <button
+            className="ml-2 rounded-full bg-background/20 px-3 py-0.5 text-xs font-semibold text-background hover:bg-background/30"
+            onClick={s.toast.action.onPress}
+          >
+            {s.toast.action.label}
+          </button>
+        )}
       </div>
 
       <SiteFooter namespace="result" />
