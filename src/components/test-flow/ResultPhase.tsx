@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { normalCDF, abilityToDegradationIndex, type TestResult, type DimensionScores } from "@/lib/scoring";
+import { normalCDF, abilityToDegradationIndex, scoreAnswer, isCorrect, type TestResult, type DimensionScores } from "@/lib/scoring";
 import RadarChart from "@/components/radar-chart";
 import { DegradationGauge } from "./DegradationGauge";
 
@@ -514,8 +514,13 @@ export function ResultPhase({
             <div className="mt-3 space-y-3">
               {result.questions.map((q, i) => {
                 const userAnswer = result.answers[i];
-                const isCorrect = userAnswer === q.answer;
+                const answerScore = scoreAnswer(userAnswer, q.answer);
+                const isFullCorrect = answerScore === 1;
+                const isPartialCorrect = answerScore > 0 && answerScore < 1;
                 const timedOut = result.timeouts[i];
+                const correctLabel = Array.isArray(q.answer)
+                  ? q.answer.map((a) => q.options[a]).join(", ")
+                  : q.options[q.answer];
 
                 return (
                   <div key={i} className="rounded-lg border p-3 text-sm">
@@ -530,16 +535,22 @@ export function ResultPhase({
                         className={`text-xs font-medium ${
                           timedOut
                             ? "text-muted-foreground"
-                            : isCorrect
+                            : isFullCorrect
                               ? "text-green-600"
-                              : "text-red-600"
+                              : isPartialCorrect
+                                ? "text-amber-600"
+                                : "text-red-600"
                         }`}
                       >
                         {timedOut
                           ? n("result.reviewTimeout")
-                          : isCorrect
+                          : isFullCorrect
                             ? n("result.reviewCorrect")
-                            : n("result.reviewWrong")}
+                            : isPartialCorrect
+                              ? n("result.reviewPartial", {
+                                  score: Math.round(answerScore * 100),
+                                })
+                              : n("result.reviewWrong")}
                       </span>
                     </div>
                     <p className="mt-1 text-muted-foreground">
@@ -549,14 +560,18 @@ export function ResultPhase({
                     <div className="mt-2 text-xs text-muted-foreground">
                       {n("result.reviewYourAnswer")}
                       {userAnswer !== null
-                        ? q.options[userAnswer]
+                        ? Array.isArray(userAnswer)
+                          ? userAnswer.length > 0
+                            ? userAnswer.map((a) => q.options[a]).join(", ")
+                            : n("result.reviewUnanswered")
+                          : q.options[userAnswer]
                         : n("result.reviewUnanswered")}
-                      {!isCorrect && !timedOut && (
+                      {!isFullCorrect && !timedOut && (
                         <>
                           {" · "}
                           <span className="text-green-600">
                             {n("result.reviewCorrectAnswer", {
-                              answer: q.options[q.answer],
+                              answer: correctLabel,
                             })}
                           </span>
                         </>
@@ -565,7 +580,7 @@ export function ResultPhase({
                     {timedOut && (
                       <div className="mt-1 text-xs text-green-600">
                         {n("result.reviewCorrectAnswer", {
-                          answer: q.options[q.answer],
+                          answer: correctLabel,
                         })}
                       </div>
                     )}

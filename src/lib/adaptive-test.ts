@@ -95,7 +95,7 @@ export function recordResponse(
   questionId: number,
   type: "logic" | "math" | "vocab",
   difficulty: number,
-  score: 0 | 1,
+  score: number, // 0–1, fractional for partial credit
   responseTime?: number,
 ): void {
   session.responses.push({

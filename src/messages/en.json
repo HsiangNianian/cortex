@@ -132,7 +132,8 @@
 		"scoringPctRate": "Correct / Total",
 		"scoringPctFormula": "Degradation index = 100 − (correct / total × 100)",
 		"scoringIrtResult": "Degradation index",
-		"scoringByDimension": "Per-dimension ability"
+		"scoringByDimension": "Per-dimension ability",
+		"reviewPartial": "Partial ({score}%)"
 	},
 	"stats": {
 		"pageTitle": "Platform-wide Statistics",
@@ -266,7 +267,9 @@
 			"sequence": "Sequence Reasoning",
 			"math": "Mental Math",
 			"vocab": "Vocabulary"
-		}
+		},
+		"multiSelect": "Multi-select",
+		"multiSelectHint": "Select all correct answers"
 	},
 	"lockedSelection": "No changing your answer—after all, real fools don't get do-overs.",
 	"toast": {

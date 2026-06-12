@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { scoreAnswer, isCorrect } from "@/lib/scoring";
 import {
   Card,
   CardContent,
@@ -15,16 +16,31 @@ import { QUESTION_TIME } from "@/lib/questions";
 import { QuestionTimer } from "./QuestionTimer";
 import { renderEmphasized } from "./helpers";
 
+/** Selected options: null = nothing, number = single, number[] = multi */
+type Selection = number | null | number[];
+
 interface QuestionCardProps {
   questions: Question[];
   currentQ: number;
-  answers: (number | null)[];
+  answers: (number | null | number[])[];
   timeLeft: number;
-  selected: number | null;
+  selected: Selection;
   isLastQuestion: boolean;
   totalQuestions: number;
   handleSelectOption: (i: number) => void;
   handleNext: () => void;
+}
+
+function isSelected(sel: Selection, i: number): boolean {
+  if (sel === null) return false;
+  if (Array.isArray(sel)) return sel.includes(i);
+  return sel === i;
+}
+
+function isSelectionEmpty(sel: Selection): boolean {
+  if (sel === null) return true;
+  if (Array.isArray(sel)) return sel.length === 0;
+  return false;
 }
 
 export function QuestionCard({
@@ -42,6 +58,8 @@ export function QuestionCard({
   const question = questions[currentQ];
   if (!question) return null;
 
+  const isMulti = Array.isArray(question.answer);
+
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
       <CardHeader className="pb-3">
@@ -53,20 +71,28 @@ export function QuestionCard({
             <Badge variant="outline" className="text-xs">
               {n("question.category." + question.category)}
             </Badge>
+            {isMulti && (
+              <Badge className="bg-amber-100 text-amber-800 text-xs dark:bg-amber-900/30 dark:text-amber-400">
+                {n("question.multiSelect")}
+              </Badge>
+            )}
           </div>
           <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
         </div>
 
-        {/* Progress bar: always N segments, answered ones turn solid */}
+        {/* Progress bar */}
         <div className="mt-3 flex gap-[3px]">
           {Array.from({ length: totalQuestions }).map((_, i) => {
-            const isAnswered = answers[i] !== undefined;
+            const answered =
+              answers[i] !== undefined &&
+              answers[i] !== null &&
+              (Array.isArray(answers[i]) ? answers[i].length > 0 : true);
             const isCurrent = i === currentQ;
             return (
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-sm transition-colors ${
-                  isAnswered
+                  answered
                     ? "bg-foreground"
                     : isCurrent
                       ? "bg-foreground/30"
@@ -84,32 +110,51 @@ export function QuestionCard({
 
       <CardContent className="space-y-2">
         {question.options.map((option, i) => {
-          const isSelected = selected === i;
-          const isCorrect =
-            answers[currentQ] !== undefined && question.answer === i;
-          const isWrong = answers[currentQ] === i && !isCorrect;
-
-          const showFeedback = answers[currentQ] !== undefined;
+          const optSelected = isSelected(selected, i);
+          const showFeedback =
+            answers[currentQ] !== undefined &&
+            answers[currentQ] !== null;
+          const answerCorrect =
+            showFeedback && isCorrect(i, question.answer);
+          const userPicked =
+            showFeedback &&
+            (Array.isArray(answers[currentQ])
+              ? (answers[currentQ] as number[]).includes(i)
+              : answers[currentQ] === i);
+          const isWrong = userPicked && !answerCorrect;
+          // Partial credit: some correct but not full
+          const answerScore =
+            showFeedback && isMulti
+              ? scoreAnswer(answers[currentQ], question.answer)
+              : -1;
+          const isPartial = answerScore > 0 && answerScore < 1;
 
           return (
             <button
               key={i}
-              disabled={answers[currentQ] !== undefined}
+              disabled={showFeedback}
               onClick={() => handleSelectOption(i)}
               className={`w-full rounded-lg border-2 p-4 text-left text-sm transition-all active:scale-[0.98] ${
                 showFeedback
-                  ? isCorrect
+                  ? answerCorrect
                     ? "border-green-500 bg-green-50 text-green-800"
-                    : isWrong
-                      ? "border-red-500 bg-red-50 text-red-800"
-                      : "border-muted opacity-60"
-                  : isSelected
+                    : isPartial
+                      ? "border-amber-500 bg-amber-50 text-amber-800"
+                      : isWrong
+                        ? "border-red-500 bg-red-50 text-red-800"
+                        : "border-muted opacity-60"
+                  : optSelected
                     ? "border-primary bg-primary/5"
                     : "border-muted hover:border-primary/50 hover:bg-accent"
               }`}
             >
               <span className="font-medium">
-                {String.fromCharCode(65 + i)}.
+                {isMulti
+                  ? optSelected
+                    ? "☑"
+                    : "☐"
+                  : String.fromCharCode(65 + i)}
+                .
               </span>{" "}
               {renderEmphasized(option)}
             </button>
@@ -118,10 +163,15 @@ export function QuestionCard({
       </CardContent>
 
       <CardFooter className="flex-col gap-2">
+        {isMulti && (
+          <p className="w-full text-center text-xs text-muted-foreground">
+            {n("question.multiSelectHint")}
+          </p>
+        )}
         <Button
           size="lg"
           className="w-full text-base"
-          disabled={selected === null}
+          disabled={isSelectionEmpty(selected)}
           onClick={handleNext}
         >
           {isLastQuestion

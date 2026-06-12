@@ -1,7 +1,7 @@
 export interface ResponseRecord {
   questionId: number;
   type: "logic" | "math" | "vocab";
-  score: 0 | 1; // 1 = correct, 0 = incorrect/timedout
+  score: number; // 0–1, fractional for partial credit
   difficulty: number;
   discrimination?: number;
   guessing?: number;

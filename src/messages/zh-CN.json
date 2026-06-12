@@ -132,7 +132,8 @@
 		"scoringPctRate": "正确 / 总题",
 		"scoringPctFormula": "退化指数 = 100 − (正确数 / 总题数 × 100)",
 		"scoringIrtResult": "退化指数",
-		"scoringByDimension": "各维度能力估计"
+		"scoringByDimension": "各维度能力估计",
+		"reviewPartial": "部分正确 ({score}%)"
 	},
 	"stats": {
 		"pageTitle": "全平台统计",
@@ -266,7 +267,9 @@
 			"sequence": "数列推理",
 			"math": "速算",
 			"vocab": "词汇语义"
-		}
+		},
+		"multiSelect": "多选",
+		"multiSelectHint": "请勾选所有正确答案"
 	},
 	"lockedSelection": "不允许更改，毕竟真正的笨蛋就是没有后悔机会的",
 	"toast": {

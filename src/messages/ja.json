@@ -132,7 +132,8 @@
 		"scoringPctRate": "正解 / 合計",
 		"scoringPctFormula": "退化指数 = 100 − (正解数 / 合計問題数 × 100)",
 		"scoringIrtResult": "退化指数",
-		"scoringByDimension": "次元別能力推定"
+		"scoringByDimension": "次元別能力推定",
+		"reviewPartial": "部分的 ({score}%)"
 	},
 	"stats": {
 		"pageTitle": "全体統計",
@@ -266,7 +267,9 @@
 			"sequence": "数列推論",
 			"math": "暗算",
 			"vocab": "語彙意味"
-		}
+		},
+		"multiSelect": "複数選択",
+		"multiSelectHint": "正しい答えをすべて選んでください"
 	},
 	"lockedSelection": "変更はできません。本当のバカには後悔するチャンスすらないのですから",
 	"toast": {

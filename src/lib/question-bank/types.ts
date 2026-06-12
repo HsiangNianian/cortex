@@ -4,7 +4,7 @@ export interface Question {
   category: string; // translation key, e.g. "logic", "sequence", "math", "vocab"
   question: string;
   options: string[];
-  answer: number; // index into options
+  answer: number | number[]; // index into options, array for multi-answer
   explanation: string;
   // Phase 1: IRT parameters
   difficulty: number; // IRT b-parameter, logit scale -3 to +3

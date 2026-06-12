@@ -15,6 +15,7 @@ import {
   abilityToDegradationIndex,
   generateShareText,
   getTierByIndex,
+  scoreAnswer,
   type TestResult,
   type DimensionScores,
 } from "@/lib/scoring";
@@ -60,8 +61,8 @@ export function useTestState() {
   const [phase, setPhase] = useState<Phase>("landing");
   const [declared, setDeclared] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [answers, setAnswers] = useState<(number | null)[]>([]);
+  const [selected, setSelected] = useState<number | null | number[]>(null);
+  const [answers, setAnswers] = useState<(number | null | number[])[]>([]);
   const [timeouts, setTimeouts] = useState<boolean[]>([]);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
   const [result, setResult] = useState<TestResult | null>(null);
@@ -458,6 +459,19 @@ export function useTestState() {
   }
 
   function handleSelectOption(index: number) {
+    // Multi-select mode: toggle option in/out
+    if (questions[currentQ] && Array.isArray(questions[currentQ].answer)) {
+      setSelected((prev) => {
+        const arr: number[] = Array.isArray(prev) ? [...prev] : prev !== null ? [prev] : [];
+        const idx = arr.indexOf(index);
+        if (idx >= 0) arr.splice(idx, 1);
+        else arr.push(index);
+        return arr;
+      });
+      return;
+    }
+
+    // Single-select mode (original behavior)
     if (selected !== null) {
       if (selected !== index) {
         setToast(n("lockedSelection"));
@@ -468,7 +482,7 @@ export function useTestState() {
     setSelected(index);
   }
 
-  function submitAnswer(answer: number | null) {
+  function submitAnswer(answer: number | null | number[]) {
     const timedOut = answer === null && timeLeft === 0;
     stopTimer();
     setAnswers((prev) => [...prev, answer]);
@@ -479,7 +493,7 @@ export function useTestState() {
     if (ADAPTIVE_MODE && adaptiveSessionRef.current) {
       const answeredQ = questions[currentQ];
       if (answeredQ) {
-        const score = answer === answeredQ.answer ? 1 : 0;
+        const score = scoreAnswer(answer, answeredQ.answer);
         recordResponse(
           adaptiveSessionRef.current,
           answeredQ.id,
@@ -502,6 +516,7 @@ export function useTestState() {
 
   function handleNext() {
     if (selected === null) return;
+    if (Array.isArray(selected) && selected.length === 0) return;
     submitAnswer(selected);
   }
 

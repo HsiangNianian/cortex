@@ -9,7 +9,7 @@ const PROGRESS_TTL = 24 * 60 * 60 * 1000; // 24h
 export interface SavedProgress {
   questions: Question[];
   currentQ: number;
-  answers: (number | null)[];
+  answers: (number | null | number[])[];
   timeouts: boolean[];
   declared: boolean;
   aiUsage: number | null;

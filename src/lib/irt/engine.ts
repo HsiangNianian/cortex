@@ -92,7 +92,7 @@ export function estimateAbility(
       const p = irf(theta, r.difficulty, r.discrimination, r.guessing);
       // Clamp to avoid log(0)
       const cp = Math.max(1e-15, Math.min(1 - 1e-15, p));
-      logLikelihood += r.score === 1 ? Math.log(cp) : Math.log(1 - cp);
+      logLikelihood += r.score * Math.log(cp) + (1 - r.score) * Math.log(1 - cp);
     }
 
     // Log-prior

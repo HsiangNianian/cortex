@@ -1,5 +1,39 @@
 import type { Question } from "./questions"
 
+/**
+ * Score a user's answer against the correct answer(s).
+ *
+ * Single-select: 0 (wrong) or 1 (correct).
+ * Multi-select:  0 (picked any wrong option),
+ *                 otherwise fraction of correct options selected (partial credit).
+ */
+export function scoreAnswer(
+  userAnswer: number | null | number[],
+  correctAnswer: number | number[],
+): number {
+  if (userAnswer === null) return 0
+  // Multi-select with multi-answer
+  if (Array.isArray(userAnswer) && Array.isArray(correctAnswer)) {
+    const correctSet = new Set(correctAnswer)
+    // Any wrong option → 0
+    if (userAnswer.some((a) => !correctSet.has(a))) return 0
+    // Fraction of correct options selected
+    return userAnswer.length / correctAnswer.length
+  }
+  // Multi-select answer but single-select user input
+  if (Array.isArray(correctAnswer)) return correctAnswer.includes(userAnswer as number) ? 1 : 0
+  // Single-select both sides
+  return userAnswer === correctAnswer ? 1 : 0
+}
+
+/** Convenience: did the user get full credit? */
+export function isCorrect(
+  userAnswer: number | null | number[],
+  correctAnswer: number | number[],
+): boolean {
+  return scoreAnswer(userAnswer, correctAnswer) === 1
+}
+
 export interface DimensionScores {
   logic: number | null // percentage correct (0-100), null if no questions of this type
   math: number | null
@@ -117,7 +151,7 @@ export interface TestResult {
   totalQuestions: number
   tier: ResultTier
   dimensionScores: DimensionScores
-  answers: (number | null)[]
+  answers: (number | null | number[])[]
   timeouts: boolean[]
   questions: Question[]
   /** Phase 1: how the degradation index was computed */
@@ -177,13 +211,13 @@ export function abilityToDegradationIndex(theta: number): number {
  * Calculate test result from user's answers.
  */
 export function calculateResult(
-  answers: (number | null)[],
+  answers: (number | null | number[]) [],
   timeouts: boolean[],
   questions: Question[],
 ): TestResult {
   const correctCount = answers.reduce<number>((count, answer, i) => {
     if (answer === null) return count
-    return count + (answer === questions[i].answer ? 1 : 0)
+    return count + scoreAnswer(answer, questions[i].answer)
   }, 0)
 
   const score = (correctCount / questions.length) * 100
@@ -200,9 +234,7 @@ export function calculateResult(
     const type = questions[i].type
     if (!dimCorrect[type]) dimCorrect[type] = { correct: 0, total: 0 }
     dimCorrect[type].total++
-    if (answers[i] !== null && answers[i] === questions[i].answer) {
-      dimCorrect[type].correct++
-    }
+    dimCorrect[type].correct += scoreAnswer(answers[i], questions[i].answer)
   }
 
   const dimensionScores: DimensionScores = {
