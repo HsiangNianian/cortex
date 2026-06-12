@@ -24,6 +24,7 @@ jobs:
       - run: pnpm cf:build
         env:
           NEXT_PUBLIC_ADAPTIVE_MODE: true
+          NEXT_PUBLIC_PREMIUM_MODE: true
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
