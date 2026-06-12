@@ -14,13 +14,13 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // API calls: network-only (don't cache)
-  if (event.request.url.includes("/api/")) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
+  // Only handle GET requests — skip POST, PUT, DELETE, etc.
+  if (event.request.method !== "GET") return;
 
-  // Navigation (HTML pages): network-first, never stale
+  // API calls: network-only (don't cache)
+  if (event.request.url.includes("/api/")) return;
+
+  // Navigation (HTML pages): network-first, fallback to cache
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request)),
@@ -33,9 +33,10 @@ self.addEventListener("fetch", (event) => {
     caches.open(CACHE).then((cache) =>
       cache.match(event.request).then((cached) => {
         const fetchPromise = fetch(event.request).then((res) => {
-          cache.put(event.request, res.clone());
+          // Only cache successful responses
+          if (res.ok) cache.put(event.request, res.clone());
           return res;
-        });
+        }).catch(() => cached);
         return cached ?? fetchPromise;
       }),
     ),
