@@ -125,9 +125,9 @@ const TYPE_PROMPTS: Record<
   }`,
   },
   event: {
-    zh: "题型：事件事理分析。包括：事件排序（给4-5个事件，选正确的因果关系/时间顺序）、因果推断（根据场景判断最可能的原因或结果）、论证分析（找前提假设、逻辑漏洞、加强/削弱选项）。以事件排序为主，因为答案唯一确定。",
-    en: "Type: Event & Causal Reasoning. Includes: event sequencing (order 4-5 events by cause/effect or timeline), causal inference (identify the most likely cause or outcome from a scenario), argument analysis (find assumptions, logical flaws, strengthen/weaken options). Prefer event sequencing for unambiguous answers.",
-    ja: "题型：事象因果分析。内容：出来事の並べ替え（4-5の事象を因果関係/時系列順に並べる）、因果推論（シナリオから最も可能性の高い原因や結果を選ぶ）、論証分析（前提仮定、論理的欠陥、強化/弱化する選択肢を見つける）。解答が一意に定まる出来事の並べ替え問題を優先してください。",
+    zh: "题型：事件排序。给4-5个事件描述，要求按因果或时间顺序排列。4个选项各为一种排序，只有1个正确。事件之间必须有唯一确定的因果/时序逻辑链条。场景覆盖商业、历史、日常生活、科技等。",
+    en: "Type: Event Sequencing. Present 4-5 events for ordering by cause/effect or timeline. 4 options are different orderings, only 1 correct. Clear causal/temporal logic chain between events. Scenarios: business, history, daily life, technology, etc.",
+    ja: "题型：出来事の並べ替え。4-5の出来事を因果関係または時系列順に並べる。4つの選択肢は異なる並べ替えで、正解は1つのみ。出来事間に明確な因果/時系列の論理チェーンが必要。シチュエーション：ビジネス、歴史、日常生活、テクノロジーなど。",
     examples: `良好示例（事件排序）：
   {
     "question": "将以下事件按因果逻辑排序：\\n① 公司股价大跌\\n② 财报显示季度亏损\\n③ CEO宣布辞职\\n④ 投资者抛售股票\\n\\n正确的因果顺序是什么？",
@@ -137,13 +137,39 @@ const TYPE_PROMPTS: Record<
     "difficulty": -0.2
   }`,
   },
+  "event-cause": {
+    zh: "题型：因果推断。给出一个场景或现象，4个选项分别是对其原因或结果的推断。只有1个是最合理、最能解释或最可能发生的。干扰项要有迷惑性但逻辑上可排除。场景覆盖社会现象、经济行为、日常生活、科技趋势等。",
+    en: "Type: Causal Inference. Present a scenario or phenomenon, 4 options each infer a cause or outcome. Only 1 is the most plausible explanation or consequence. Distractors should be seductive but logically eliminable. Scenarios: social phenomena, economic behavior, daily life, tech trends, etc.",
+    ja: "题型：因果推論。シナリオや現象を提示し、4つの選択肢がそれぞれ原因や結果を推論する。最も妥当で説明力の高い選択肢が1つだけ正解。誤答選択肢は魅力的だが論理的に排除可能。シナリオ：社会現象、経済行動、日常生活、テクノロジー動向など。",
+    examples: `良好示例（因果推断）：
+  {
+    "question": "某市推行公交免费政策半年后，私家车通行量下降了40%，但公交乘坐量只增长了8%。以下哪项最能解释这个差异？",
+    "options": ["许多市民转而骑自行车或步行出行", "公交运力不足导致部分人被挤出", "油价同期大幅上涨", "城市人口同期减少了30%"],
+    "answer": 0,
+    "explanation": "私家车通行量降40%但公交仅增8%，说明减少的私家车出行并未全部转为公交。自行车/步行是最合理的替代方式(A)。B中'挤出'无法解释为何私家车也减少；C油价上涨确实会减少开车，但通常也会增加公交需求，不应只增8%；D人口减少30%是极端假设，不符合常识。",
+    "difficulty": 0.5
+  }`,
+  },
+  "event-argument": {
+    zh: "题型：论证分析。给出一段论证（前提→结论），4个选项分别是找出论证所依赖的假设、逻辑漏洞、最能加强或削弱论证的选项。只有1个正确。类似GMAT Critical Reasoning但使用中国语境。",
+    en: "Type: Argument Analysis. Present an argument (premise → conclusion), 4 options each identify an assumption, logical flaw, strengthener, or weakener. Only 1 correct. Similar to GMAT Critical Reasoning but with localized contexts.",
+    ja: "题型：論証分析。論証（前提→結論）を提示し、4つの選択肢がそれぞれ前提仮定・論理的欠陥・強化・弱化のいずれかを示す。正解は1つのみ。GMAT Critical Reasoningに類似するが、日本の文脈に合わせる。",
+    examples: `良好示例（论证分析）：
+  {
+    "question": ""这项研究表明，每天喝绿茶的人患心脏病的风险降低30%。因此，喝绿茶可以预防心脏病。"\n\n上述论证最依赖以下哪项假设？",
+    "options": ["喝绿茶的人在其他生活方式上也更健康，但研究已通过对照组排除了这一因素", "绿茶是唯一能够预防心脏病的饮品", "研究对象中没有人在研究期间改变饮茶习惯", "喝绿茶与较低的心脏病风险之间存在因果关系，而非仅仅相关"],
+    "answer": 3,
+    "explanation": "论证从'相关'（喝绿茶者风险低）直接跳到'因果'（绿茶预防心脏病）。这个推理依赖的核心假设是相关关系确实反映了因果关系(D)。A如果研究已排除其他因素，反而削弱了假设的必要性；B中'唯一'过于绝对；C是次要细节，不触及核心逻辑漏洞。",
+    "difficulty": 1.2
+  }`,
+  },
 };
 
 /* ─── Assemble Prompt ─── */
 
 export interface GeneratePromptInput {
   locale: string;
-  type: "logic" | "math" | "vocab" | "event";
+  type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument";
   difficulty: number;
   usedQuestions: string[]; // short summaries or IDs to avoid duplicates
 }
@@ -164,7 +190,9 @@ export function buildGeneratePrompt(input: GeneratePromptInput): {
 
   const userPrompt =
     locale === "zh-CN"
-      ? `请生成一道${diffLabel}难度的${type === "logic" ? "逻辑推理" : type === "math" ? "速算" : type === "vocab" ? "词汇语义" : "事件事理分析"}题，IRT difficulty 参数约为 ${difficulty}。${avoidText}
+      ? `请生成一道${diffLabel}难度的${
+        type === "logic" ? "逻辑推理" : type === "math" ? "速算" : type === "vocab" ? "词汇语义" : type === "event" ? "事件排序" : type === "event-cause" ? "因果推断" : "论证分析"
+      }题，IRT difficulty 参数约为 ${difficulty}。${avoidText}
 
 确保：
 - 题目和选项使用中文
@@ -172,14 +200,18 @@ export function buildGeneratePrompt(input: GeneratePromptInput): {
 - 解析详细、易懂
 - difficulty 保留一位小数`
       : locale === "ja"
-        ? `難易度「${diffLabel}」の${type === "logic" ? "論理推論" : type === "math" ? "暗算" : type === "vocab" ? "語彙意味" : "事象因果分析"}問題を1問生成してください。IRT difficulty パラメータ: 約 ${difficulty}。${avoidText}
+        ? `難易度「${diffLabel}」の${
+          type === "logic" ? "論理推論" : type === "math" ? "暗算" : type === "vocab" ? "語彙意味" : type === "event" ? "出来事並替" : type === "event-cause" ? "因果推論" : "論証分析"
+        }問題を1問生成してください。IRT difficulty パラメータ: 約 ${difficulty}。${avoidText}
 
 確認：
 - 問題文と選択肢は日本語
 - 答えは一意で正しい
 - 解説は詳細で分かりやすい
 - difficulty は小数点以下1桁`
-        : `Generate one ${diffLabel} ${type === "event" ? "event/causal reasoning" : type} question. IRT difficulty parameter: approximately ${difficulty}.${avoidText}
+        : `Generate one ${diffLabel} ${
+          type === "event" ? "event sequencing" : type === "event-cause" ? "causal inference" : type === "event-argument" ? "argument analysis" : type
+        } question. IRT difficulty parameter: approximately ${difficulty}.${avoidText}
 
 Ensure:
 - Question and options in English

@@ -94,7 +94,7 @@ export function selectNextQuestion(
 export function recordResponse(
   session: AdaptiveTestSession,
   questionId: number,
-  type: "logic" | "math" | "vocab" | "event",
+  type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument",
   difficulty: number,
   score: number, // 0–1, fractional for partial credit
   responseTime?: number,

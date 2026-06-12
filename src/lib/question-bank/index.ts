@@ -31,7 +31,7 @@ export function selectQuestions(n: number, locale = "zh-CN"): Question[] {
   const logic = BANK.filter((q) => q.type === "logic");
   const math = BANK.filter((q) => q.type === "math");
   const vocab = BANK.filter((q) => q.type === "vocab");
-  const event = BANK.filter((q) => q.type === "event");
+  const event = BANK.filter((q) => q.type === "event" || q.type === "event-cause" || q.type === "event-argument");
 
   // Pick at least 1 from each
   const picked = new Set<number>();

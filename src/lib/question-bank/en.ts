@@ -2937,4 +2937,1000 @@ export const bank: Question[] = [
     discrimination: 1,
     guessing: 0.25,
   },
+
+  // Causal Inference
+  {
+    id: 172,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "After a company introduced a four-day workweek, employee satisfaction scores rose by 35%, but overall productivity remained flat compared to the previous year. Which of the following best explains this outcome?",
+    options: ["Employees used the extra day off for leisure rather than rest","The company simultaneously reduced headcount by 10%","Employees condensed five days of work into four, leading to burnout","The productivity measurement included only output quantity, not quality"],
+    answer: 0,
+    difficulty: 0.2,
+    discrimination: 1,
+    guessing: 0.25,
+    explanation:
+      "If employees use the extra day for leisure rather than deep rest or skill development, satisfaction rises but productivity gains are minimal. A is the most direct explanation. B would suggest productivity per person increased. C would likely decrease satisfaction. D shifts the measurement criteria but does not explain the flat productivity.",
+  },
+  {
+    id: 173,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A national park introduced a mandatory reservation system to reduce overcrowding. Visitor numbers dropped by 45%, but visitor satisfaction scores also decreased. Which of the following best explains the decrease in satisfaction?",
+    options: ["The reservation system created access barriers for spontaneous visitors","Fewer visitors meant less revenue for park maintenance","Nearby parks without reservations saw increased attendance","Weather conditions were particularly poor during the study period"],
+    answer: 0,
+    difficulty: 0.3,
+    discrimination: 1,
+    guessing: 0.25,
+    explanation:
+      "The reservation system, while reducing crowding, created friction for visitors who preferred spontaneous trips. Those who did visit may have been frustrated by the booking process itself. A directly explains the paradox. B concerns maintenance, not visitor experience. C is about other parks. D is an external factor.",
+  },
+
+  // Argument Analysis
+  {
+    id: 174,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A study tracked 10,000 adults for 15 years and found that those who owned pets had a 25% lower risk of heart disease. The researchers concluded: 'Pet ownership reduces the risk of heart disease.'\n\nWhich of the following is an assumption the argument depends on?",
+    options: ["People who choose to own pets do not already have characteristics that lower heart disease risk","Dog ownership provides more cardiovascular benefit than cat ownership","The study participants accurately reported their pet ownership status","Heart disease risk does not vary significantly across different age groups"],
+    answer: 0,
+    difficulty: 0.8,
+    discrimination: 1,
+    guessing: 0.25,
+    explanation:
+      "The argument moves from correlation (pet owners have lower risk) to causation (pet ownership reduces risk). This requires assuming no confounding variable — that people who choose pets are not inherently healthier. A correctly identifies this assumption. B is irrelevant. C is a minor methodological detail. D is too broad.",
+  },
+  {
+    id: 175,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A city council member argues: 'Since we installed security cameras in the downtown area, reported crimes have decreased by 20%. Security cameras are clearly effective at preventing crime.'\n\nWhich of the following, if true, most weakens the argument?",
+    options: ["Police patrols in the downtown area were doubled during the same period","The security cameras have frequent technical malfunctions","Reported crimes decreased by a similar percentage in nearby cities without cameras","Some crimes may have shifted to areas without cameras rather than being prevented"],
+    answer: 2,
+    difficulty: 1,
+    discrimination: 1,
+    guessing: 0.25,
+    explanation:
+      "If nearby cities without cameras experienced similar crime drops, the decrease is likely due to broader trends (e.g., economic improvement) rather than cameras. C is the strongest weakener, providing a controlled comparison. A weakens (alternative cause) but less strongly. B is about malfunction rate. D suggests crime displacement, not prevention failure.",
+  },
+
+  // ════════════════════════════════════════════
+  //  LLM 批量生成 · 2026-06-12
+  //  Event Seq 23 题、Argument 13 题、Cause/Effect 13 题
+  // ════════════════════════════════════════════
+  {
+    id: 176,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the correct causal sequence:\n1. Farmers experience lower crop yields.\n2. The city imposes water restrictions.\n3. Food prices rise.\n4. The region suffers a severe drought.",
+    options: [
+      "Severe drought, Water restrictions, Lower crop yields, Higher food prices",
+      "Water restrictions, Severe drought, Lower crop yields, Higher food prices",
+      "Lower crop yields, Severe drought, Water restrictions, Higher food prices",
+      "Severe drought, Lower crop yields, Water restrictions, Higher food prices"
+    ],
+    answer: 0,
+    explanation:
+      "The drought is the initial cause, leading to water restrictions as a response. The restrictions reduce water for irrigation, causing lower crop yields. The reduced supply then drives up food prices.",
+    difficulty: -0.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 177,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical chronological order based on cause and effect:\n1. Company A launches a new smartphone.\n2. Sales of Company A's phone drop significantly.\n3. Competitor B releases a similar phone at a lower price.\n4. Sales skyrocket in the first month.\n5. Company A reduces the price of its phone.",
+    options: [
+      "1, 4, 3, 2, 5",
+      "1, 3, 4, 2, 5",
+      "1, 4, 2, 3, 5",
+      "1, 3, 5, 4, 2"
+    ],
+    answer: 0,
+    explanation:
+      "The correct sequence starts with the launch (1) causing high sales (4). Then, competitor's release (3) leads to a sales drop (2), prompting a price reduction (5). Option 2 has competitor before high sales, option 3 has drop before competitor, and option 4 has price reduction before drop, which are illogical.",
+    difficulty: -0.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 178,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the correct causal sequence: (1) Software company releases new product version. (2) Customer complaints about bugs increase. (3) Company hires additional developers. (4) Product performance improves. (5) Customer satisfaction ratings rise.",
+    options: [
+      "Release → Complaints → Hire → Improve → Satisfaction",
+      "Complaints → Release → Hire → Improve → Satisfaction",
+      "Release → Hire → Complaints → Improve → Satisfaction",
+      "Release → Complaints → Improve → Hire → Satisfaction"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence starts with the release of a new version (1), which introduces bugs leading to increased complaints (2). In response, the company hires more developers (3) to fix the issues, resulting in improved performance (4), and ultimately higher customer satisfaction (5). Any other order breaks the logical cause-and-effect relationships, such as hiring before complaints or improving performance before fixing bugs.",
+    difficulty: 1.2,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 179,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) The company launched a new smartphone. (2) Sales of the smartphone exceeded projections. (3) The marketing team released an online advertising campaign for the smartphone. (4) Website traffic to the product page increased significantly.",
+    options: [
+      "1, 3, 4, 2",
+      "3, 1, 4, 2",
+      "1, 2, 3, 4",
+      "3, 4, 1, 2"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence starts with the product launch (1), which enables the marketing team to create an advertising campaign (3). The campaign then drives an increase in website traffic (4), which subsequently leads to higher sales (2). Option A (1,3,4,2) reflects this logical chain. Other options either place marketing before the product is available (B), imply sales occurred before traffic increased (C), or suggest traffic increased before the launch or campaign (D).",
+    difficulty: 0.1,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 180,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the correct causal sequence: (1) The company recalls the product. (2) Health inspectors confirm contamination. (3) Consumers report food poisoning. (4) The company issues a public apology.",
+    options: [
+      "3 → 2 → 1 → 4",
+      "1 → 3 → 2 → 4",
+      "3 → 1 → 2 → 4",
+      "2 → 3 → 1 → 4"
+    ],
+    answer: 0,
+    explanation:
+      "The correct sequence begins with consumers reporting food poisoning (3). Health inspectors then investigate and confirm contamination (2). Following confirmation, the company recalls the product (1). Finally, the company issues a public apology (4). Thus, the order is 3-2-1-4.",
+    difficulty: -0.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 181,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence:\n(1) The company's sales decline significantly.\n(2) The company announces a price reduction campaign.\n(3) Competitors lower their prices as well.\n(4) The company's profit margins shrink.",
+    options: [
+      "1, 2, 3, 4",
+      "2, 1, 3, 4",
+      "1, 3, 2, 4",
+      "3, 2, 1, 4"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence is that initial sales decline triggers a price reduction campaign, which prompts competitors to also lower prices, ultimately leading to reduced profit margins. Options B, C, and D place events out of order, violating the cause-effect relationships (e.g., price reduction cannot precede sales decline that caused it).",
+    difficulty: 0.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 182,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the correct causal sequence: (1) Company hires external safety consultants. (2) Regulatory fines are imposed. (3) Company issues a product recall. (4) Widespread media coverage of the recall. (5) Consumer complaints about product malfunctions increase.",
+    options: [
+      "5 → 1 → 3 → 4 → 2",
+      "5 → 3 → 1 → 4 → 2",
+      "1 → 5 → 3 → 4 → 2",
+      "5 → 1 → 4 → 3 → 2"
+    ],
+    answer: 0,
+    explanation:
+      "The causal chain begins with an increase in consumer complaints (5), which prompts the company to investigate by hiring external safety consultants (1). The consultants likely identify a serious defect, leading the company to issue a recall (3). The recall attracts widespread media coverage (4), and subsequently, regulatory authorities impose fines (2). Alternative sequences violate causality: for instance, issuing a recall before hiring consultants (option 2) skips the necessary investigation; hiring consultants before complaints arise (option 3) lacks a trigger; and media coverage before the recall (option 4) is implausible because the recall itself is the news event.",
+    difficulty: 0.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 183,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Traffic congestion decreases during peak hours. (2) Citizens start using bikes for short trips. (3) Bike-sharing stations are installed across the city. (4) City council approves funding for bike-sharing program.",
+    options: [
+      "4 → 3 → 2 → 1",
+      "3 → 4 → 2 → 1",
+      "4 → 2 → 3 → 1",
+      "4 → 3 → 1 → 2"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence is: first, the city council approves funding (4), which enables the installation of bike-sharing stations (3). Once stations are in place, citizens start using bikes for short trips (2). Finally, increased bike usage leads to reduced traffic congestion (1). Option A follows this logic. Option B has installation before approval, which is implausible. Option C has citizen usage before station installation, which is illogical. Option D has congestion decreasing before citizens start using bikes, reversing the cause and effect.",
+    difficulty: -0.8,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 184,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Mark is offered a job at a top company. (2) Mark studies hard for several weeks. (3) Mark passes his final exams.",
+    options: [
+      "2, 3, 1",
+      "3, 2, 1",
+      "1, 2, 3",
+      "2, 1, 3"
+    ],
+    answer: 0,
+    explanation:
+      "Studying hard leads to passing exams, which then leads to being offered a job. The correct causal sequence is: Mark studies hard (2) → passes exams (3) → gets job offer (1). Thus, the order is 2, 3, 1.",
+    difficulty: -2.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 185,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) City officials approve funding for subway construction. (2) Construction of subway tunnels begins. (3) Subway stations are built. (4) Subway service starts. (5) Commuters shift from cars to subway.",
+    options: [
+      "1,2,3,4,5",
+      "2,1,3,4,5",
+      "1,3,2,4,5",
+      "1,2,4,3,5"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence begins with approval of funding (1), which enables tunnel construction (2). After tunnels are built, stations are constructed (3). Only then can subway service start (4), leading to commuters shifting from cars to subway (5). Any other order violates the temporal and causal dependencies between these events.",
+    difficulty: -0.6,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 186,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the correct causal sequence: (1) Chatter updates its algorithm to prioritize paid content. (2) Users complain of reduced organic reach and many migrate to Talk. (3) Chatter's ad revenue declines as user engagement drops. (4) Chatter's stock price falls sharply. (5) A hedge fund launches a hostile takeover bid for Chatter.",
+    options: [
+      "1, 2, 3, 4, 5",
+      "1, 3, 2, 4, 5",
+      "2, 1, 3, 4, 5",
+      "1, 2, 4, 3, 5"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence begins with the algorithm update (1), which directly causes user dissatisfaction and migration to a rival platform (2). This decline in active users leads to reduced ad revenue (3), as fewer users mean less engagement and fewer ad impressions. The revenue drop negatively impacts investor confidence, causing the stock price to fall (4). Finally, the low stock price makes Chatter an attractive target for a hostile takeover bid (5). Other options misplace the order: option B puts ad revenue decline before user migration, which is illogical since revenue depends on user engagement; option C starts with user complaints before the algorithm update; option D incorrectly places the stock price fall before the ad revenue decline.",
+    difficulty: 3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 187,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) City council passes a law requiring residents to separate recyclables. (2) Recycling contamination rates decrease. (3) Residents receive educational pamphlets on proper recycling. (4) Recycling processing facility reports higher quality materials. (5) City's recycling revenue increases.",
+    options: [
+      "1-2-3-4-5",
+      "1-3-2-4-5",
+      "3-1-2-4-5",
+      "1-3-4-2-5"
+    ],
+    answer: 1,
+    explanation:
+      "The law (1) is the initial cause, which leads to the distribution of educational pamphlets (3) to inform residents. Proper education results in decreased contamination (2), which in turn leads to higher quality materials at the facility (4). Finally, higher quality materials increase recycling revenue (5). Thus, the correct sequence is 1-3-2-4-5.",
+    difficulty: 1.2,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 188,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Several customers report fires caused by the battery pack. (2) The company issues a formal recall of all affected units. (3) Engineers identify a manufacturing defect in the battery pack. (4) A news article highlights the potential danger of the batteries.",
+    options: [
+      "1 → 3 → 4 → 2",
+      "3 → 1 → 2 → 4",
+      "4 → 1 → 3 → 2",
+      "1 → 4 → 2 → 3"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence begins with customer reports of fires (1), which triggers an investigation by engineers who identify the defect (3). The defect information is then publicized via a news article (4), leading to the company's recall decision (2).",
+    difficulty: -0.6,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 189,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Anna's phone battery starts lasting longer. (2) Anna installs a battery optimization app. (3) Anna reads online about battery-saving tips. (4) Anna notices her phone battery drains quickly.",
+    options: [
+      "4, 3, 2, 1",
+      "1, 2, 3, 4",
+      "3, 4, 2, 1",
+      "2, 1, 4, 3"
+    ],
+    answer: 0,
+    explanation:
+      "The correct sequence is 4 (notice problem) → 3 (read tips) → 2 (install app) → 1 (battery lasts longer). Anna first notices the battery draining quickly, which motivates her to read online about solutions. After learning about battery-saving tips, she installs an optimization app, which then causes the battery to last longer. The other orders are illogical because they place events out of causal order (e.g., the battery lasting longer before installing the app, or reading tips before noticing the problem).",
+    difficulty: -2.3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 190,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) The coffee shop introduces a loyalty program. (2) The coffee shop experiences a decline in customer visits. (3) The cost of coffee beans increases significantly. (4) The owner raises the prices of all beverages. (5) Customers complain about the higher prices.",
+    options: [
+      "3 → 4 → 5 → 2 → 1",
+      "3 → 4 → 2 → 5 → 1",
+      "4 → 3 → 5 → 2 → 1",
+      "3 → 5 → 4 → 2 → 1"
+    ],
+    answer: 0,
+    explanation:
+      "The causal chain starts with the increase in coffee bean costs (3), which forces the owner to raise prices (4). Higher prices lead to customer complaints (5), which cause a decline in customer visits (2). The owner then introduces a loyalty program (1) to attract customers back. Option A correctly follows this cause-and-effect sequence.",
+    difficulty: -0.3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 191,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Reports of injuries surface, (2) Company issues a product recall, (3) Safety defect is identified in manufacturing, (4) Sales of the product decline.",
+    options: [
+      "1, 2, 3, 4",
+      "3, 1, 2, 4",
+      "2, 4, 1, 3",
+      "4, 3, 1, 2"
+    ],
+    answer: 1,
+    explanation:
+      "The causal sequence begins with the safety defect being identified in manufacturing (3), which leads to injuries caused by the defect, prompting reports to surface (1). In response to the reports, the company issues a recall (2), and as a result of the recall and negative publicity, sales decline (4). Thus, the correct order is 3, 1, 2, 4.",
+    difficulty: 0.8,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 192,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) The company expands production capacity. (2) The company's electricity costs decrease. (3) The government announces tax credits for solar energy investment. (4) The company installs solar panels.",
+    options: [
+      "3, 4, 2, 1",
+      "3, 2, 4, 1",
+      "1, 3, 4, 2",
+      "4, 3, 2, 1"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence starts with the government announcing tax credits (3), which incentivizes the company to install solar panels (4). The solar panels then cause a decrease in electricity costs (2), and the cost savings enable the company to expand production capacity (1). Option A is the only order that follows this logic. Option B incorrectly places the cost decrease before the installation. Option C starts with expansion, which is an effect, not a cause. Option D starts with installation before the tax credits that motivated it.",
+    difficulty: -0.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 193,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Strong winds knock down a tree onto power lines, (2) The power outage lasts for several hours, (3) Residents start using generators to power their homes, (4) Carbon monoxide poisoning cases are reported at the local hospital.",
+    options: [
+      "1, 2, 3, 4",
+      "1, 3, 2, 4",
+      "2, 1, 3, 4",
+      "4, 3, 2, 1"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence starts with the storm causing the tree to fall on power lines (1), which leads to a power outage (2). Because of the outage, residents use generators (3), and improper use of generators causes carbon monoxide poisoning (4). Therefore, the order is 1, 2, 3, 4.",
+    difficulty: 0.2,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 194,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) A major social media platform announces a new privacy policy that restricts data sharing with third-party advertisers. (2) The platform's advertising revenue declines significantly. (3) Many users express outrage and delete their accounts. (4) The company hires a public relations firm to improve its image.",
+    options: [
+      "1, 3, 2, 4",
+      "1, 2, 3, 4",
+      "3, 1, 2, 4",
+      "1, 3, 4, 2"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence starts with the announcement of the new privacy policy (1). This leads to user outrage and account deletions (3), which then causes a decline in advertising revenue (2) because fewer users mean less data and ad impressions. Finally, the company hires a PR firm (4) in response to the revenue decline and negative publicity. Option A (1,3,2,4) is the only order that follows this logical chain.",
+    difficulty: -0.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 195,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Harmony introduces a personalized playlist algorithm. (2) Users spend more time on the platform, increasing ad revenue. (3) Competitors replicate the feature, leading to market saturation. (4) Harmony's user growth slows, so they reduce investment in algorithm improvement. (5) User engagement declines as algorithm quality stagnates.",
+    options: [
+      "1,2,3,4,5",
+      "1,3,2,4,5",
+      "1,2,4,3,5",
+      "2,1,3,4,5"
+    ],
+    answer: 0,
+    explanation:
+      "The correct sequence starts with Harmony introducing a new algorithm (1), which leads to increased user time and ad revenue (2). This success attracts competitors who copy the feature (3), causing market saturation and slowing Harmony's growth. In response, Harmony cuts investment in the algorithm (4), leading to stagnation and declining user engagement (5). Other orders break the cause-effect chain, e.g., competitors copying before user growth is implausible.",
+    difficulty: 2.5,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 196,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the correct causal sequence: (1) Student studies regularly. (2) Student performs well on the test. (3) Student understands the material. (4) Student gets a good grade.",
+    options: [
+      "1, 3, 2, 4",
+      "2, 1, 3, 4",
+      "3, 1, 4, 2",
+      "1, 2, 3, 4"
+    ],
+    answer: 0,
+    explanation:
+      "Studying regularly (1) leads to understanding the material (3), which leads to performing well on the test (2), which then leads to getting a good grade (4). Thus the correct order is 1, 3, 2, 4.",
+    difficulty: -1.8,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 197,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence: (1) Jane updates her resume. (2) Jane interviews and receives a job offer. (3) Jane's company announces layoffs. (4) Jane resigns from her current position. (5) Jane applies for several positions.",
+    options: [
+      "3, 1, 5, 2, 4",
+      "1, 3, 5, 2, 4",
+      "3, 5, 1, 2, 4",
+      "1, 5, 3, 2, 4"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence starts with layoff announcements (3), which prompts Jane to update her resume (1). She then applies for jobs (5), interviews and gets an offer (2), and finally resigns (4). Option A (3,1,5,2,4) is the only one that follows this logical cause-effect chain.",
+    difficulty: -1,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 198,
+    type: "event",
+    category: "event",
+    question:
+      "Arrange the following events in the most logical causal sequence:\n1. A tech company releases a new AI-powered customer service system.\n2. The company eliminates several human customer service positions.\n3. Customer satisfaction ratings decline sharply.\n4. The AI system is updated with better natural language processing.\n5. Customer satisfaction ratings recover and exceed previous levels.",
+    options: [
+      "1 → 2 → 3 → 4 → 5",
+      "1 → 3 → 2 → 4 → 5",
+      "2 → 1 → 3 → 4 → 5",
+      "1 → 2 → 4 → 3 → 5"
+    ],
+    answer: 0,
+    explanation:
+      "The correct causal sequence begins with the release of the AI system (1), which directly leads to the elimination of human customer service positions (2) as the company relies on the new technology. Subsequently, customers experience impersonal service, causing satisfaction to decline sharply (3). In response, the company updates the AI system with better language processing (4), which eventually improves service quality, leading to a recovery and rise in satisfaction (5). The other options contain logical inconsistencies: option B places satisfaction decline before layoffs, despite the layoffs being a direct consequence of the system release and a likely cause of the decline; option C has layoffs before the system release; option D has the AI update before the satisfaction decline, which is implausible because the decline typically motivates the update.",
+    difficulty: 0.6,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 199,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A recent study found that people who attend religious services at least once a week have lower blood pressure on average than those who attend less frequently. Therefore, attending religious services causes a reduction in blood pressure. Which of the following is the most significant logical flaw in this argument?",
+    options: [
+      "The argument fails to consider that people with lower blood pressure might be more inclined to attend religious services.",
+      "The argument assumes that attending religious services is the cause of lower blood pressure, but other factors such as diet or exercise could be responsible.",
+      "The argument relies on a sample that may not be representative of the general population.",
+      "The argument confuses correlation with causation, but does not specify which direction."
+    ],
+    answer: 1,
+    explanation:
+      "The argument's flaw is that it assumes a causal relationship based solely on a correlation, without considering alternative explanations. Option B correctly identifies that the observed difference in blood pressure could be due to confounding variables (e.g., healthier lifestyle choices among regular attendees) rather than the act of attending services itself. Option A is a potential reverse causation but is less likely given the argument's direction; Option C addresses sample representativeness, which is not explicitly challenged; Option D is too vague and does not specify the nature of the flaw as precisely as B.",
+    difficulty: 0.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 200,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "In the coastal town of Seaview, residents have noticed a dramatic increase in the frequency of dense fog over the past year. Local meteorologists have verified that regional weather patterns, ocean currents, and sea surface temperatures have remained stable. Which of the following is the most plausible cause of the increased fog?",
+    options: [
+      "A nearby shipping company shifted its route closer to shore, and ship emissions have increased the concentration of aerosol particles that serve as cloud condensation nuclei.",
+      "The town constructed a new desalination plant that releases large amounts of warm, moist air, increasing local humidity.",
+      "A major reforestation project has significantly increased tree cover, leading to higher rates of transpiration and local humidity.",
+      "The local airport extended its runway and now handles more flights, increasing contrails and cirrus clouds."
+    ],
+    answer: 0,
+    explanation:
+      "Fog forms when moist air cools to its dew point and water vapor condenses on aerosol particles (cloud condensation nuclei). With stable weather patterns and sea temperatures, the most plausible cause is an increase in condensation nuclei. Ship emissions release abundant aerosols (e.g., sulfates) that enhance fog formation. Desalination releases warm, moist air, but warm air rises and disperses, and the effect is localized; it would not explain widespread fog. Reforestation increases humidity via transpiration, but without a concurrent increase in condensation nuclei or cooling mechanism, it is insufficient to cause dense fog. Airport contrails form high-altitude cirrus clouds, not ground-level fog. Therefore, option A is the most plausible.",
+    difficulty: 2.6,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 201,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A large corporation implemented a four-day workweek (Monday-Thursday) for all employees. After one year, the company reported a 15% increase in overall productivity. Which of the following is the most plausible explanation for this productivity increase?",
+    options: [
+      "Employees worked longer shifts on the four days to compensate for the lost day.",
+      "The reduced workweek allowed employees to rest more, increasing their efficiency.",
+      "The company also introduced new automation software during the same period.",
+      "The company fired low-performing employees and rehired more productive ones."
+    ],
+    answer: 1,
+    explanation:
+      "The correct answer is that the reduced workweek improved employee well-being and focus, leading to higher productivity per hour. Studies on four-day workweeks show that employees often maintain similar output despite fewer hours due to reduced burnout and better work-life balance. Option 1 is a common but mistaken assumption; in practice, employees typically do not significantly extend their shifts, so total hours decrease. Option 3 introduces a confounding factor that is not the direct result of the schedule change, and without evidence, it is less plausible as the primary cause. Option 4 is unsupported and unlikely to account for a broad 15% increase across all employees. Therefore, option 2 is the most direct and evidence-based explanation.",
+    difficulty: -0.1,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 202,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A company introduced a new training program for its sales staff. After six months, sales increased by 15%. The CEO concluded that the training program was effective. Which of the following is a logical flaw in this reasoning?",
+    options: [
+      "The CEO assumes that the training program was the only factor affecting sales.",
+      "The CEO fails to consider that sales might have increased even without the training program.",
+      "The CEO incorrectly believes that correlation implies causation.",
+      "The CEO ignores the possibility that the training program could have long-term negative effects."
+    ],
+    answer: 0,
+    explanation:
+      "The argument concludes that the training program caused the sales increase based solely on a temporal correlation. However, the increase could be due to other factors (e.g., seasonal demand, improved economy). The flaw is assuming that the program was the only cause. Option 0 directly states this assumption. Option 1 is similar but less precise; option 2 is a general statement but not as specific to the argument; option 3 introduces an irrelevant possibility.",
+    difficulty: -0.3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 203,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "City council: 'Increasing the number of public parks will reduce crime rates in urban neighborhoods. Studies show that areas with more green spaces have lower crime. Therefore, we should allocate more funds to park development.' Which of the following is a necessary assumption for this argument?",
+    options: [
+      "The correlation between green spaces and lower crime is causal.",
+      "Other factors that reduce crime are already at optimal levels.",
+      "Parks are more effective at reducing crime than community policing.",
+      "The funds for park development will not be taken from other crime prevention programs."
+    ],
+    answer: 0,
+    explanation:
+      "The argument assumes that the observed correlation between green spaces and lower crime indicates causation. Without this assumption, the council cannot conclude that increasing parks will cause crime to decrease. Option A identifies this necessary assumption. Option B is not required; the argument does not depend on other factors being optimal. Option C is a comparison not made in the argument. Option D is a practical concern but not a logical necessity for the causal claim.",
+    difficulty: 0.5,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 204,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "Our company's sales have increased by 20% since we started our new online advertising campaign. Therefore, the campaign is effective and we should increase its budget. Which of the following is a logical flaw in this argument?",
+    options: [
+      "The argument assumes that the sales increase is due solely to the campaign, ignoring other factors.",
+      "The argument confuses cause and effect.",
+      "The argument relies on a small sample size.",
+      "The argument fails to consider that the campaign might have increased sales but also increased costs."
+    ],
+    answer: 0,
+    explanation:
+      "The argument infers a causal relationship from a mere correlation: because sales increased after the campaign began, it concludes the campaign caused the increase. This ignores alternative explanations (e.g., seasonal trends, market changes), making it an example of the post hoc ergo propter hoc fallacy. Option A correctly identifies this hidden assumption. Option B is inaccurate because the argument does not confuse which is cause and which is effect; it simply assumes causation. Option C is irrelevant; sample size is not at issue. Option D discusses cost, which is not part of the argument's reasoning.",
+    difficulty: 0.8,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 205,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A school district implemented a new homework policy that reduced the amount of homework assigned. After one year, average test scores increased. The school board claims that the reduction in homework caused the increase in test scores. What is the logical flaw in this argument?",
+    options: [
+      "It assumes without evidence that the amount of homework affects test scores.",
+      "It fails to consider that other factors, such as changes in teaching methods or student demographics, could have caused the increase.",
+      "It confuses cause and effect by suggesting that higher test scores led to less homework.",
+      "It relies on a sample size that is too small to draw any meaningful conclusions."
+    ],
+    answer: 1,
+    explanation:
+      "The argument concludes that reducing homework caused test scores to increase based solely on a temporal correlation. The flaw is ignoring alternative explanations: other changes might have occurred simultaneously (e.g., new curriculum, better teachers, or different student body) that could account for the rise in scores. Option B correctly identifies this failure to consider confounding factors. Option A is too vague; the argument does assume homework affects scores, but the central flaw is neglecting other potential causes. Option C reverses cause and effect, which is not supported by the argument. Option D introduces an issue of sample size not mentioned in the argument.",
+    difficulty: -1,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 206,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A large manufacturing company replaced some assembly line workers with robots. After six months, overall production output increased by 15%, but the number of defective products also increased by 10%. Which of the following is the most likely explanation for this pattern?",
+    options: [
+      "The robots were not calibrated properly for precision tasks.",
+      "The remaining workers became demotivated and made more errors.",
+      "The robots worked faster but with less accuracy than humans.",
+      "The company reduced quality control staff to cut costs."
+    ],
+    answer: 2,
+    explanation:
+      "The correct answer is C. The scenario describes two simultaneous outcomes: increased output and increased defects. The most direct causal explanation is that the robots, while faster, are less precise than the humans they replaced. This accounts for both the rise in production (due to speed) and the rise in defects (due to lower accuracy). Option A suggests a calibration issue, but if robots were not calibrated properly, they might produce more defects but likely not increase overall output unless they are faster. Option B relies on an unstated assumption about worker morale, and it does not directly link to the introduction of robots. Option D introduces a separate change (reducing quality control) that is not mentioned in the scenario and is less parsimonious than the direct effect of the robots. Therefore, C is the most plausible explanation.",
+    difficulty: 1.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 207,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A coffee shop chain introduced a new loyalty program. After six months, they surveyed customers and found that 70% of loyalty program members reported higher satisfaction than before. The CEO concludes that the loyalty program caused an increase in customer satisfaction. Which of the following is a logical flaw in the argument?",
+    options: [
+      "The survey only included loyalty program members, not all customers.",
+      "The CEO did not consider that customers who joined the program might already have been more satisfied.",
+      "The time period of six months is too short to measure satisfaction accurately.",
+      "The increase in satisfaction could be due to improved coffee quality."
+    ],
+    answer: 1,
+    explanation:
+      "The argument assumes that the loyalty program caused the increase in satisfaction, but it fails to consider that customers who chose to join the program may have been more satisfied to begin with (selection bias). This is a classic correlation-causation flaw. The other options are potential concerns but not the central logical flaw: the survey only included members, but the CEO's conclusion is about the program's effect; the time period is not necessarily too short; and improved coffee quality is another possible cause, but the flaw is the lack of consideration of pre-existing differences.",
+    difficulty: -2.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 208,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A software company replaced the fluorescent lighting in its open-plan office with full-spectrum LED lighting that mimics natural daylight. Over the next three months, employee productivity increased by 15%. Which of the following is the most likely cause of this increase?",
+    options: [
+      "Employees felt more valued because the company invested in their comfort, boosting morale.",
+      "Full-spectrum lighting reduces eye strain and fatigue, improving concentration and efficiency.",
+      "The new lighting made the office look more modern, attracting more clients and increasing revenue.",
+      "The installation required employees to work from home for a week, which reduced burnout."
+    ],
+    answer: 1,
+    explanation:
+      "The most direct causal mechanism is that full-spectrum LED lighting reduces eye strain and fatigue, which enhances concentration and work efficiency, leading to higher productivity. Option A is plausible but less direct: feeling valued might improve morale, but the primary effect of lighting is physiological. Option C incorrectly links office appearance to client attraction and revenue, which does not directly increase productivity. Option D is unlikely because working from home for a week would disrupt work, not sustainably boost productivity over three months.",
+    difficulty: -1.2,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 209,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "A company recently provided free snacks in the break room. Over the following year, employee turnover decreased by 15%. The company concludes that the free snacks caused the decrease in turnover. Which of the following most accurately describes a logical flaw in this argument?",
+    options: [
+      "It confuses correlation with causation.",
+      "It overlooks the possibility that the snacks were not popular.",
+      "It assumes that the turnover rate was high before.",
+      "It fails to consider that employees might have left for other reasons anyway."
+    ],
+    answer: 0,
+    explanation:
+      "The argument observes a correlation between offering free snacks and a decrease in employee turnover, and concludes that the snacks caused the decrease. This is a classic example of confusing correlation with causation. Other factors, such as changes in management, economic conditions, or other benefits, could have contributed to the turnover reduction. The flaw is not simply that the snacks were unpopular (B), nor does the argument assume the turnover rate was high before (C). Option D is a specific instance of the correlation-causation confusion, but A is the more precise and general description of the flaw.",
+    difficulty: -1.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 210,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "Since the city started its recycling program last year, recycling rates have increased by 30%. Therefore, the program is highly effective and should be expanded. Which of the following best describes the logical flaw in this argument?",
+    options: [
+      "The argument overlooks the possibility that the increase in recycling rates might be due to a new state law that mandates recycling.",
+      "The argument assumes that the recycling program is the only factor affecting recycling rates.",
+      "The argument fails to consider that the program may not be cost-effective.",
+      "The argument concludes that the program should be expanded without providing data on its costs."
+    ],
+    answer: 1,
+    explanation:
+      "The argument concludes that the recycling program caused the increase in recycling rates, but it does not consider alternative explanations. By implicitly assuming that the program is the sole cause, the argument commits the flaw of ignoring other possible factors (e.g., a new state law, public awareness campaigns). This is a classic causal oversimplification error. Options 3 and 4 discuss cost, which is not the logical flaw. Option 1 points to a specific alternative, but the general flaw is the assumption of exclusive causation, which option 2 best captures.",
+    difficulty: -2.3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 211,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "City council installed speed bumps on a busy road. In the six months after installation, the number of accidents on that road decreased by 30%. Therefore, the speed bumps were effective in reducing accidents. Which of the following most accurately describes a logical flaw in the argument?",
+    options: [
+      "It assumes that the decrease in accidents is due solely to the speed bumps, without considering other possible causes.",
+      "It concludes that the speed bumps were effective without considering the cost of installation.",
+      "It relies on data from only one road, which may not be representative.",
+      "It ignores the possibility that accidents might have increased on other roads."
+    ],
+    answer: 0,
+    explanation:
+      "The argument presents a correlation (speed bumps followed by accident decrease) and concludes causation. The flaw is that it ignores other factors that could have caused the decrease, such as changes in traffic volume, weather, or driver behavior. Option 1 identifies this unwarranted causal assumption. Option 2 is irrelevant to effectiveness in reducing accidents; cost is a separate consideration. Option 3 is about representativeness, but the argument is about this specific road. Option 4 discusses displacement, which is a different issue and does not directly address the flawed causal reasoning on this road.",
+    difficulty: -0.9,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 212,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A city introduced a new light rail system to reduce traffic congestion. After one year, traffic congestion decreased by 15% compared to the previous year. Which of the following is the most likely explanation for this decrease?",
+    options: [
+      "The light rail system provided a convenient alternative, leading many commuters to switch from driving to public transit.",
+      "The city also implemented a new parking pricing policy that increased rates in the downtown area during the same period.",
+      "A major employer relocated its headquarters from the city center to the suburbs, reducing the number of commuters.",
+      "The city experienced a mild winter, resulting in fewer weather-related traffic disruptions and smoother traffic flow."
+    ],
+    answer: 0,
+    explanation:
+      "The most likely explanation is that the light rail system directly caused the decrease in traffic congestion by providing a convenient alternative to driving. Option 0 is the direct causal effect the city intended. Option 1 is a plausible confounder but could be part of a package of policies; however, the question asks for the most likely explanation given the introduction of the light rail. Option 2 could reduce congestion but is less likely because a major employer relocation would be a notable event, not mentioned. Option 3 is a natural factor that could temporarily affect traffic, but it is less directly linked to the light rail introduction and a mild winter alone is unlikely to produce a 15% decrease sustained over a year.",
+    difficulty: 0.3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 213,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "The city lowered the speed limit on Main Street from 40 mph to 30 mph. Since then, the number of accidents on Main Street has decreased by 15%. Therefore, lowering the speed limit effectively reduced accidents. Which of the following, if true, most weakens the argument?",
+    options: [
+      "During the same period, the city also added more traffic lights and crosswalks on Main Street.",
+      "The number of accidents on nearby streets increased by 10% over the same period.",
+      "Surveys show that drivers on Main Street now drive an average of 5 mph slower than before the change.",
+      "The city's overall accident rate across all streets has remained unchanged."
+    ],
+    answer: 0,
+    explanation:
+      "The argument assumes that the reduction in accidents on Main Street was caused solely by lowering the speed limit. Option A introduces an alternative cause: the installation of more traffic lights and crosswalks, which could have contributed to the decrease. This weakens the causal claim by suggesting that the speed limit change may not be the primary factor. Option B does not directly weaken because an increase on nearby streets could indicate displacement rather than a failure of the speed limit. Option C actually strengthens the argument by showing that driving behavior changed as intended. Option D is neutral; if the overall rate is unchanged but Main Street decreased, it could mean other streets worsened, but that doesn't undermine the effect on Main Street.",
+    difficulty: 1,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 214,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A mid-sized tech company switched from a fully in-office schedule to a hybrid model requiring three days in the office. Three months later, employee satisfaction scores increased by 20%. During the same period, the company also gave each employee a $100 allowance to improve their home office setup. Which of the following is the most likely cause of the increase in employee satisfaction?",
+    options: [
+      "The hybrid model provided employees with greater flexibility and work-life balance.",
+      "The home office allowance allowed employees to purchase better equipment.",
+      "Both the hybrid model and the home office allowance contributed equally.",
+      "The increase was part of a broader trend of rising satisfaction in the tech industry during that quarter."
+    ],
+    answer: 0,
+    explanation:
+      "The hybrid model is a major change that directly improves work-life balance, a key driver of employee satisfaction. The $100 allowance is a relatively small amount that is unlikely to have a significant impact on overall satisfaction. The option claiming equal contribution is less plausible given the trivial size of the allowance. The broader trend is speculative and not supported by evidence in the scenario. Therefore, the hybrid model is the most likely cause.",
+    difficulty: 0.3,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 215,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A study found that employees who take short breaks every hour are more productive than those who work continuously. What is the most likely causal explanation for this finding?",
+    options: [
+      "Taking breaks prevents mental fatigue, allowing employees to maintain focus and energy throughout the day.",
+      "Employees who take breaks are more conscientious and thus more productive for reasons unrelated to breaks.",
+      "The study measured productivity over a short period, so the results may not reflect long-term effects.",
+      "Employees who take breaks are often in managerial roles, which involve higher productivity."
+    ],
+    answer: 0,
+    explanation:
+      "The correct answer is option 0. Regular breaks help prevent mental fatigue, which improves sustained focus and productivity—a direct causal mechanism. Option 1 is a plausible confounder (conscientiousness), but it does not explain how breaks themselves cause higher productivity; it suggests reverse causation. Option 2 is a methodological limitation, not a causal explanation. Option 3 is a confounder (job role), but the study likely compared employees with similar roles; even if not, the most direct causal link is through fatigue reduction.",
+    difficulty: -0.8,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 216,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "In the city of Oakville, a public health program provided free gas stove replacements to low-income households that used old wood-burning stoves. The following winter, the rate of respiratory-related emergency room visits among participants dropped by 15% compared to a similar control group that did not receive stoves. Interestingly, the city's overall outdoor air quality, measured at central monitoring stations, showed no significant improvement. Which of the following best explains this result?",
+    options: [
+      "The reduction in respiratory visits was likely due to a milder winter that year.",
+      "The control group also replaced their stoves independently, so the comparison is flawed.",
+      "The new gas stoves reduced indoor air pollution directly, but outdoor air quality is influenced by many other sources.",
+      "The program was implemented only in neighborhoods with already low respiratory rates."
+    ],
+    answer: 2,
+    explanation:
+      "The correct answer is C. The program directly reduced indoor air pollution from wood stoves, which is a known trigger for respiratory issues. Since the control group was similar, weather and other factors affect both equally, ruling out A. Option B is incorrect because if the control group also replaced stoves, the observed difference would be smaller or nonexistent. Option D is not supported as the program targeted low-income households regardless of baseline rates, and the control group was similar.",
+    difficulty: 1.4,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 217,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A coffee shop moved from a busy downtown intersection to a quieter residential street. After the move, its monthly sales dropped by 40%. Which of the following is the most likely explanation for the decrease in sales?",
+    options: [
+      "The new location had lower foot traffic, reducing the number of walk-in customers.",
+      "The coffee shop raised its prices at the same time as the move.",
+      "The new neighborhood had a higher crime rate, deterring customers.",
+      "The coffee shop changed its coffee blend shortly before the move."
+    ],
+    answer: 0,
+    explanation:
+      "The most direct and plausible cause is the reduction in foot traffic. A busy downtown intersection naturally attracts more spontaneous customers, while a quieter residential street relies more on destination visits. The other options are possible confounds, but there is no evidence provided in the scenario that any of them actually occurred. Even if they did, the primary effect of moving to a less visible location is a decline in walk-in business, making option A the most likely explanation.",
+    difficulty: -0.5,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 218,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "School board member: \"A recent survey of 100 high schools found that those with a uniform policy have average test scores that are 10% higher than those without. Therefore, requiring uniforms will improve academic performance at our school.\" Which of the following best describes the logical flaw in this argument?",
+    options: [
+      "It assumes that a correlation between uniforms and test scores implies a causal relationship.",
+      "It relies on a sample that is too small to draw any reliable conclusions.",
+      "It fails to consider that the schools with uniforms might have had higher test scores before adopting uniforms.",
+      "It confuses the cause of improved test scores with the effect of higher socioeconomic status."
+    ],
+    answer: 0,
+    explanation:
+      "The argument concludes that uniforms cause higher test scores based solely on a correlation observed in a survey. This is a classic post hoc ergo propter hoc fallacy, assuming causation from correlation without considering alternative explanations. Option A correctly identifies this flaw. Option B is incorrect because a sample of 100 schools is generally adequate for such a survey. Option C is a possible alternative explanation but does not describe the flaw in the reasoning, which is the causal leap. Option D is too specific and assumes socioeconomic status is the cause, which is not identified in the argument.",
+    difficulty: -0.5,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 219,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A tech company implemented an unlimited vacation policy for all employees. After one year, the company's overall productivity increased by 15%. Which of the following is the most likely explanation?",
+    options: [
+      "Employees began working longer hours to compensate for taking more time off.",
+      "The company hired additional staff during the same period.",
+      "Employees felt more rested and motivated, leading to higher efficiency.",
+      "The policy attracted more skilled workers who replaced less productive ones."
+    ],
+    answer: 2,
+    explanation:
+      "Unlimited vacation policies often improve work-life balance, reducing burnout and increasing motivation, which directly boosts productivity. Option 1 is unlikely because unlimited vacation usually encourages taking time off, not longer hours. Option 2, while possible, is not directly caused by the policy and could be a separate factor. Option 4 might occur over a longer period, but the productivity increase within one year is more likely due to existing employees' improved morale and efficiency.",
+    difficulty: -0.5,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 220,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A city increased the frequency of bus service on a major route from every 30 minutes to every 15 minutes. After six months, the average number of daily passengers on that route increased by 25%. What is the most likely cause of the increase?",
+    options: [
+      "More frequent service attracted more riders.",
+      "The city lowered bus fares.",
+      "Gas prices increased significantly.",
+      "A new shopping mall opened near the route."
+    ],
+    answer: 0,
+    explanation:
+      "The most direct and plausible cause is the increased frequency of bus service, as it reduces wait times and makes the bus more convenient, likely attracting more passengers. The other options are not mentioned as having occurred during the same period, so they are less plausible as causes.",
+    difficulty: -1.7,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 221,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "Political analyst: 'To win the election, the candidate must secure at least 60% of the female vote. Recent polls show the candidate now has exactly 60% support among women. Therefore, the candidate will win the election.'\n\nWhich of the following best identifies the logical flaw in the argument above?",
+    options: [
+      "The argument treats a necessary condition as if it were a sufficient condition.",
+      "The argument assumes that the poll is accurate despite possible sampling errors.",
+      "The argument overlooks the possibility that the candidate's support among women might decrease before the election.",
+      "The argument concludes that because the candidate has achieved a milestone, victory is certain, which is a post hoc fallacy."
+    ],
+    answer: 0,
+    explanation:
+      "The argument states that securing 60% of the female vote is necessary for winning, and that the candidate has achieved this. However, satisfying a necessary condition does not guarantee the outcome; other conditions (e.g., support from other demographics, turnout) may also be required. The flaw is the assumption that a necessary condition is sufficient.",
+    difficulty: 2.7,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 222,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "A local gym began offering free yoga classes every Saturday morning. After two months, the gym's membership increased by 10%. Which of the following is the most likely explanation?",
+    options: [
+      "The free yoga classes attracted new people to join the gym.",
+      "The gym lowered its monthly membership fee.",
+      "The gym renovated its locker rooms.",
+      "The weather improved, encouraging more people to exercise."
+    ],
+    answer: 0,
+    explanation:
+      "The most likely explanation is that the free yoga classes attracted new members, directly causing the increase in membership. The scenario does not mention any fee reduction, renovation, or weather change, and exercise is indoor, so weather is irrelevant. Other options are unsupported and less plausible as the primary cause.",
+    difficulty: -2.7,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 223,
+    type: "event-argument",
+    category: "event-argument",
+    question:
+      "Last year, the town of Greenfield implemented a program that gives households a small cash reward for recycling more. Since then, recycling rates have increased by 30%. Therefore, the cash reward program is effective at increasing recycling. Which of the following is the most significant logical flaw in this argument?",
+    options: [
+      "It assumes that the program is the only possible cause of the increase.",
+      "It overlooks the possibility that households might have recycled more even without the program.",
+      "It mistakenly interprets a correlation as a causal relationship.",
+      "It fails to consider that the cash reward might be too small to motivate significant change."
+    ],
+    answer: 2,
+    explanation:
+      "The argument notes that recycling rates increased after the program was implemented and concludes the program caused the increase. This is a classic post hoc ergo propter hoc fallacy, which confuses correlation with causation. There could be other factors (e.g., a concurrent environmental campaign, seasonal changes, or increased public awareness) that caused the increase. Option C correctly identifies this flaw. Option A is too extreme—the argument does not explicitly assume the program is the only possible cause, but it fails to consider alternatives. Option B is a specific alternative, but the flaw is broader. Option D discusses the reward size, which is not relevant to the logical flaw.",
+    difficulty: 0.1,
+    discrimination: 1,
+    guessing: 0.25,
+  },
+  {
+    id: 224,
+    type: "event-cause",
+    category: "event-cause",
+    question:
+      "In the city of Lakeside, a new highway was built to reduce travel time between the suburbs and downtown. After the highway opened, the average travel time during rush hour actually increased by 10% compared to before. Which of the following is the most likely explanation?",
+    options: [
+      "The highway construction was poorly designed and caused bottlenecks.",
+      "The highway attracted more drivers, leading to induced demand and congestion.",
+      "The highway was built with fewer lanes than the old road.",
+      "The old road was closed for repairs during the construction."
+    ],
+    answer: 1,
+    explanation:
+      "The phenomenon of induced demand is well-documented: expanding road capacity initially reduces travel time but attracts additional drivers, often resulting in congestion levels similar to or worse than before. While poor design, fewer lanes, or temporary closures could cause delays, induced demand is the most common and plausible explanation for a sustained increase after adding capacity.",
+    difficulty: 0.6,
+    discrimination: 1,
+    guessing: 0.25,
+  },
 ];

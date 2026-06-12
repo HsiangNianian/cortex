@@ -15,7 +15,7 @@ export interface ValidationError {
 export function validateGeneratedQuestion(
   raw: Record<string, unknown>,
   locale: string,
-  expectedType: "logic" | "math" | "vocab" | "event",
+  expectedType: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument",
 ): Question {
   const errors: ValidationError[] = [];
 

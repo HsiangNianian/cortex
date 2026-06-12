@@ -322,7 +322,9 @@
 			"sequence": "数列推論",
 			"math": "暗算",
 			"vocab": "語彙意味",
-			"event": "事象因果"
+			"event": "出来事並替",
+			"event-cause": "因果推論",
+			"event-argument": "論証分析"
 		},
 		"multiSelect": "複数選択",
 		"multiSelectHint": "正しい答えをすべて選んでください"

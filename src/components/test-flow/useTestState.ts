@@ -179,7 +179,11 @@ export function useTestState() {
           event: null,
         };
         for (const dim of ["logic", "math", "vocab", "event"] as const) {
-          const dimResponses = responses.filter((r) => r.type === dim);
+          const dimResponses = responses.filter((r) =>
+            dim === "event"
+              ? r.type === "event" || r.type === "event-cause" || r.type === "event-argument"
+              : r.type === dim
+          );
           if (dimResponses.length >= 3) {
             const est = estimateAbility(dimResponses);
             thetaByType[dim] = { theta: est.theta, se: est.standardError };

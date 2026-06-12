@@ -322,7 +322,9 @@
 			"sequence": "Sequence Reasoning",
 			"math": "Mental Math",
 			"vocab": "Vocabulary",
-			"event": "Event Reasoning"
+			"event": "Event Sequence",
+			"event-cause": "Causal Inference",
+			"event-argument": "Argument Analysis"
 		},
 		"multiSelect": "Multi-select",
 		"multiSelectHint": "Select all correct answers"

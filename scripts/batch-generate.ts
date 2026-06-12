@@ -46,22 +46,28 @@ const BATCH_SIZE_PER_WRITE = 5; // flush output every N questions
  * Existing: zh-CN=44, en=54, ja=54
  * So we need: zh-CN +106, en +96, ja +96
  */
-const GENERATION_PLAN: { locale: string; type: "logic" | "math" | "vocab" | "event"; count: number }[] = [
+const GENERATION_PLAN: { locale: string; type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument"; count: number }[] = [
   // zh-CN
   { locale: "zh-CN", type: "logic", count: 25 },
   { locale: "zh-CN", type: "math", count: 25 },
   { locale: "zh-CN", type: "vocab", count: 25 },
   { locale: "zh-CN", type: "event", count: 25 },
+  { locale: "zh-CN", type: "event-cause", count: 15 },
+  { locale: "zh-CN", type: "event-argument", count: 15 },
   // en
   { locale: "en", type: "logic", count: 23 },
   { locale: "en", type: "math", count: 23 },
   { locale: "en", type: "vocab", count: 23 },
   { locale: "en", type: "event", count: 23 },
+  { locale: "en", type: "event-cause", count: 13 },
+  { locale: "en", type: "event-argument", count: 13 },
   // ja
   { locale: "ja", type: "logic", count: 23 },
   { locale: "ja", type: "math", count: 23 },
   { locale: "ja", type: "vocab", count: 23 },
   { locale: "ja", type: "event", count: 23 },
+  { locale: "ja", type: "event-cause", count: 13 },
+  { locale: "ja", type: "event-argument", count: 13 },
 ];
 
 /** Difficulty distribution: normal-ish across -3 to +3 */
@@ -79,7 +85,7 @@ const DIFFICULTY_BUCKETS = [
 
 interface GeneratedQuestion {
   id: number;
-  type: "logic" | "math" | "vocab" | "event";
+  type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument";
   category: string;
   question: string;
   options: string[];
@@ -99,7 +105,7 @@ interface GenerationProgress {
 
 interface CellConfig {
   locale: string;
-  type: "logic" | "math" | "vocab" | "event";
+  type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument";
   difficulty: number;
 }
 
@@ -293,6 +299,43 @@ function getCultureGuidance(locale: string, type: string, difficulty: number): s
 - 困难题（1.5 ~ 3）：4-5步复杂因果链，含多重因果或反馈循环
 
 使用中国语境和中文表述。`;
+      case "event-cause":
+        return `题型：因果推断（难度：${diffLabel}）
+
+给出一个场景或现象，让答题者选出最可能的原因或结果。要求：
+• 场景描述清晰，有足够的信息供推理
+• 4个选项中只有1个是最合理、最能解释或最可能发生的
+• 干扰项要有迷惑性——看似合理但逻辑上可排除
+• 解析需详细说明为什么正确选项最优、为什么其他选项不对
+• 场景覆盖：社会现象、经济行为、日常生活、科技趋势、环境变化等
+
+难度 ${diffLabel}（IRT difficulty ≈ ${difficulty}）：
+- 简单题（-3 ~ -1）：因果关系直接，干扰项明显不合理
+- 中等题（-0.5 ~ 0.5）：需要排除1-2个有迷惑性的干扰项
+- 困难题（1.5 ~ 3）：需要多层推理，多个选项初看都合理
+
+使用中国语境和中文表述。`;
+      case "event-argument":
+        return `题型：论证分析（难度：${diffLabel}）
+
+给出一段论证（包含前提和结论），让答题者找出论证的逻辑结构。可以问：
+• 论证依赖什么假设？（前提假设题）
+• 论证有什么逻辑漏洞？（逻辑漏洞题）
+• 哪个选项最能加强/削弱论证？（加强/削弱题）
+
+要求：
+• 论证本身要简短清晰（2-4句话）
+• 4个选项中只有1个正确
+• 干扰项要与论证相关但逻辑上不正确
+• 解析需详细说明逻辑结构
+• 场景覆盖：社会政策、科学研究、商业决策、日常生活推理等
+
+难度 ${diffLabel}（IRT difficulty ≈ ${difficulty}）：
+- 简单题（-3 ~ -1）：逻辑结构简单，漏洞或假设明显
+- 中等题（-0.5 ~ 0.5）：需要仔细分析论证结构
+- 困难题（1.5 ~ 3）：需要识别细微的逻辑跳跃或复杂推理链
+
+参考GMAT Critical Reasoning风格，但使用中国语境和中文表述。`;
     }
   } else if (locale === "ja") {
     switch (type) {
@@ -363,6 +406,43 @@ function getCultureGuidance(locale: string, type: string, difficulty: number): s
 - 簡単（-3 ~ -1）：2-3ステップの因果連鎖、関係が明確
 - 普通（-0.5 ~ 0.5）：3-4ステップの因果連鎖、注意深い分析が必要
 - 難しい（1.5 ~ 3）：4-5ステップの複雑な因果連鎖、多重因果やフィードバックループを含む
+
+日本の文脈と日本語表現を使用してください。`;
+      case "event-cause":
+        return `题型：因果推論（難易度：${diffLabel}）
+
+シナリオや現象を提示し、最も可能性の高い原因または結果を選ばせる問題。要件：
+• シナリオは明確で、十分な推論材料を含む
+• 4つの選択肢のうち1つだけが最も妥当
+• 誤答選択肢は魅力的だが論理的に排除可能
+• 解説では正解が最適な理由と他の選択肢が不適切な理由を詳述
+• シナリオ：社会現象、経済行動、日常生活、テクノロジー動向、環境変化など
+
+難易度 ${diffLabel}（IRT difficulty ≈ ${difficulty}）：
+- 簡単（-3 ~ -1）：因果関係が直接的、誤答が明らかに不合理
+- 普通（-0.5 ~ 0.5）：1-2の魅力的な誤答を排除する必要がある
+- 難しい（1.5 ~ 3）：複数ステップの推論が必要、多くの選択肢が一見合理的
+
+日本の文脈と日本語表現を使用してください。`;
+      case "event-argument":
+        return `题型：論証分析（難易度：${diffLabel}）
+
+論証（前提→結論）を提示し、その論理構造を分析させる問題。以下のタイプがある：
+• 前提仮定：論証が依存する隠れた前提は何か
+• 論理的欠陥：論証のどこに欠陥があるか
+• 強化/弱化：どの選択肢が論証を最も強化/弱化するか
+
+要件：
+• 論証は簡潔で明確（2-4文）
+• 4つの選択肢のうち1つだけが正解
+• 誤答は論証に関連するが論理的に不正確
+• 解説では論理構造を詳細に説明
+• シナリオ：社会政策、科学研究、ビジネス判断、日常推論など
+
+難易度 ${diffLabel}（IRT difficulty ≈ ${difficulty}）：
+- 簡単（-3 ~ -1）：論理構造が単純、欠陥や仮定が明白
+- 普通（-0.5 ~ 0.5）：論証構造の慎重な分析が必要
+- 難しい（1.5 ~ 3）：微妙な論理の飛躍や複雑な推論チェーンを識別する必要がある
 
 日本の文脈と日本語表現を使用してください。`;
     }
@@ -443,6 +523,43 @@ Difficulty ${diffLabel} (IRT difficulty ≈ ${difficulty})：
 - Hard (1.5 ~ 3): 4-5+ step complex chain with multiple causality or feedback loops
 
 Use Western cultural contexts and names.`;
+      case "event-cause":
+        return `Type: Causal Inference (Difficulty: ${diffLabel})
+
+Present a scenario or phenomenon, ask the test-taker to identify the most likely cause or outcome. Requirements:
+• Clear scenario description with sufficient information for reasoning
+• 4 options, only 1 is the most plausible explanation or consequence
+• Distractors must be seductive but logically eliminable
+• Explanation must detail why the correct option works and why others fail
+• Scenarios: social phenomena, economic behavior, daily life, tech trends, environmental changes
+
+Difficulty ${diffLabel} (IRT difficulty ≈ ${difficulty})：
+- Easy (-3 ~ -1): Direct causal relationship, distractors clearly unreasonable
+- Medium (-0.5 ~ 0.5): Need to eliminate 1-2 seductive distractors
+- Hard (1.5 ~ 3): Multi-step reasoning, multiple options initially plausible
+
+Use Western cultural contexts and names.`;
+      case "event-argument":
+        return `Type: Argument Analysis (Difficulty: ${diffLabel})
+
+Present an argument (premise → conclusion), ask the test-taker to analyze its logical structure. Question types:
+• Assumption: What hidden assumption does the argument depend on?
+• Flaw: What is the logical flaw in the argument?
+• Strengthen/Weaken: Which option most strengthens/weakens the argument?
+
+Requirements:
+• Argument itself should be brief and clear (2-4 sentences)
+• 4 options, only 1 correct
+• Distractors must relate to the argument but be logically incorrect
+• Explanation must detail the logical structure
+• Scenarios: social policy, scientific research, business decisions, everyday reasoning
+
+Difficulty ${diffLabel} (IRT difficulty ≈ ${difficulty})：
+- Easy (-3 ~ -1): Simple logical structure, obvious flaw or assumption
+- Medium (-0.5 ~ 0.5): Requires careful analysis of argument structure
+- Hard (1.5 ~ 3): Requires identifying subtle logical leaps or complex reasoning chains
+
+Model after GMAT Critical Reasoning style but with Western cultural contexts.`;
     }
   }
 
@@ -460,10 +577,16 @@ function difficultyLabel(d: number): string {
 
 function buildUserPrompt(locale: string, type: string, difficulty: number, usedQuestions: string[]): string {
   const base = locale === "zh-CN"
-    ? `请生成一道难度约为 ${difficulty} 的${type === "logic" ? "逻辑推理" : type === "math" ? "速算" : type === "vocab" ? "词汇语义" : "事件事理分析"}题。`
+    ? `请生成一道难度约为 ${difficulty} 的${
+      type === "logic" ? "逻辑推理" : type === "math" ? "速算" : type === "vocab" ? "词汇语义" : type === "event" ? "事件排序" : type === "event-cause" ? "因果推断" : "论证分析"
+    }题。`
     : locale === "ja"
-      ? `難易度 ${difficulty} の${type === "logic" ? "論理推論" : type === "math" ? "暗算" : type === "vocab" ? "語彙意味" : "事象因果分析"}問題を1問生成してください。`
-      : `Generate one ${type === "event" ? "event/causal reasoning" : type} question with difficulty approximately ${difficulty}.`;
+      ? `難易度 ${difficulty} の${
+        type === "logic" ? "論理推論" : type === "math" ? "暗算" : type === "vocab" ? "語彙意味" : type === "event" ? "出来事並替" : type === "event-cause" ? "因果推論" : "論証分析"
+      }問題を1問生成してください。`
+      : `Generate one ${
+        type === "event" ? "event sequencing" : type === "event-cause" ? "causal inference" : type === "event-argument" ? "argument analysis" : type
+      } question with difficulty approximately ${difficulty}.`;
 
   const avoidText = usedQuestions.length > 0
     ? `\n\n避免与以下题目重复（Avoid duplicating these topics）：\n${usedQuestions.map((q, i) => `${i + 1}. ${q}`).slice(-20).join("\n")}`

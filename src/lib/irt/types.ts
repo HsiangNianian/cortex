@@ -1,6 +1,6 @@
 export interface ResponseRecord {
   questionId: number;
-  type: "logic" | "math" | "vocab" | "event";
+  type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument";
   score: number; // 0–1, fractional for partial credit
   difficulty: number;
   discrimination?: number;
