@@ -344,6 +344,17 @@
 		"multiSelect": "複数選択",
 		"multiSelectHint": "正しい答えをすべて選んでください"
 	},
+	"cooldown": {
+		"closeAria": "閉じる",
+		"remainingDaysHours": "{days}日{hours}時間",
+		"remainingDays": "{days}日",
+		"remainingHours": "{totalHours}時間",
+		"cooldownLabel": "クールダウン中 · 無料版は7日に1回のみテスト可能",
+		"upgradePrompt": "アップグレードすればいつでも無制限でテスト可能",
+		"unlockCta": "プレミアム解除 ¥29.90 →",
+		"afdianLink": "愛発電でサポート",
+		"warningText": "クールダウン回避のためにブラウザデータを消去しないでください。履歴がすべて失われます。"
+	},
 	"lockedSelection": "変更はできません。本当のバカには後悔するチャンスすらないのですから",
 	"handSlipButton": "手が滑った！",
 	"handSlipButton2": "まさかまた滑ったなんて言わないよね",

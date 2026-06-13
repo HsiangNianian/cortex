@@ -339,6 +339,17 @@
 		"multiSelect": "多选",
 		"multiSelectHint": "请勾选所有正确答案"
 	},
+	"cooldown": {
+		"closeAria": "关闭",
+		"remainingDaysHours": "{days}天{hours}小时",
+		"remainingDays": "{days}天",
+		"remainingHours": "{totalHours}小时",
+		"cooldownLabel": "冷却剩余 · 免费版每7天可测一次",
+		"upgradePrompt": "升级后随时可测，不限次数",
+		"unlockCta": "解锁高级版 ¥29.90 →",
+		"afdianLink": "前往爱发电",
+		"warningText": "请不要清除浏览器数据来绕过冷却，这会丢失你的所有历史记录。"
+	},
 	"lockedSelection": "不允许更改，毕竟真正的笨蛋就是没有后悔机会的",
 	"handSlipButton": "我手滑了",
 	"handSlipButton2": "你总不能又手滑了吧",

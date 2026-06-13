@@ -344,6 +344,17 @@
 		"multiSelect": "Multi-select",
 		"multiSelectHint": "Select all correct answers"
 	},
+	"cooldown": {
+		"closeAria": "Close",
+		"remainingDaysHours": "{days}d {hours}h",
+		"remainingDays": "{days}d",
+		"remainingHours": "{totalHours}h",
+		"cooldownLabel": "Cooldown · Free tier: test once every 7 days",
+		"upgradePrompt": "Upgrade to test anytime, no limits",
+		"unlockCta": "Unlock Premium ¥29.90 →",
+		"afdianLink": "Support on Afdian",
+		"warningText": "Don't clear browser data to bypass cooldown — this will lose all your history."
+	},
 	"lockedSelection": "No changing your answer—after all, real fools don't get do-overs.",
 	"handSlipButton": "I slipped!",
 	"handSlipButton2": "You can't be slipping again!",
