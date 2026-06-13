@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Script from "next/script"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -91,7 +92,9 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <script
+      <Script
+        id="css-cache-buster"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `(function(){var d=document,t=setTimeout(function(){var s=d.querySelectorAll('link[rel=stylesheet]');for(var i=0;i<s.length;i++){var h=s[i].href;s[i].href=h+(h.includes('?')?'&':'?')+'_t='+Date.now()}},5000);d.addEventListener('load',function(){clearTimeout(t)})})()`,
         }}
