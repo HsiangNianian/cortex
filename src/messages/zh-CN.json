@@ -63,7 +63,10 @@
 	},
 	"testing": {
 		"nextButton": "下一题",
-		"finishButton": "完成测试"
+		"finishButton": "完成测试",
+		"flagLabel": "此题有误?",
+		"flagTip": "帮助我们更好的改进题目与题库",
+		"flagged": "已反馈"
 	},
 	"processing": {
 		"title": "测试完成",
@@ -87,6 +90,7 @@
 		},
 		"retestPrompt": "7 天后复测，追踪你的变化",
 		"retestDesc": "认知能力就像肌肉——定期测量才能看到趋势。我们会在本地保存你的历史记录。",
+		"flaggedCount": "标记了 {count} 道题，感谢反馈！",
 		"comparisonTitle": "与上次测试对比",
 		"lastLabel": "上次",
 		"currentLabel": "本次",
@@ -192,7 +196,7 @@
 		"emptyCta": "开始测试",
 		"totalTests": "总测试数",
 		"avgDegradation": "平均退化指数",
-		"yourRank": "你的排名",
+		"yourRank": "排名",
 		"ranking": "超过 {count} 人",
 		"rankedBehind": "被 {count} 人超过",
 		"tied": "持平 {count} 人",
@@ -207,7 +211,7 @@
 		"trendLogic": "逻辑",
 		"trendMath": "速算",
 		"trendVocab": "词汇",
-	"trendEvent": "事理",
+		"trendEvent": "事理",
 		"trendFirst": "首次",
 		"trendLatest": "最新",
 		"trendFlat": "→ 持平",

@@ -68,7 +68,10 @@
 	},
 	"testing": {
 		"nextButton": "Next Question",
-		"finishButton": "Finish Test"
+		"finishButton": "Finish Test",
+		"flagLabel": "Report issue",
+		"flagTip": "Help us improve our question bank",
+		"flagged": "Flagged"
 	},
 	"processing": {
 		"title": "Test Complete",
@@ -92,6 +95,7 @@
 		},
 		"retestPrompt": "Retest in 7 days to track your changes",
 		"retestDesc": "Cognitive ability is like a muscle—measure regularly to see the trend. Your history is saved locally.",
+		"flaggedCount": "Flagged {count} questions. Thanks for the feedback!",
 		"comparisonTitle": "Comparison with Last Test",
 		"lastLabel": "Previous",
 		"currentLabel": "Current",

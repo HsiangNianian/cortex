@@ -197,6 +197,8 @@ export interface TestResult {
     vocab: { theta: number; se: number } | null
     event: { theta: number; se: number } | null
   }
+  /** IDs of questions the user flagged for review */
+  flaggedIds?: number[]
 }
 
 /**

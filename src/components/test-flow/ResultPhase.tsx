@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Flag } from "lucide-react";
 import { normalCDF, abilityToDegradationIndex, scoreAnswer, isCorrect, type TestResult, type DimensionScores } from "@/lib/scoring";
 import RadarChart from "@/components/radar-chart";
 import { DegradationGauge } from "./DegradationGauge";
@@ -39,6 +39,8 @@ interface ResultPhaseProps {
   handleSetReminder: () => void;
   handleRestart: () => void;
   handleDownloadImage: () => void;
+  flaggedIds: Set<number>;
+  onToggleFlag: (qId: number) => void;
 }
 
 export function ResultPhase({
@@ -52,6 +54,8 @@ export function ResultPhase({
   handleSetReminder,
   handleRestart,
   handleDownloadImage,
+  flaggedIds,
+  onToggleFlag,
 }: ResultPhaseProps) {
   const n = useTranslations();
   const [showScoringInfo, setShowScoringInfo] = useState(false);
@@ -99,6 +103,14 @@ export function ResultPhase({
       </CardHeader>
 
       <CardContent className="space-y-6">
+        {/* Flagged count */}
+        {flaggedIds.size > 0 && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+            <Flag className="mr-1 inline h-4 w-4" />
+            {n("result.flaggedCount", { count: flaggedIds.size })}
+          </div>
+        )}
+
         {/* Gauge + Tier */}
         <div className="text-center">
           <DegradationGauge
@@ -655,9 +667,24 @@ export function ResultPhase({
                         })}
                       </div>
                     )}
-                    <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-muted-foreground">
-                      {q.explanation}
-                    </p>
+                    <div className="mt-2 flex items-start justify-between gap-2">
+                      <p className="whitespace-pre-line text-xs leading-relaxed text-muted-foreground">
+                        {q.explanation}
+                      </p>
+                      <button
+                        type="button"
+                        title={n("testing.flagTip")}
+                        onClick={() => onToggleFlag(q.id)}
+                        className={`shrink-0 flex items-center gap-1 rounded px-2 py-0.5 text-xs transition-colors ${
+                          flaggedIds.has(q.id)
+                            ? "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400"
+                            : "text-muted-foreground/40 hover:text-amber-500 hover:bg-muted"
+                        }`}
+                      >
+                        <Flag className={`h-3 w-3 ${flaggedIds.has(q.id) ? "fill-amber-400" : ""}`} />
+                        {n("testing.flagLabel")}
+                      </button>
+                    </div>
                   </div>
                 );
               })}

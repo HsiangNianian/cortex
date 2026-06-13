@@ -68,6 +68,7 @@ export async function POST(request: Request) {
         thetaSE: number | null
         thetaByType: Record<string, number> | null
         elapsedMs: number
+        flaggedIds?: number[]
       }>
     }
 
@@ -88,6 +89,7 @@ export async function POST(request: Request) {
         thetaSE: r.thetaSE ?? null,
         thetaByType: r.thetaByType ? JSON.stringify(r.thetaByType) : null,
         elapsedMs: r.elapsedMs,
+        flaggedIds: r.flaggedIds ? JSON.stringify(r.flaggedIds) : null,
       })
     }
 

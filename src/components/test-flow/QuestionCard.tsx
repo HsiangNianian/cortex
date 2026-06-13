@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Flag } from "lucide-react";
 import type { Question } from "@/lib/questions";
 import { QUESTION_TIME } from "@/lib/questions";
 import { QuestionTimer } from "./QuestionTimer";
@@ -27,6 +28,8 @@ interface QuestionCardProps {
   selected: Selection;
   isLastQuestion: boolean;
   totalQuestions: number;
+  flaggedIds: Set<number>;
+  onToggleFlag: (qId: number) => void;
   handleSelectOption: (i: number) => void;
   handleNext: () => void;
 }
@@ -51,6 +54,8 @@ export function QuestionCard({
   selected,
   isLastQuestion,
   totalQuestions,
+  flaggedIds,
+  onToggleFlag,
   handleSelectOption,
   handleNext,
 }: QuestionCardProps) {
@@ -77,7 +82,22 @@ export function QuestionCard({
               </Badge>
             )}
           </div>
-          <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              title={n("testing.flagTip")}
+              onClick={() => onToggleFlag(question.id)}
+              className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors ${
+                flaggedIds.has(question.id)
+                  ? "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400"
+                  : "text-muted-foreground/40 hover:text-amber-500 hover:bg-muted"
+              }`}
+            >
+              <Flag className={`h-3.5 w-3.5 ${flaggedIds.has(question.id) ? "fill-amber-400" : ""}`} />
+              {flaggedIds.has(question.id) ? n("testing.flagged") : n("testing.flagLabel")}
+            </button>
+            <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
+          </div>
         </div>
 
         {/* Progress bar */}
@@ -169,15 +189,15 @@ export function QuestionCard({
           </p>
         )}
         <Button
-          size="lg"
-          className="w-full text-base"
-          disabled={isSelectionEmpty(selected)}
-          onClick={handleNext}
-        >
-          {isLastQuestion
-            ? n("testing.finishButton")
-            : n("testing.nextButton")}
-        </Button>
+            size="lg"
+            className="w-full text-base"
+            disabled={isSelectionEmpty(selected)}
+            onClick={handleNext}
+          >
+            {isLastQuestion
+              ? n("testing.finishButton")
+              : n("testing.nextButton")}
+          </Button>
       </CardFooter>
     </Card>
   );

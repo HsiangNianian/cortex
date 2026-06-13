@@ -68,7 +68,10 @@
 	},
 	"testing": {
 		"nextButton": "次の問題",
-		"finishButton": "テスト完了"
+		"finishButton": "テスト完了",
+		"flagLabel": "問題を報告",
+		"flagTip": "問題の改善にご協力ください",
+		"flagged": "報告済み"
 	},
 	"processing": {
 		"title": "テスト完了",
@@ -92,6 +95,7 @@
 		},
 		"retestPrompt": "7日後に再測定し、変化を追跡",
 		"retestDesc": "認知能力は筋肉と同じ——定期的な測定で傾向が見えてきます。履歴はローカルに保存されます。",
+		"flaggedCount": "{count}問を報告しました。フィードバックありがとうございます！",
 		"comparisonTitle": "前回のテストとの比較",
 		"lastLabel": "前回",
 		"currentLabel": "今回",

@@ -185,6 +185,7 @@ export async function saveTestResult(
     thetaSE: number | null
     thetaByType: string | null // JSON string
     elapsedMs: number
+    flaggedIds?: string | null // JSON string array
   },
 ) {
   // Dedup: skip if an identical result was saved within the last 10 seconds
@@ -200,8 +201,8 @@ export async function saveTestResult(
   await d1Run(
     `INSERT INTO test_results
      (license_key, degradation_index, tier_key, correct_count, total_questions,
-      dimension_scores, ai_usage_level, estimation_method, theta, theta_se, theta_by_type, elapsed_ms)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      dimension_scores, ai_usage_level, estimation_method, theta, theta_se, theta_by_type, elapsed_ms, flagged_ids)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       licenseKey,
       result.degradationIndex,
@@ -215,6 +216,7 @@ export async function saveTestResult(
       result.thetaSE,
       result.thetaByType,
       result.elapsedMs,
+      result.flaggedIds ?? null,
     ],
   )
 }
