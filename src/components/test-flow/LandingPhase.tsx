@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { QUESTIONS_PER_TEST, QUESTION_TIME } from "@/lib/questions";
 import type { DimensionScores } from "@/lib/scoring";
 import type { SavedProgress } from "./helpers";
+import { SiteGoal } from "@/components/site-goal";
 import { CooldownBanner } from "../premium/CooldownBanner";
 import { usePremium } from "../premium/usePremium";
 
@@ -105,6 +106,7 @@ export function LandingPhase({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <SiteGoal />
             {showCommunityBanner && (
               <div className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-left">
                 <div className="flex gap-3">

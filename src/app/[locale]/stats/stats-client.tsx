@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { normalizeDimensionScores, normalizeThetaByType } from "@/lib/scoring";
+import { SiteGoal } from "@/components/site-goal";
 import {
   Card,
   CardContent,
@@ -111,6 +112,10 @@ export default function StatsClient() {
           </h1>
           <p className="text-xs text-muted-foreground">{t("pageSubtitle")}</p>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <SiteGoal />
       </div>
 
       {loading && (
