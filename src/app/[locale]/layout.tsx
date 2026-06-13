@@ -95,7 +95,7 @@ export default async function LocaleLayout({
           __html: JSON.stringify(jsonLdWebApplication(locale)),
         }}
       />
-      <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
+      <div className="flex items-center justify-end gap-2 px-4 pt-3">
         <LanguageToggle />
         <ThemeToggle />
       </div>
