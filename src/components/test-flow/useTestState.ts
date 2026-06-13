@@ -92,6 +92,13 @@ export function useTestState() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [toast, setToast] = useState<ToastState>(null);
   const handSlipsRef = useRef(0);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function showToast(msg: ToastState, duration = 2000) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast(msg);
+    if (duration > 0) toastTimerRef.current = setTimeout(() => setToast(null), duration);
+  }
   const [challengeRef, setChallengeRef] = useState<number | null>(null);
   const [prevResult, setPrevResult] = useState<StoredResultSummary | null>(null);
   const [aiUsage, setAiUsage] = useState<number | null>(null);
@@ -120,8 +127,7 @@ export function useTestState() {
           if (fullRaw) { const f = JSON.parse(fullRaw); if (f.result) f.result.flaggedIds = ids; localStorage.setItem("cognitive-rust-full-result", JSON.stringify(f)); }
         } catch { /* ignore */ }
         // Toast feedback
-        setToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"));
-        setTimeout(() => setToast(null), 2000);
+        showToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"), 2000);
       }
 
       // Report to KV (aggregate by question, not by user)
@@ -564,8 +570,7 @@ export function useTestState() {
     setPhase("testing");
     setSelected(null);
     startTimer();
-    setToast(n("toast.resumeRestored"));
-    setTimeout(() => setToast(null), 2000);
+    showToast(n("toast.resumeRestored"), 2000);
   }
 
   function handleBeginTest() {
@@ -624,9 +629,9 @@ export function useTestState() {
               },
             },
           });
+          setTimeout(() => setToast(null), 4000);
         } else {
-          setToast(n("lockedSelection"));
-          setTimeout(() => setToast(null), 2000);
+          showToast(n("lockedSelection"), 2000);
         }
       }
       return;
@@ -669,6 +674,8 @@ export function useTestState() {
   function handleNext() {
     if (selected === null) return;
     if (Array.isArray(selected) && selected.length === 0) return;
+    setToast(null);
+    if (toastTimerRef.current) { clearTimeout(toastTimerRef.current); toastTimerRef.current = null; }
     submitAnswer(selected);
   }
 
@@ -792,8 +799,7 @@ export function useTestState() {
     try {
       const shareText = isPremium ? text : text + "\n\n测试来自 认知防锈 cortex.hydroroll.team"
       await navigator.clipboard.writeText(shareText + "\n" + pageUrl);
-      setToast(n("toast.resultCopied"));
-      setTimeout(() => setToast(null), 2000);
+      showToast(n("toast.resultCopied"), 2000);
     } catch {
       // silently fail
     }
@@ -801,8 +807,7 @@ export function useTestState() {
 
   function handleSetReminder() {
     if (!("Notification" in window)) {
-      setToast(n("toast.notificationUnsupported"));
-      setTimeout(() => setToast(null), 2000);
+      showToast(n("toast.notificationUnsupported"), 2000);
       return;
     }
 
@@ -820,11 +825,9 @@ export function useTestState() {
         new Notification(n("toast.notifConfirmTitle"), {
           body: n("toast.notifConfirmBody"),
         });
-        setToast(n("toast.notificationSet"));
-        setTimeout(() => setToast(null), 2000);
+        showToast(n("toast.notificationSet"), 2000);
       } else {
-        setToast(n("toast.notificationDenied"));
-        setTimeout(() => setToast(null), 2000);
+        showToast(n("toast.notificationDenied"), 2000);
       }
     });
   }
@@ -832,8 +835,7 @@ export function useTestState() {
   function handleDownloadImage() {
     if (!result || isDownloading) return;
     setIsDownloading(true);
-    setToast(n("toast.downloadStarted"));
-    setTimeout(() => setToast(null), 1500);
+    showToast(n("toast.downloadStarted"), 1500);
 
     const dimParts = [
       result.dimensionScores.logic !== null
@@ -887,8 +889,7 @@ export function useTestState() {
       canvas.toBlob((pngBlob) => {
         if (!pngBlob) {
           setIsDownloading(false);
-          setToast(n("toast.downloadFailed"));
-          setTimeout(() => setToast(null), 2000);
+          showToast(n("toast.downloadFailed"), 2000);
           return;
         }
         const a = document.createElement("a");
@@ -899,16 +900,14 @@ export function useTestState() {
         document.body.removeChild(a);
         URL.revokeObjectURL(a.href);
         setIsDownloading(false);
-        setToast(n("toast.downloadSuccess"));
-        setTimeout(() => setToast(null), 2000);
+        showToast(n("toast.downloadSuccess"), 2000);
       }, "image/png");
     };
 
     img.onerror = () => {
       URL.revokeObjectURL(url);
       setIsDownloading(false);
-      setToast(n("toast.downloadFailed"));
-      setTimeout(() => setToast(null), 2000);
+      showToast(n("toast.downloadFailed"), 2000);
     };
 
     img.src = url;

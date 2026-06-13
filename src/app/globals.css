@@ -151,3 +151,23 @@ html[lang="ja"] {
 body.hide-top-nav #top-nav-bar {
   display: none;
 }
+
+/* During testing: footer only shows copyright */
+body.hide-top-nav footer .footer-links {
+  display: none;
+}
+
+/* Bilibili-style danmaku — per-track right-to-left scroll */
+@keyframes danmaku-track {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+.animate-danmaku-track {
+  animation: danmaku-track 40s linear infinite;
+  width: max-content;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-danmaku-track {
+    animation-duration: 80s;
+  }
+}

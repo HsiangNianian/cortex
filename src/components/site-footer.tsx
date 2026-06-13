@@ -29,7 +29,7 @@ export function SiteFooter({ namespace }: { namespace: FooterNamespace }) {
 
       <footer className="flex flex-col items-center gap-2 pt-4 text-xs text-muted-foreground">
         <div className="flex items-center justify-center gap-3">
-        <span>Cortex &copy; </span>
+        <span>Cortex &copy; {new Date().getFullYear()}</span>
         <a
           href="https://academic.jyunko.cn"
           target="_blank"
@@ -38,22 +38,22 @@ export function SiteFooter({ namespace }: { namespace: FooterNamespace }) {
         >
           {t("author")}
         </a>
-        <span className="text-muted-foreground/40">|</span>
+        <span className="footer-links text-muted-foreground/40">|</span>
         <Link
           href="/about"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          className="footer-links transition-colors hover:text-foreground hover:underline underline-offset-4"
         >
           {t("aboutLink")}
         </Link>
-        <span className="text-muted-foreground/40">|</span>
+        <span className="footer-links text-muted-foreground/40">|</span>
         <Link
           href="/sponsors"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          className="footer-links transition-colors hover:text-foreground hover:underline underline-offset-4"
         >
           {ts("title")}
         </Link>
       </div>
-      <div className="flex items-center justify-center gap-3">
+      <div className="footer-links flex items-center justify-center gap-3">
         <a
           href="https://deadpan.hydroroll.team"
           target="_blank"

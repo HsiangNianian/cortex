@@ -51,6 +51,7 @@ export default function TestFlow() {
             onToggleFlag={s.toggleFlag}
             handleSelectOption={s.handleSelectOption}
             handleNext={s.handleNext}
+            onExitTest={s.handleRestart}
           />
         )}
         {s.phase === "processing" && <ProcessingPhase />}

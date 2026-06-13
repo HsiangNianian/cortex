@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Flag } from "lucide-react";
+import { Flag, X } from "lucide-react";
 import type { Question } from "@/lib/questions";
 import { QUESTION_TIME } from "@/lib/questions";
 import { QuestionTimer } from "./QuestionTimer";
@@ -33,6 +33,7 @@ interface QuestionCardProps {
   onToggleFlag: (qId: number) => void;
   handleSelectOption: (i: number) => void;
   handleNext: () => void;
+  onExitTest: () => void;
 }
 
 function isSelected(sel: Selection, i: number): boolean {
@@ -60,6 +61,7 @@ export function QuestionCard({
   onToggleFlag,
   handleSelectOption,
   handleNext,
+  onExitTest,
 }: QuestionCardProps) {
   const n = useTranslations();
   const question = questions[currentQ];
@@ -69,6 +71,17 @@ export function QuestionCard({
 
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
+      {/* Exit test button */}
+      <div className="flex justify-start px-4 pt-3">
+        <button
+          type="button"
+          onClick={onExitTest}
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+        >
+          <X className="h-3.5 w-3.5" />
+          退出测试
+        </button>
+      </div>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
