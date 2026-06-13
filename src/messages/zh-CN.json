@@ -71,8 +71,8 @@
 		"flagLabel": "此题有误?",
 		"flagTip": "帮助我们更好的改进题目与题库",
 		"flagged": "已反馈",
-	"flagAdded": "已反馈题目有问题",
-	"flagRemoved": "已取消反馈"
+		"flagAdded": "已反馈题目有问题",
+		"flagRemoved": "已取消反馈"
 	},
 	"processing": {
 		"title": "测试完成",
@@ -277,8 +277,8 @@
 		"estimationPctOnlyDesc": "目前所有测试均使用固定百分比评分——每道题权重相同。"
 	},
 	"siteGoal": {
-		"achieved": "站点目标已达成！",
-		"title": "站点目标",
+		"achieved": "目标已达成！",
+		"title": "目标",
 		"progressAchieved": "全站平均退化指数 {current}，低于目标 {goal}",
 		"progressBelow": "全站平均退化指数 {current} → 目标 < {goal}",
 		"participants": "已有 {count} 人次参与测试 · 共同努力降低全站退化指数"
