@@ -35,30 +35,36 @@ export default function SearchPage() {
   const [expanded, setExpanded] = useState<Set<number>>(new Set())
   const [flaggedIds, setFlaggedIds] = useState<Set<number>>(new Set())
   const [hasFlaggedBefore, setHasFlaggedBefore] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Check if user has flagged before
+  // Check if user has flagged before + hide top nav
   useEffect(() => {
+    document.body.classList.add("hide-top-nav")
     try {
       const hist = localStorage.getItem("cognitive-rust-history")
       if (hist && JSON.parse(hist).some((h: any) => h.flaggedIds?.length > 0)) {
         setHasFlaggedBefore(true)
       }
     } catch {}
+    return () => document.body.classList.remove("hide-top-nav")
   }, [])
 
   function toggleFlag(qId: number) {
     setFlaggedIds((prev) => {
       const next = new Set(prev)
-      if (next.has(qId)) next.delete(qId)
-      else {
-        next.add(qId)
+      const adding = !next.has(qId)
+      if (adding) next.add(qId)
+      else next.delete(qId)
+      if (adding) {
         fetch("/api/flags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ questionId: `${locale}:${qId}` }),
         }).catch(() => {})
       }
+      setToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"))
+      setTimeout(() => setToast(null), 2000)
       return next
     })
   }
@@ -101,6 +107,12 @@ export default function SearchPage() {
 
   return (
     <div className="flex min-h-dvh flex-col px-4 py-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-full bg-foreground px-4 py-2 text-sm text-background shadow-lg animate-in fade-in">
+          {toast}
+        </div>
+      )}
       <div className="mx-auto w-full max-w-lg space-y-4">
         {/* Header */}
         <div className="flex items-center gap-3">

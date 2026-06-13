@@ -616,66 +616,65 @@ export function ResultPhase({
                           category: n("question.category." + q.category),
                         })}
                       </span>
-                      <span
-                        className={`text-xs font-medium ${
-                          timedOut
-                            ? "text-muted-foreground"
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          title={n("testing.flagTip")}
+                          onClick={() => onToggleFlag(q.id)}
+                          className={`shrink-0 rounded px-1.5 py-0.5 text-xs transition-colors ${
+                            flaggedIds.has(q.id)
+                              ? "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400"
+                              : "text-muted-foreground/30 hover:text-amber-500 hover:bg-muted"
+                          }`}
+                        >
+                          <Flag className={`h-3 w-3 ${flaggedIds.has(q.id) ? "fill-amber-400" : ""}`} />
+                        </button>
+                        <span
+                          className={`text-xs font-medium ${
+                            timedOut
+                              ? "text-muted-foreground"
+                              : isFullCorrect
+                                ? "text-green-600"
+                                : isPartialCorrect
+                                  ? "text-amber-600"
+                                  : "text-red-600"
+                          }`}
+                        >
+                          {timedOut
+                            ? n("result.reviewTimeout")
                             : isFullCorrect
-                              ? "text-green-600"
+                              ? n("result.reviewCorrect")
                               : isPartialCorrect
-                                ? "text-amber-600"
-                                : "text-red-600"
-                        }`}
-                      >
-                        {timedOut
-                          ? n("result.reviewTimeout")
-                          : isFullCorrect
-                            ? n("result.reviewCorrect")
-                            : isPartialCorrect
-                              ? n("result.reviewPartial", {
-                                  score: Math.round(answerScore * 100),
-                                })
-                              : n("result.reviewWrong")}
-                      </span>
+                                ? n("result.reviewPartial", {
+                                    score: Math.round(answerScore * 100),
+                                  })
+                                : n("result.reviewWrong")}
+                        </span>
+                      </div>
                     </div>
                     <p className="mt-1 text-muted-foreground">
                       {q.question.split("\n")[0]}
                       {q.question.includes("\n") ? "…" : ""}
                     </p>
-                    <div className="mt-2 flex items-center justify-between gap-2">
-                      <div className="text-xs text-muted-foreground">
-                        {n("result.reviewYourAnswer")}
-                        {userAnswer !== null
-                          ? Array.isArray(userAnswer)
-                            ? userAnswer.length > 0
-                              ? userAnswer.map((a) => q.options[a]).join(", ")
-                              : n("result.reviewUnanswered")
-                            : q.options[userAnswer]
-                          : n("result.reviewUnanswered")}
-                        {!isFullCorrect && !timedOut && (
-                          <>
-                            {" · "}
-                            <span className="text-green-600">
-                              {n("result.reviewCorrectAnswer", {
-                                answer: correctLabel,
-                              })}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        title={n("testing.flagTip")}
-                        onClick={() => onToggleFlag(q.id)}
-                        className={`shrink-0 flex items-center gap-1 rounded px-2 py-0.5 text-xs transition-colors ${
-                          flaggedIds.has(q.id)
-                            ? "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400"
-                            : "text-muted-foreground/40 hover:text-amber-500 hover:bg-muted"
-                        }`}
-                      >
-                        <Flag className={`h-3 w-3 ${flaggedIds.has(q.id) ? "fill-amber-400" : ""}`} />
-                        {!hasFlaggedBefore && n("testing.flagLabel")}
-                      </button>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      {n("result.reviewYourAnswer")}
+                      {userAnswer !== null
+                        ? Array.isArray(userAnswer)
+                          ? userAnswer.length > 0
+                            ? userAnswer.map((a) => q.options[a]).join(", ")
+                            : n("result.reviewUnanswered")
+                          : q.options[userAnswer]
+                        : n("result.reviewUnanswered")}
+                      {!isFullCorrect && !timedOut && (
+                        <>
+                          {" · "}
+                          <span className="text-green-600">
+                            {n("result.reviewCorrectAnswer", {
+                              answer: correctLabel,
+                            })}
+                          </span>
+                        </>
+                      )}
                     </div>
                     {timedOut && (
                       <div className="mt-1 text-xs text-green-600">

@@ -71,7 +71,9 @@
 		"finishButton": "Finish Test",
 		"flagLabel": "Report issue",
 		"flagTip": "Help us improve our question bank",
-		"flagged": "Flagged"
+		"flagged": "Flagged",
+	"flagAdded": "Question issue reported",
+	"flagRemoved": "Report cancelled"
 	},
 	"processing": {
 		"title": "Test Complete",

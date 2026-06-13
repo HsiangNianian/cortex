@@ -71,7 +71,9 @@
 		"finishButton": "テスト完了",
 		"flagLabel": "問題を報告",
 		"flagTip": "問題の改善にご協力ください",
-		"flagged": "報告済み"
+		"flagged": "報告済み",
+	"flagAdded": "問題を報告しました",
+	"flagRemoved": "報告をキャンセルしました"
 	},
 	"processing": {
 		"title": "テスト完了",

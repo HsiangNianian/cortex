@@ -146,3 +146,8 @@ html[lang="ja"] {
   display: inline-block;
   transition: transform 0.15s ease-out;
 }
+
+/* Hide top nav (search, language, theme) during testing */
+body.hide-top-nav #top-nav-bar {
+  display: none;
+}

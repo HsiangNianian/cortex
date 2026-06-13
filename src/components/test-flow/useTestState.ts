@@ -119,6 +119,9 @@ export function useTestState() {
           const fullRaw = localStorage.getItem("cognitive-rust-full-result");
           if (fullRaw) { const f = JSON.parse(fullRaw); if (f.result) f.result.flaggedIds = ids; localStorage.setItem("cognitive-rust-full-result", JSON.stringify(f)); }
         } catch { /* ignore */ }
+        // Toast feedback
+        setToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"));
+        setTimeout(() => setToast(null), 2000);
       }
 
       // Report to KV (aggregate by question, not by user)
@@ -306,6 +309,16 @@ export function useTestState() {
       if (resultTimer) clearTimeout(resultTimer);
     };
   }, [answers, timeouts, questions, aiUsage]);
+
+  // Hide top nav during testing
+  useEffect(() => {
+    if (phase === "testing") {
+      document.body.classList.add("hide-top-nav");
+    } else {
+      document.body.classList.remove("hide-top-nav");
+    }
+    return () => document.body.classList.remove("hide-top-nav");
+  }, [phase]);
 
   // Auto-advance to next question after answer is recorded
   useEffect(() => {

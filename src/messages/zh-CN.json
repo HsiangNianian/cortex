@@ -66,7 +66,9 @@
 		"finishButton": "完成测试",
 		"flagLabel": "此题有误?",
 		"flagTip": "帮助我们更好的改进题目与题库",
-		"flagged": "已反馈"
+		"flagged": "已反馈",
+	"flagAdded": "已反馈题目有问题",
+	"flagRemoved": "已取消反馈"
 	},
 	"processing": {
 		"title": "测试完成",
