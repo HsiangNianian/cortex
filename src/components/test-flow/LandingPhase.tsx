@@ -53,7 +53,6 @@ export function LandingPhase({
   cooldownVersion,
 }: LandingPhaseProps) {
   const n = useTranslations();
-  const ts = useTranslations("sponsors");
   const locale = useLocale();
   const { isPremium } = usePremium();
   const isChallenge = challengeRef !== null;
@@ -285,12 +284,6 @@ export function LandingPhase({
               className="text-xs text-primary/70 underline-offset-4 hover:underline"
             >
               {isPremium ? n("landing.managePremium") : n("landing.activateLicense")}
-            </Link>
-            <Link
-              href="/sponsors"
-              className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-            >
-              {ts("title")}
             </Link>
           </CardFooter>
         </Card>

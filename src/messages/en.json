@@ -95,7 +95,7 @@
 		},
 		"retestPrompt": "Retest in 7 days to track your changes",
 		"retestDesc": "Cognitive ability is like a muscle—measure regularly to see the trend. Your history is saved locally.",
-		"flaggedCount": "Flagged {count} questions. Thanks for the feedback!",
+		"flaggedCount": "Flagged {count} possible issues. Thanks for the feedback!",
 		"comparisonTitle": "Comparison with Last Test",
 		"lastLabel": "Previous",
 		"currentLabel": "Current",
@@ -177,6 +177,15 @@
 		"networkError": "Network error. Please try again later.",
 		"licenseKeyLabel": "Your License Key (save it):",
 		"autoActivated": "Auto-activated. Key saved on this device. Enter it on other devices to sync."
+	},
+	"search": {
+		"title": "Search Questions",
+		"placeholder": "Search by keyword...",
+		"noResults": "No matching questions found",
+		"resultCount": "{count} results",
+		"expand": "Show explanation",
+		"collapse": "Hide explanation",
+		"correctAnswer": "Correct answer"
 	},
 	"sponsors": {
 		"backToTest": "Back to Test",

@@ -40,6 +40,7 @@ interface ResultPhaseProps {
   handleRestart: () => void;
   handleDownloadImage: () => void;
   flaggedIds: Set<number>;
+  hasFlaggedBefore: boolean;
   onToggleFlag: (qId: number) => void;
 }
 
@@ -55,6 +56,7 @@ export function ResultPhase({
   handleRestart,
   handleDownloadImage,
   flaggedIds,
+  hasFlaggedBefore,
   onToggleFlag,
 }: ResultPhaseProps) {
   const n = useTranslations();
@@ -640,37 +642,27 @@ export function ResultPhase({
                       {q.question.split("\n")[0]}
                       {q.question.includes("\n") ? "…" : ""}
                     </p>
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      {n("result.reviewYourAnswer")}
-                      {userAnswer !== null
-                        ? Array.isArray(userAnswer)
-                          ? userAnswer.length > 0
-                            ? userAnswer.map((a) => q.options[a]).join(", ")
-                            : n("result.reviewUnanswered")
-                          : q.options[userAnswer]
-                        : n("result.reviewUnanswered")}
-                      {!isFullCorrect && !timedOut && (
-                        <>
-                          {" · "}
-                          <span className="text-green-600">
-                            {n("result.reviewCorrectAnswer", {
-                              answer: correctLabel,
-                            })}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                    {timedOut && (
-                      <div className="mt-1 text-xs text-green-600">
-                        {n("result.reviewCorrectAnswer", {
-                          answer: correctLabel,
-                        })}
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <div className="text-xs text-muted-foreground">
+                        {n("result.reviewYourAnswer")}
+                        {userAnswer !== null
+                          ? Array.isArray(userAnswer)
+                            ? userAnswer.length > 0
+                              ? userAnswer.map((a) => q.options[a]).join(", ")
+                              : n("result.reviewUnanswered")
+                            : q.options[userAnswer]
+                          : n("result.reviewUnanswered")}
+                        {!isFullCorrect && !timedOut && (
+                          <>
+                            {" · "}
+                            <span className="text-green-600">
+                              {n("result.reviewCorrectAnswer", {
+                                answer: correctLabel,
+                              })}
+                            </span>
+                          </>
+                        )}
                       </div>
-                    )}
-                    <div className="mt-2 flex items-start justify-between gap-2">
-                      <p className="whitespace-pre-line text-xs leading-relaxed text-muted-foreground">
-                        {q.explanation}
-                      </p>
                       <button
                         type="button"
                         title={n("testing.flagTip")}
@@ -682,9 +674,19 @@ export function ResultPhase({
                         }`}
                       >
                         <Flag className={`h-3 w-3 ${flaggedIds.has(q.id) ? "fill-amber-400" : ""}`} />
-                        {n("testing.flagLabel")}
+                        {!hasFlaggedBefore && n("testing.flagLabel")}
                       </button>
                     </div>
+                    {timedOut && (
+                      <div className="mt-1 text-xs text-green-600">
+                        {n("result.reviewCorrectAnswer", {
+                          answer: correctLabel,
+                        })}
+                      </div>
+                    )}
+                    <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-muted-foreground">
+                      {q.explanation}
+                    </p>
                   </div>
                 );
               })}

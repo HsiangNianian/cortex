@@ -29,6 +29,7 @@ interface QuestionCardProps {
   isLastQuestion: boolean;
   totalQuestions: number;
   flaggedIds: Set<number>;
+  hasFlaggedBefore: boolean;
   onToggleFlag: (qId: number) => void;
   handleSelectOption: (i: number) => void;
   handleNext: () => void;
@@ -55,6 +56,7 @@ export function QuestionCard({
   isLastQuestion,
   totalQuestions,
   flaggedIds,
+  hasFlaggedBefore,
   onToggleFlag,
   handleSelectOption,
   handleNext,
@@ -94,7 +96,7 @@ export function QuestionCard({
               }`}
             >
               <Flag className={`h-3.5 w-3.5 ${flaggedIds.has(question.id) ? "fill-amber-400" : ""}`} />
-              {flaggedIds.has(question.id) ? n("testing.flagged") : n("testing.flagLabel")}
+              {!hasFlaggedBefore && (flaggedIds.has(question.id) ? n("testing.flagged") : n("testing.flagLabel"))}
             </button>
             <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
           </div>

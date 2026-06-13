@@ -173,6 +173,15 @@
 		"licenseKeyLabel": "你的 License Key（请保存好）：",
 		"autoActivated": "已自动激活。Key 已保存在此设备。换设备时输入此 Key 即可同步。"
 	},
+	"search": {
+		"title": "搜题",
+		"placeholder": "输入关键词搜索题目...",
+		"noResults": "没有找到匹配的题目",
+		"resultCount": "找到 {count} 题",
+		"expand": "展开解析",
+		"collapse": "收起解析",
+		"correctAnswer": "正确答案"
+	},
 	"sponsors": {
 		"backToTest": "回到测试",
 		"title": "赞助墙",

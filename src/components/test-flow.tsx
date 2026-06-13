@@ -47,6 +47,7 @@ export default function TestFlow() {
             isLastQuestion={s.isLastQuestion}
             totalQuestions={s.totalQuestions}
             flaggedIds={s.flaggedIds}
+            hasFlaggedBefore={s.hasFlaggedBefore}
             onToggleFlag={s.toggleFlag}
             handleSelectOption={s.handleSelectOption}
             handleNext={s.handleNext}
@@ -62,6 +63,7 @@ export default function TestFlow() {
             setShowExplanations={s.setShowExplanations}
             isDownloading={s.isDownloading}
             flaggedIds={s.flaggedIds}
+            hasFlaggedBefore={s.hasFlaggedBefore}
             onToggleFlag={s.toggleFlag}
             handleShare={s.handleShare}
             handleSetReminder={s.handleSetReminder}

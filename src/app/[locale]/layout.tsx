@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { ServiceWorkerRegister } from "@/components/service-worker-register"
 import { PremiumWrapper } from "@/components/premium/PremiumWrapper"
+import { Link } from "@/i18n/navigation"
 import { QUESTIONS_PER_TEST } from "@/lib/questions"
 import { RESULT_TIERS } from "@/lib/scoring"
 
@@ -90,12 +91,21 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){var d=document,t=setTimeout(function(){var s=d.querySelectorAll('link[rel=stylesheet]');for(var i=0;i<s.length;i++){var h=s[i].href;s[i].href=h+(h.includes('?')?'&':'?')+'_t='+Date.now()}},5000);d.addEventListener('load',function(){clearTimeout(t)})})()`,
+        }}
+      />
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLdWebApplication(locale)),
         }}
       />
-      <div className="flex items-center justify-end gap-2 px-4 pt-3">
+      <div className="flex items-center justify-end gap-3 px-4 pt-3">
+        <Link href="/search" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="mr-0.5 inline h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          搜题
+        </Link>
         <LanguageToggle />
         <ThemeToggle />
       </div>

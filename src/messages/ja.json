@@ -95,7 +95,7 @@
 		},
 		"retestPrompt": "7日後に再測定し、変化を追跡",
 		"retestDesc": "認知能力は筋肉と同じ——定期的な測定で傾向が見えてきます。履歴はローカルに保存されます。",
-		"flaggedCount": "{count}問を報告しました。フィードバックありがとうございます！",
+		"flaggedCount": "{count}件の問題を報告しました。フィードバックありがとうございます！",
 		"comparisonTitle": "前回のテストとの比較",
 		"lastLabel": "前回",
 		"currentLabel": "今回",
@@ -177,6 +177,15 @@
 		"networkError": "ネットワークエラー。後でもう一度お試しください。",
 		"licenseKeyLabel": "ライセンスキー（保存してください）:",
 		"autoActivated": "自動アクティベート済み。キーはこのデバイスに保存されました。他のデバイスで入力して同期。"
+	},
+	"search": {
+		"title": "問題検索",
+		"placeholder": "キーワードで検索...",
+		"noResults": "該当する問題が見つかりません",
+		"resultCount": "{count}件",
+		"expand": "解説を表示",
+		"collapse": "解説を隠す",
+		"correctAnswer": "正解"
 	},
 	"sponsors": {
 		"backToTest": "テストに戻る",

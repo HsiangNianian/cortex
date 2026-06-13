@@ -101,6 +101,7 @@ export function useTestState() {
   const [cooldownEndsAt, setCooldownEndsAt] = useState<number>(0);
   const [cooldownVersion, setCooldownVersion] = useState(0);
   const [flaggedIds, setFlaggedIds] = useState<Set<number>>(new Set());
+  const [hasFlaggedBefore, setHasFlaggedBefore] = useState(false);
 
   function toggleFlag(questionId: number) {
     setFlaggedIds((prev) => {
@@ -393,7 +394,17 @@ export function useTestState() {
       try {
         const saved = localStorage.getItem("cognitive-rust-result");
         if (saved) {
-          setSavedResult(normalizeStoredEntry(JSON.parse(saved)));
+          const parsed = JSON.parse(saved);
+          if (parsed.flaggedIds?.length > 0) setHasFlaggedBefore(true);
+          setSavedResult(normalizeStoredEntry(parsed));
+        }
+        // Also check history for any past flags
+        if (!hasFlaggedBefore) {
+          const histRaw = localStorage.getItem("cognitive-rust-history");
+          if (histRaw) {
+            const hist = JSON.parse(histRaw);
+            if (hist.some((h: any) => h.flaggedIds?.length > 0)) setHasFlaggedBefore(true);
+          }
         }
       } catch {
         // ignore
@@ -914,6 +925,7 @@ export function useTestState() {
     cooldownEndsAt,
     cooldownVersion,
     flaggedIds,
+    hasFlaggedBefore,
     toggleFlag,
 
     // Refs
