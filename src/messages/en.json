@@ -5,6 +5,9 @@
 		"subtitle": "Baseline Test",
 		"description": "{count} questions to take a snapshot of your cognitive abilities. Measure regularly to see the trend—cognitive ability is like a muscle, use it or lose it."
 	},
+	"nav": {
+		"search": "Search"
+	},
 	"error": {
 		"heading": "Something went wrong",
 		"message": "The page failed to load. Please try refreshing. If the problem persists, your data is safe—your history is saved locally.",
