@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { usePremium } from "@/components/premium/usePremium"
 import { UnlockButton } from "@/components/premium/UnlockButton"
@@ -10,6 +10,10 @@ import { ArrowLeft, Copy, Check, ShieldCheck } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 
 export default function PremiumPage() {
+  useEffect(() => {
+    document.body.classList.add("hide-top-nav")
+    return () => document.body.classList.remove("hide-top-nav")
+  }, [])
   const t = useTranslations()
   const { isPremium, licenseKey, isLoading, error, clearLicense } = usePremium()
   const [copied, setCopied] = useState(false)
