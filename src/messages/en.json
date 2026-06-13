@@ -70,6 +70,7 @@
 		"backButton": "Back"
 	},
 	"testing": {
+		"exitButton": "Exit Test",
 		"nextButton": "Next Question",
 		"finishButton": "Finish Test",
 		"flagLabel": "Report issue",

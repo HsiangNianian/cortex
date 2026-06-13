@@ -65,6 +65,7 @@
 		"backButton": "返回"
 	},
 	"testing": {
+		"exitButton": "退出测试",
 		"nextButton": "下一题",
 		"finishButton": "完成测试",
 		"flagLabel": "此题有误?",

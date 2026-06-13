@@ -79,7 +79,7 @@ export function QuestionCard({
           className="inline-flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
         >
           <X className="h-3.5 w-3.5" />
-          退出测试
+          {n("testing.exitButton")}
         </button>
       </div>
       <CardHeader className="pb-3">

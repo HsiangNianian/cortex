@@ -70,6 +70,7 @@
 		"backButton": "戻る"
 	},
 	"testing": {
+		"exitButton": "テストを終了",
 		"nextButton": "次の問題",
 		"finishButton": "テスト完了",
 		"flagLabel": "問題を報告",
