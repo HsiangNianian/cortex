@@ -1,10 +1,11 @@
 // Wraps the OpenNext worker to add a scheduled cron handler for periodic maintenance.
 import original from "./.open-next/worker.js"
+import { runCalibration } from "./calibration.js"
 
 export default {
 	...original,
 	async scheduled(event, env, ctx) {
-		// Clean up expired test license keys
+		// 1. Clean up expired test license keys
 		if (env.CORTEX_DB) {
 			try {
 				const result = await env.CORTEX_DB.prepare(
@@ -15,5 +16,8 @@ export default {
 				console.error("[cron] Failed to cleanup expired licenses:", e)
 			}
 		}
+
+		// 2. Run IRT item parameter calibration (cron triggers daily at 3AM)
+		await runCalibration(env)
 	},
 }

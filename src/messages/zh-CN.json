@@ -217,7 +217,12 @@
 		"resultCount": "找到 {count} 题",
 		"expand": "展开解析",
 		"collapse": "收起解析",
-		"correctAnswer": "正确答案"
+		"correctAnswer": "正确答案",
+		"diffEasy": "简单",
+		"diffMedium": "中等",
+		"diffHard": "困难",
+		"thetaLabel": "θ={theta}",
+		"scoreLabel": "score: {score}"
 	},
 	"sponsors": {
 		"backToTest": "回到测试",

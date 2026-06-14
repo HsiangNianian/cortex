@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { saveResult } from "@/lib/storage"
+import { d1Run } from "@/lib/auth/d1-client"
 import { TIER_KEYS } from "@/lib/scoring"
 import { AI_CANONICAL_LEVELS } from "@/lib/constants"
 
@@ -41,6 +42,23 @@ export async function POST(request: Request) {
       aiUsageLevel: aiUsageLevel ?? null,
       estimationMethod: estimationMethod === "irt" ? "irt" : "percentage",
     })
+
+    // Store per-question response records for IRT calibration (best-effort, silent fail)
+    if (body.responses && Array.isArray(body.responses) && body.responses.length > 0) {
+      const userId = typeof body.deviceId === "string" ? body.deviceId : "anon"
+      const thetaVal = typeof body.theta === "number" ? body.theta : null
+      for (const r of body.responses) {
+        if (typeof r?.questionId !== "number") continue
+        try {
+          await d1Run(
+            "INSERT INTO item_responses (question_id, user_id, correct, theta) VALUES (?, ?, ?, ?)",
+            [r.questionId, userId, r.correct ? 1 : 0, thetaVal],
+          )
+        } catch {
+          // Silently skip individual insert failures
+        }
+      }
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {

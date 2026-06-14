@@ -16,13 +16,14 @@ interface SearchResult {
   answer: number | number[]
   explanation: string
   difficulty: number
+  calibratedDifficulty?: number | null
   score: number
 }
 
-function diffLabel(d: number): string {
-  if (d < -0.5) return "简单"
-  if (d < 0.5) return "中等"
-  return "困难"
+function diffLabel(d: number, t: (key: string) => string): string {
+  if (d < -0.5) return t("search.diffEasy")
+  if (d < 0.5) return t("search.diffMedium")
+  return t("search.diffHard")
 }
 
 export default function SearchPage() {
@@ -176,10 +177,15 @@ export default function SearchPage() {
                           {n("question.category." + r.category)}
                         </Badge>
                         <Badge variant="outline" className="text-[10px]">
-                          {diffLabel(r.difficulty)} · θ={r.difficulty.toFixed(1)}
+                          {diffLabel(r.difficulty, n)} · {n("search.thetaLabel", { theta: r.difficulty.toFixed(1) })}
+                          {r.calibratedDifficulty != null && (
+                            <span className="ml-1 text-orange-500 dark:text-orange-400">
+                              →{r.calibratedDifficulty.toFixed(1)}
+                            </span>
+                          )}
                         </Badge>
                         <span className="text-[10px] text-muted-foreground/40">
-                          score: {r.score}
+                          {n("search.scoreLabel", { score: r.score })}
                         </span>
                         <button
                           type="button"

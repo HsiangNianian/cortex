@@ -411,7 +411,7 @@ export const bank: Question[] = [
     answer: 0,
     difficulty: 1.2,
     explanation:
-      "Premise: every student is perfectly logical and knows the others are too.\n\nThree levels of reasoning:\n\u2460 If a student saw two blue hats, they would instantly know their own hat is red (only two blue hats exist), and raise their hand immediately. No one did → nobody saw two blue hats.\n\u2461 If a student saw one red and one blue: suppose their own hat were blue. Then the person wearing red would see two blue hats and, by \u2460, would raise their hand immediately. After a brief pause with no hand raised → the assumption \"I am blue\" is false → they must be red. Someone at this level would raise their hand after a short delay.\n\u2462 In reality, all three wear red, so everyone sees two red hats. Each thinks: if I were blue, the other two would be in scenario \u2461 and someone would raise their hand shortly. After a few seconds of silence → the \"I am blue\" assumption fails → I must be red.\n\nSo the student who raised their hand saw two red hats and deduced through three-level recursive reasoning.",
+      'Premise: every student is perfectly logical and knows the others are too.\n\nThree levels of reasoning:\n\u2460 If a student saw two blue hats, they would instantly know their own hat is red (only two blue hats exist), and raise their hand immediately. No one did → nobody saw two blue hats.\n\u2461 If a student saw one red and one blue: suppose their own hat were blue. Then the person wearing red would see two blue hats and, by \u2460, would raise their hand immediately. After a brief pause with no hand raised → the assumption "I am blue" is false → they must be red. Someone at this level would raise their hand after a short delay.\n\u2462 In reality, all three wear red, so everyone sees two red hats. Each thinks: if I were blue, the other two would be in scenario \u2461 and someone would raise their hand shortly. After a few seconds of silence → the "I am blue" assumption fails → I must be red.\n\nSo the student who raised their hand saw two red hats and deduced through three-level recursive reasoning.',
   },
   {
     id: 30,
@@ -430,12 +430,12 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      'A says: "I am 3 years older than B."\nB says: "I am 2 years older than C."\nC says: "I am 1 year older than D."\nD says: "I am 5 years younger than A."\n\nIf all four are telling the truth, who is the oldest?',
+      'A says: "I am 3 years older than B."\nB says: "I am 2 years older than C."\nC says: "I am 1 year older than D."\nD says: "I am 6 years younger than A."\n\nIf all four are telling the truth, who is the oldest?',
     options: ["A", "B", "C", "D"],
     answer: 0,
     difficulty: -0.5,
     explanation:
-      "A = B + 3, B = C + 2 → A = C + 5\nC = D + 1 → A = D + 6, B = D + 3\nD = A − 5 → consistent with A = D + 6 (not contradictory)\n\nAge order: A > B > C > D\nSo A is the oldest.",
+      "A = B + 3, B = C + 2 → A = C + 5\nC = D + 1 → A = D + 6, B = D + 3\nD = A − 6 → consistent with A = D + 6\n\nAge order: A > B > C > D\nSo A is the oldest.",
   },
 
   // ════════════════════════════════════════════
@@ -769,12 +769,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A jacket originally costs $80. It is now on sale for 25% off. What is the sale price?",
-    options: [
-      "$60",
-      "$55",
-      "$20",
-      "$65"
-    ],
+    options: ["$60", "$55", "$20", "$65"],
     answer: 0,
     explanation:
       "25% of $80 is $20 (since 80 × 0.25 = 20). Subtract the discount from the original price: $80 - $20 = $60.",
@@ -788,12 +783,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "In Shakespeare's Romeo and Juliet, when Juliet says 'O Romeo, Romeo! wherefore art thou Romeo?' what does 'wherefore' mean?",
-    options: [
-      "why",
-      "where",
-      "how",
-      "when"
-    ],
+    options: ["why", "where", "how", "when"],
     answer: 0,
     explanation:
       "In early modern English, 'wherefore' means 'why' or 'for what reason', not 'where'. Juliet is lamenting the reason Romeo is a Montague, not asking his location. This is a common misconception.",
@@ -807,12 +797,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You have a dinner bill of $45.60 and want to leave a 15% tip. Approximately how much is the tip?",
-    options: [
-      "$6.80",
-      "$6.84",
-      "$7.00",
-      "$5.60"
-    ],
+    options: ["$6.80", "$6.84", "$7.00", "$5.60"],
     answer: 1,
     explanation:
       "To find 15% of $45.60, multiply by 0.15: 45.60 × 0.15 = 6.84. So the tip is $6.84.",
@@ -826,12 +811,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You invest $10,000 in a bond that pays 4% annual interest compounded quarterly. After 3 years, you sell the bond and pay a 1% commission on the sale proceeds. What is your net profit (in dollars)?",
-    options: [
-      "$1,155.57",
-      "$1,126.83",
-      "$1,268.25",
-      "$1,000.00"
-    ],
+    options: ["$1,155.57", "$1,126.83", "$1,268.25", "$1,000.00"],
     answer: 0,
     explanation:
       "First, calculate the account balance after 3 years of quarterly compounding: Principal P = $10,000, annual rate r = 0.04, compounding periods per year n = 4, time t = 3 years. The amount A = P(1 + r/n)^(nt) = 10000 * (1 + 0.04/4)^(4*3) = 10000 * (1.01)^12. Using (1.01)^12 ≈ 1.126825, A ≈ 10000 * 1.126825 = $11,268.25. Then, a 1% commission on the sale reduces the proceeds to 99% of A: 11268.25 * 0.99 = $11,155.57. The net profit is the final amount minus the initial investment: 11155.57 - 10000 = $1,155.57.",
@@ -845,12 +825,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A television originally costs $600. The store offers a 20% discount, and you have a coupon for an additional 15% off the discounted price. What is the final price?",
-    options: [
-      "$390",
-      "$408",
-      "$480",
-      "$510"
-    ],
+    options: ["$390", "$408", "$480", "$510"],
     answer: 1,
     explanation:
       "First, apply the 20% discount: 100% - 20% = 80% of $600 = $480. Then apply the additional 15% off the discounted price: 100% - 15% = 85% of $480 = $408. Alternatively, multiply the original price by (0.8 × 0.85) = 0.68, giving $600 × 0.68 = $408. A common mistake is to add the percentages (20% + 15% = 35%) and apply a single 35% discount, resulting in $600 × 0.65 = $390. The other options represent applying only one of the discounts: $480 (only the 20% off) and $510 (only the 15% off).",
@@ -868,7 +843,7 @@ export const bank: Question[] = [
       "For this specific purpose",
       "In the middle of",
       "At first sight",
-      "Without end"
+      "Without end",
     ],
     answer: 0,
     explanation:
@@ -883,12 +858,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You drive 240 miles. For the first 120 miles, you travel at 60 mph, and for the remaining 120 miles, you travel at 40 mph. What is your average speed for the entire trip?",
-    options: [
-      "48 mph",
-      "50 mph",
-      "52 mph",
-      "45 mph"
-    ],
+    options: ["48 mph", "50 mph", "52 mph", "45 mph"],
     answer: 0,
     explanation:
       "Average speed is total distance divided by total time. Time for first 120 miles at 60 mph: 120/60 = 2 hours. Time for next 120 miles at 40 mph: 120/40 = 3 hours. Total time = 5 hours. Total distance = 240 miles. Average speed = 240/5 = 48 mph. Note that averaging the speeds (60 and 40) to get 50 mph is incorrect because time spent at each speed differs.",
@@ -902,12 +872,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "Your garden is 12 feet by 15 feet. You want to add a 6-inch layer of topsoil. The topsoil costs $2.50 per cubic foot. How much will the topsoil cost?",
-    options: [
-      "$225",
-      "$270",
-      "$180",
-      "$300"
-    ],
+    options: ["$225", "$270", "$180", "$300"],
     answer: 0,
     explanation:
       "First, find the area: 12 ft × 15 ft = 180 sq ft. Convert depth to feet: 6 inches = 0.5 ft. Volume = 180 × 0.5 = 90 cubic ft. Cost = 90 × $2.50 = $225.",
@@ -925,7 +890,7 @@ export const bank: Question[] = [
       "Lisa is a manager.",
       "Lisa is not a manager.",
       "Some managers do not have a company car.",
-      "None of the above."
+      "None of the above.",
     ],
     answer: 3,
     explanation:
@@ -940,12 +905,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Choose the correct word to complete the sentence: 'The detective tried to _____ a confession from the suspect.'",
-    options: [
-      "illicit",
-      "elicit",
-      "explicit",
-      "implicate"
-    ],
+    options: ["illicit", "elicit", "explicit", "implicate"],
     answer: 1,
     explanation:
       "'Elicit' means to draw out or evoke, often information or a response. 'Illicit' means illegal or forbidden. 'Explicit' means clearly stated. 'Implicate' means to show someone is involved in a crime. Only 'elicit' fits the context of obtaining a confession.",
@@ -959,12 +919,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You deposit $800 in a savings account that earns 2.5% simple interest per year. How much interest will you earn after 3 years?",
-    options: [
-      "$20",
-      "$50",
-      "$60",
-      "$80"
-    ],
+    options: ["$20", "$50", "$60", "$80"],
     answer: 2,
     explanation:
       "Simple interest is calculated as principal × rate × time. Here, principal = $800, rate = 2.5% = 0.025, time = 3 years. Interest = 800 × 0.025 × 3 = $60. The correct answer is $60.",
@@ -977,12 +932,12 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "On an island where every inhabitant is either a knight (always tells the truth) or a knave (always lies), you meet two inhabitants, Alice and Bob. Alice says, \"Bob is a knight.\" Bob says, \"We are of different types.\" What can you conclude?",
+      'On an island where every inhabitant is either a knight (always tells the truth) or a knave (always lies), you meet two inhabitants, Alice and Bob. Alice says, "Bob is a knight." Bob says, "We are of different types." What can you conclude?',
     options: [
       "Both are knights.",
       "Both are knaves.",
       "Alice is a knight and Bob is a knave.",
-      "Alice is a knave and Bob is a knight."
+      "Alice is a knave and Bob is a knight.",
     ],
     answer: 1,
     explanation:
@@ -997,12 +952,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You drive 150 miles at 60 mph, stop for 30 minutes, then drive 120 miles at 50 mph. What is your average speed for the entire trip?",
-    options: [
-      "50 mph",
-      "52 mph",
-      "55 mph",
-      "48 mph"
-    ],
+    options: ["50 mph", "52 mph", "55 mph", "48 mph"],
     answer: 0,
     explanation:
       "Total distance = 150 + 120 = 270 miles. First leg time = 150/60 = 2.5 hours. Stop = 0.5 hours. Second leg time = 120/50 = 2.4 hours. Total time = 2.5 + 0.5 + 2.4 = 5.4 hours. Average speed = 270 / 5.4 = 50 mph.",
@@ -1016,12 +966,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "An item originally costs $50. The store offers a 30% discount on all items. You also have a coupon for an additional 10% off the discounted price. What is the final price you pay?",
-    options: [
-      "$30.00",
-      "$31.50",
-      "$35.00",
-      "$32.50"
-    ],
+    options: ["$30.00", "$31.50", "$35.00", "$32.50"],
     answer: 1,
     explanation:
       "First apply the 30% discount: 50 * 0.7 = 35. Then apply the additional 10% off: 35 * 0.9 = 31.5. So the final price is $31.50. A common mistake is to add the discounts (40% off) leading to $30, or only applying the first discount.",
@@ -1033,14 +978,8 @@ export const bank: Question[] = [
     id: 69,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the Latin phrase 'bona fide' mean in English?",
-    options: [
-      "In good faith",
-      "One-time",
-      "Without payment",
-      "After the fact"
-    ],
+    question: "What does the Latin phrase 'bona fide' mean in English?",
+    options: ["In good faith", "One-time", "Without payment", "After the fact"],
     answer: 0,
     explanation:
       "'Bona fide' is Latin for 'in good faith.' It is used to describe something genuine or sincere, as in 'a bona fide offer.' The other options are incorrect: 'one-time' is 'ad hoc,' 'without payment' is 'pro bono,' and 'after the fact' is 'post hoc.'",
@@ -1052,14 +991,8 @@ export const bank: Question[] = [
     id: 70,
     type: "vocab",
     category: "vocab",
-    question:
-      "What is the meaning of the word 'garrulous'?",
-    options: [
-      "talkative",
-      "secretive",
-      "quarrelsome",
-      "sleepy"
-    ],
+    question: "What is the meaning of the word 'garrulous'?",
+    options: ["talkative", "secretive", "quarrelsome", "sleepy"],
     answer: 0,
     explanation:
       "'Garrulous' means excessively talkative, especially on trivial matters. It comes from the Latin 'garrire' (to chatter). The other options are common distractors: 'secretive' is opposite, 'quarrelsome' is confused with 'pugnacious', and 'sleepy' is unrelated.",
@@ -1077,7 +1010,7 @@ export const bank: Question[] = [
       "A sudden introduction of a new character or event to resolve a seemingly impossible situation",
       "A tragic flaw in the protagonist that leads to their downfall",
       "A symbolic representation of a deity or divine intervention",
-      "An unexpected twist that reveals a hidden identity"
+      "An unexpected twist that reveals a hidden identity",
     ],
     answer: 0,
     explanation:
@@ -1092,12 +1025,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You drive a car that gets 28 miles per gallon on the highway and 22 miles per gallon in the city. On a 200-mile trip, 40% of the distance is on the highway and 60% in the city. If gas costs $3.80 per gallon, what is the total cost of gas for the trip?",
-    options: [
-      "$31.58",
-      "$31.15",
-      "$30.40",
-      "$27.14"
-    ],
+    options: ["$31.58", "$31.15", "$30.40", "$27.14"],
     answer: 0,
     explanation:
       "Highway distance = 0.4 × 200 = 80 miles. City distance = 0.6 × 200 = 120 miles. Gallons used on highway = 80/28 ≈ 2.8571. Gallons used in city = 120/22 ≈ 5.4545. Total gallons = 2.8571 + 5.4545 = 8.3116. Cost = 8.3116 × $3.80 = $31.584, rounded to $31.58. Alternatively, effective mpg = 1/(0.4/28 + 0.6/22) ≈ 24.06 mpg, gallons = 200/24.06 ≈ 8.312, cost = $31.58.",
@@ -1115,7 +1043,7 @@ export const bank: Question[] = [
       "Buddy is a mammal.",
       "Buddy is not a mammal.",
       "All mammals are dogs.",
-      "Some mammals are dogs."
+      "Some mammals are dogs.",
     ],
     answer: 0,
     explanation:
@@ -1128,14 +1056,8 @@ export const bank: Question[] = [
     id: 74,
     type: "vocab",
     category: "vocab",
-    question:
-      "Choose the correct meaning of the word 'ostensible'.",
-    options: [
-      "genuine",
-      "apparent",
-      "secret",
-      "ambiguous"
-    ],
+    question: "Choose the correct meaning of the word 'ostensible'.",
+    options: ["genuine", "apparent", "secret", "ambiguous"],
     answer: 1,
     explanation:
       "'Ostensible' means seeming or appearing to be true, but not necessarily so. It is derived from Latin 'ostendere' (to show). The correct meaning is 'apparent' or 'seeming', not genuine, secret, or ambiguous.",
@@ -1149,12 +1071,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You drive 120 miles at 40 mph, then 180 miles at 60 mph. What must your speed be for the next 100 miles to have an overall average speed of 55 mph for the entire trip? Round to the nearest whole number.",
-    options: [
-      "68 mph",
-      "72 mph",
-      "79 mph",
-      "82 mph"
-    ],
+    options: ["68 mph", "72 mph", "79 mph", "82 mph"],
     answer: 2,
     explanation:
       "First leg: time = 120/40 = 3 hours. Second leg: time = 180/60 = 3 hours. Total distance so far = 300 miles, total time = 6 hours. Desired average speed 55 mph for 400 miles (adding 100 miles) gives total time = 400/55 ≈ 7.2727 hours. Remaining time for last 100 miles = 7.2727 - 6 = 1.2727 hours. Required speed = 100/1.2727 ≈ 78.57 mph, rounded to 79 mph.",
@@ -1168,12 +1085,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Choose the correct word to complete the sentence: 'The professor was completely _____ in the outcome of the debate, as she had no personal stake.'",
-    options: [
-      "disinterested",
-      "uninterested",
-      "biased",
-      "apathetic"
-    ],
+    options: ["disinterested", "uninterested", "biased", "apathetic"],
     answer: 0,
     explanation:
       "'Disinterested' means impartial or unbiased, which fits the context of having no personal stake. 'Uninterested' means not interested or bored. 'Biased' is the opposite of impartial. 'Apathetic' means lacking emotion or concern, but it does not specifically imply impartiality.",
@@ -1187,12 +1099,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "You meet three people on an island: X, Y, and Z. Each is either a knight (always tells the truth) or a knave (always lies). They make the following statements:\nX says: 'Y is a knight.'\nY says: 'Z is a knave.'\nZ says: 'X is a knave.'\nIf exactly one of them is a knight, who is the knight?",
-    options: [
-      "X",
-      "Y",
-      "Z",
-      "None of them"
-    ],
+    options: ["X", "Y", "Z", "None of them"],
     answer: 2,
     explanation:
       "Assume X is the knight. Then Y is a knight (since X tells truth), but that gives two knights, contradicting exactly one knight. So X is not a knight.\n\nAssume Y is the knight. Then Z is a knave (since Y tells truth). Z says 'X is a knave'. If Z is a knave, that statement is false, so X is actually a knight. That gives two knights (Y and X), contradiction. So Y is not a knight.\n\nAssume Z is the knight. Then X is a knave (since Z tells truth). X says 'Y is a knight'. Since X is a knave, that statement is false, so Y is a knave. Y says 'Z is a knave'. Since Y is a knave, that statement is false, so Z is a knight, consistent. Thus, only Z is a knight.\n\nTherefore, Z is the knight.",
@@ -1206,12 +1113,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You buy a meal that costs $45. You want to leave a 15% tip. How much is the tip?",
-    options: [
-      "$6.75",
-      "$5.75",
-      "$7.50",
-      "$6.00"
-    ],
+    options: ["$6.75", "$5.75", "$7.50", "$6.00"],
     answer: 0,
     explanation:
       "To find 15% of $45, multiply 45 by 0.15: 45 × 0.15 = 6.75. So the tip is $6.75.",
@@ -1229,7 +1131,7 @@ export const bank: Question[] = [
       "Both are truth-tellers.",
       "Both are liars.",
       "Alice is a truth-teller and Bob is a liar.",
-      "Alice is a liar and Bob is a truth-teller."
+      "Alice is a liar and Bob is a truth-teller.",
     ],
     answer: 0,
     explanation:
@@ -1243,13 +1145,8 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "Four friends—Alice, Bob, Carol, and Dave—each ordered a different dish: pizza, pasta, salad, and soup. All of them are telling the truth.\n\n- Alice says: \"I did not order pizza or pasta.\"\n- Bob says: \"I ordered soup.\"\n- Carol says: \"I did not order salad.\"\n\nWhich dish did Alice order?",
-    options: [
-      "pizza",
-      "pasta",
-      "salad",
-      "soup"
-    ],
+      'Four friends—Alice, Bob, Carol, and Dave—each ordered a different dish: pizza, pasta, salad, and soup. All of them are telling the truth.\n\n- Alice says: "I did not order pizza or pasta."\n- Bob says: "I ordered soup."\n- Carol says: "I did not order salad."\n\nWhich dish did Alice order?',
+    options: ["pizza", "pasta", "salad", "soup"],
     answer: 2,
     explanation:
       "Bob ordered soup. Alice did not order pizza or pasta, so Alice must have ordered salad or soup. Since Bob ordered soup, Alice cannot have soup — so Alice ordered salad.\n\nCarol did not order salad (consistent). The remaining dishes (pizza and pasta) go to Carol and Dave. Dave's dish is not constrained, so either assignment works, but Alice's dish is uniquely salad.",
@@ -1267,7 +1164,7 @@ export const bank: Question[] = [
       "Alex is a knight, Blake is a knave.",
       "Alex is a knave, Blake is a knight.",
       "Both are knights.",
-      "Both are knaves."
+      "Both are knaves.",
     ],
     answer: 0,
     explanation:
@@ -1282,12 +1179,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Choose the correct word to complete the sentence: 'Based on the data, economists ____ that the market will recover within the next quarter.'",
-    options: [
-      "infer",
-      "imply",
-      "allude",
-      "elude"
-    ],
+    options: ["infer", "imply", "allude", "elude"],
     answer: 0,
     explanation:
       "'Infer' means to deduce or conclude from evidence, which fits the context of economists making a conclusion from data. 'Imply' means to suggest indirectly, which is what the data might do, but the subject is the economists, not the data. 'Allude' means to refer indirectly, and 'elude' means to evade or escape. Therefore, 'infer' is correct.",
@@ -1301,12 +1193,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four teachers—Mr. Smith, Mrs. Jones, Ms. Brown, and Dr. Lee—each teach a different subject: Math, English, Physics, and Chemistry. Dr. Lee teaches Physics. Additionally, the following conditions hold:\n- If Mr. Smith teaches Math, then Mrs. Jones teaches English.\n- If Mrs. Jones teaches English, then Ms. Brown does not teach Chemistry.\n- Exactly one of the following statements is true: Mr. Smith teaches Math or Mrs. Jones teaches English.\n\nWhich subject does Ms. Brown teach?",
-    options: [
-      "Math",
-      "English",
-      "Physics",
-      "Chemistry"
-    ],
+    options: ["Math", "English", "Physics", "Chemistry"],
     answer: 0,
     explanation:
       "Let S, J, B represent the subjects taught by Smith, Jones, Brown respectively. Given Lee teaches Physics. The conditions: (1) S=Math → J=English; (2) J=English → B≠Chemistry; (3) Exactly one of S=Math or J=English is true. If S=Math were true, then from (1) J=English must be true, contradicting exactly one true. Therefore S=Math is false and J=English is true. From (2), since J=English, B≠Chemistry. With J=English and Lee=Physics, remaining subjects are Math and Chemistry for Smith and Brown. Since S≠Math, Smith must take Chemistry, so Brown takes Math. Thus Ms. Brown teaches Math.",
@@ -1320,12 +1207,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A store offers a 'buy two, get one free' promotion on items priced at $15 each. You buy 6 items. You have a coupon for 15% off your total purchase after the promotion. Sales tax is 7%. How much do you pay in total? (Round to the nearest cent.)",
-    options: [
-      "$54.57",
-      "$64.20",
-      "$45.00",
-      "$48.15"
-    ],
+    options: ["$54.57", "$64.20", "$45.00", "$48.15"],
     answer: 0,
     explanation:
       "With 'buy two, get one free', for every 2 items you pay for, you get 1 free. For 6 items, you pay for 4 and get 2 free: 4 × $15 = $60. After the 15% coupon: $60 × 0.85 = $51. Sales tax of 7%: $51 × 1.07 = $54.57.",
@@ -1339,12 +1221,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You buy a pair of shoes for $85. The store offers a 20% discount, and then you must pay 6% sales tax on the discounted price. How much do you pay in total?",
-    options: [
-      "$68.00",
-      "$72.08",
-      "$71.60",
-      "$74.80"
-    ],
+    options: ["$68.00", "$72.08", "$71.60", "$74.80"],
     answer: 1,
     explanation:
       "First, calculate the discounted price: 20% off $85 = 0.20 × 85 = $17 off, so discounted price = $85 - $17 = $68. Then add 6% sales tax on $68: 0.06 × 68 = $4.08. Total = $68 + $4.08 = $72.08.",
@@ -1358,12 +1235,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "In a race, five runners—Tom, Jerry, Spike, Tyke, and Nibbles—completed the course. The following facts are known:\n1. Spike finished ahead of Tom but behind Jerry.\n2. Tyke finished ahead of Jerry.\n3. Nibbles finished behind Tom.\nAssuming no ties, who finished first?",
-    options: [
-      "Tom",
-      "Jerry",
-      "Spike",
-      "Tyke"
-    ],
+    options: ["Tom", "Jerry", "Spike", "Tyke"],
     answer: 3,
     explanation:
       "From clue 1: Jerry > Spike > Tom. From clue 2: Tyke > Jerry. So Tyke > Jerry > Spike > Tom. From clue 3: Tom > Nibbles. Thus the complete order is Tyke > Jerry > Spike > Tom > Nibbles. Therefore Tyke finished first.",
@@ -1377,12 +1249,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four friends—Alice, Bob, Carol, and Dave—sit in a row of four chairs from left to right. Alice sits to the left of Bob. Carol sits to the right of Bob. Dave sits to the left of Alice. Who sits in the third chair?",
-    options: [
-      "Alice",
-      "Bob",
-      "Carol",
-      "Dave"
-    ],
+    options: ["Alice", "Bob", "Carol", "Dave"],
     answer: 1,
     explanation:
       "From the conditions, we deduce the order: Dave is left of Alice, Alice left of Bob, Bob left of Carol. So the order from left to right is Dave, Alice, Bob, Carol. Therefore, Bob sits in the third chair.",
@@ -1395,13 +1262,8 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "A crime has been committed. Four suspects—Alice, Bob, Carol, and Dave—are questioned. Only one of them is guilty. They make the following statements:\n\nAlice: \"Bob is guilty.\"\nBob: \"Dave is guilty.\"\nCarol: \"I am not guilty.\"\nDave: \"Alice is lying.\"\n\nOnly one statement is true. Who is guilty?",
-    options: [
-      "Alice",
-      "Bob",
-      "Carol",
-      "Dave"
-    ],
+      'A crime has been committed. Four suspects—Alice, Bob, Carol, and Dave—are questioned. Only one of them is guilty. They make the following statements:\n\nAlice: "Bob is guilty."\nBob: "Dave is guilty."\nCarol: "I am not guilty."\nDave: "Alice is lying."\n\nOnly one statement is true. Who is guilty?',
+    options: ["Alice", "Bob", "Carol", "Dave"],
     answer: 2,
     explanation:
       "Assume each person is guilty and count the true statements. Only one statement should be true.\n- If Alice is guilty: Alice's statement is false (Bob not guilty), Bob's false (Dave not guilty), Carol's true (she is not guilty), Dave's true (Alice lying). Two truths, contradiction.\n- If Bob is guilty: Alice's true, Bob's false, Carol's true (she is not guilty), Dave's false (Alice told truth). Two truths, contradiction.\n- If Carol is guilty: Alice's false, Bob's false, Carol's false (she is guilty), Dave's true (Alice lying). Exactly one truth, works.\n- If Dave is guilty: Alice's false, Bob's true, Carol's true (she is not guilty), Dave's true (Alice lying). Three truths, contradiction.\nThus Carol is guilty.",
@@ -1415,12 +1277,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four friends—Alex, Beth, Chris, and Dana—each have a different favorite season: spring, summer, fall, winter. Alex does not like summer or winter. Beth likes fall. Chris does not like spring. Dana likes winter. What is Alex's favorite season?",
-    options: [
-      "spring",
-      "summer",
-      "fall",
-      "winter"
-    ],
+    options: ["spring", "summer", "fall", "winter"],
     answer: 0,
     explanation:
       "Beth likes fall, Dana likes winter. Chris does not like spring, so Chris must like summer (the only remaining season after assigning fall and winter). Then Alex, who does not like summer or winter, must like spring.",
@@ -1434,12 +1291,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Three employees—Alex, Bailey, and Casey—each work on a different floor: 1st, 2nd, or 3rd. They each have a different job title: Analyst, Coordinator, or Manager. It is known that: 1. The Manager works on the 2nd floor. 2. Bailey is not the Coordinator. 3. Casey works on the 1st floor. 4. The Analyst works on the 3rd floor. Who is the Coordinator?",
-    options: [
-      "Alex",
-      "Bailey",
-      "Casey",
-      "Cannot be determined"
-    ],
+    options: ["Alex", "Bailey", "Casey", "Cannot be determined"],
     answer: 2,
     explanation:
       "From clue 1, Manager is on floor 2. From clue 4, Analyst is on floor 3. So the remaining floor 1 must be the Coordinator. Clue 3 says Casey works on floor 1, so Casey is the Coordinator. Clue 2 (Bailey is not the Coordinator) is consistent but doesn't affect the deduction.",
@@ -1453,12 +1305,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Five students—Amy, Ben, Carl, Dana, and Eric—line up for a photo. Amy is not first. Ben is somewhere before Carl. Dana is immediately after Eric. Carl is third. Who is first?",
-    options: [
-      "Amy",
-      "Ben",
-      "Carl",
-      "Dana"
-    ],
+    options: ["Amy", "Ben", "Carl", "Dana"],
     answer: 1,
     explanation:
       "Carl is third. Ben is before Carl, so Ben could be first or second. Dana is immediately after Eric, so they form a consecutive pair. If Eric were first, then Dana second, leaving no position before Carl for Ben (since Carl is third). Thus Eric cannot be first. Therefore Ben must be first. The only consistent order is Ben (first), Amy (second), Carl (third), Eric (fourth), Dana (fifth), satisfying all conditions.",
@@ -1471,16 +1318,16 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "Four friends—John, Mary, Paul, and Susan—each have a different favorite color (red, blue, green, yellow) and a different favorite number from 1 to 4. They give the following statements:\n1. The person who likes red has the favorite number 2.\n2. Mary's favorite number is not 1, and she does not like blue.\n3. Paul's favorite color is either yellow or green.\n4. The person who likes green has the favorite number 3.\n5. The person who likes yellow does not have the favorite number 4.\n6. John's favorite number is not 2.\nBased on this information, which of the following must be true?",
+      "Four friends—John, Mary, Paul, and Susan—each have a different favorite color (red, blue, green, yellow) and a different favorite number from 1 to 4. They give the following statements:\n1. The person who likes red has the favorite number 2.\n2. Mary's favorite number is not 1, and she does not like blue.\n3. Paul's favorite color is either yellow or green.\n4. The person who likes green has the favorite number 3.\n5. The person who likes yellow does not have the favorite number 4.\n6. John's favorite number is not 2.\n7. Mary's favorite color is not red.\nBased on this information, which of the following must be true?",
     options: [
       "Mary's favorite color is green.",
       "Paul's favorite number is 3.",
       "John's favorite color is yellow.",
-      "Susan's favorite number is 1."
+      "Susan's favorite number is 1.",
     ],
     answer: 0,
     explanation:
-      "From clues 1, 4, and 5, we deduce the color-number mapping: red=2, green=3, blue=4, yellow=1. From clue 2, Mary is not blue and not number 1 (yellow), so Mary must be red or green. From clue 3, Paul is yellow or green. Clue 6 says John is not number 2 (red). Now consider cases: if Mary were red (2), then Paul could be yellow (1) or green (3), leading to multiple possibilities. But if Mary is green (3), then Paul must be yellow (1) because green is taken. Then John cannot be red, so John is blue (4), and Susan is red (2). This yields a unique assignment: Mary: green/3, Paul: yellow/1, John: blue/4, Susan: red/2. Thus Mary's favorite color is green must be true. The other options are false.",
+      "From clues 1, 4, and 5, we deduce the color-number mapping: red=2, green=3, blue=4, yellow=1. From clue 2, Mary is not blue and not number 1 (yellow), so Mary must be red or green. Clue 7 eliminates red, so Mary must be green (3). From clue 3, Paul is yellow or green, but green is taken, so Paul is yellow (1). Clue 6 says John is not number 2 (red), so John must be blue (4), and Susan is red (2). This yields a unique assignment: Mary: green/3, Paul: yellow/1, John: blue/4, Susan: red/2. Thus Mary's favorite color is green must be true. The other options are false.",
     difficulty: 3,
     discrimination: 1,
     guessing: 0.25,
@@ -1489,13 +1336,12 @@ export const bank: Question[] = [
     id: 93,
     type: "vocab",
     category: "vocab",
-    question:
-      "What is the meaning of the word 'perspicacious'?",
+    question: "What is the meaning of the word 'perspicacious'?",
     options: [
       "Easily deceived or fooled",
       "Having a keen mental perception or understanding",
       "Tending to be overly critical or harsh",
-      "Lacking energy or enthusiasm"
+      "Lacking energy or enthusiasm",
     ],
     answer: 1,
     explanation:
@@ -1510,12 +1356,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A shirt costs $25, and it's on sale for 20% off. What is the sale price?",
-    options: [
-      "$20",
-      "$18",
-      "$22",
-      "$24"
-    ],
+    options: ["$20", "$18", "$22", "$24"],
     answer: 0,
     explanation:
       "20% of $25 is $5 (since 0.20 × 25 = 5). Subtract $5 from $25 to get the sale price of $20.",
@@ -1529,15 +1370,9 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A water tank holds 30 gallons. It is currently 40% full. How many gallons of water are in the tank?",
-    options: [
-      "12 gallons",
-      "10 gallons",
-      "15 gallons",
-      "18 gallons"
-    ],
+    options: ["12 gallons", "10 gallons", "15 gallons", "18 gallons"],
     answer: 0,
-    explanation:
-      "40% of 30 gallons is calculated as 0.4 × 30 = 12 gallons.",
+    explanation: "40% of 30 gallons is calculated as 0.4 × 30 = 12 gallons.",
     difficulty: -1,
     discrimination: 1,
     guessing: 0.25,
@@ -1548,12 +1383,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four colleagues—Alex, Bailey, Casey, and Dana—each work in a different department: Marketing, Sales, IT, and HR. Each also has a different preferred drink: coffee, tea, water, and soda. Given:\n(1) The person from IT does not drink coffee.\n(2) Bailey works in Sales and prefers tea.\n(3) The person who prefers water works in Marketing.\n(4) Alex does not work in IT and does not drink soda.\n(5) Casey prefers coffee.\n\nWhich department does Alex work in?",
-    options: [
-      "Marketing",
-      "Sales",
-      "IT",
-      "HR"
-    ],
+    options: ["Marketing", "Sales", "IT", "HR"],
     answer: 0,
     explanation:
       "From (2), Bailey works in Sales and prefers tea. From (5), Casey prefers coffee. From (4), Alex does not drink soda and does not work in IT, so Alex's drink must be water (since tea and coffee are taken). From (3), the person who prefers water works in Marketing, so Alex works in Marketing. The remaining people: Dana works in IT and drinks soda (only drink left), which satisfies (1) since soda is not coffee. Casey works in HR (only department left) and drinks coffee. Thus, Alex is in Marketing.",
@@ -1571,7 +1401,7 @@ export const bank: Question[] = [
       "It did not rain.",
       "The weather was sunny.",
       "The concert was held indoors.",
-      "It rained but the concert was not canceled."
+      "It rained but the concert was not canceled.",
     ],
     answer: 0,
     explanation:
@@ -1586,12 +1416,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Choose the correct word to complete the sentence: 'The long, tedious meeting seemed to ____ the entire staff, leaving them drained and listless.'",
-    options: [
-      "invigorate",
-      "enervate",
-      "stimulate",
-      "energize"
-    ],
+    options: ["invigorate", "enervate", "stimulate", "energize"],
     answer: 1,
     explanation:
       "'Enervate' means to weaken or drain of energy, which fits the context of leaving the staff drained and listless. The other options all mean to give energy or vitality, which is the opposite of what the sentence describes.",
@@ -1605,12 +1430,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "Jessica invested $5,000 in a stock that appreciated by 12% in the first year. In the second year, the stock lost 8% of its value. She then sold the stock and had to pay a 15% capital gains tax on the profit (the increase from her original investment). How much profit did she make after taxes?",
-    options: [
-      "$152.00",
-      "$129.20",
-      "$22.80",
-      "$120.40"
-    ],
+    options: ["$152.00", "$129.20", "$22.80", "$120.40"],
     answer: 1,
     explanation:
       "After first year: $5,000 * 1.12 = $5,600. After second year: $5,600 * 0.92 = $5,152. Profit before tax: $5,152 - $5,000 = $152. Tax: 15% of $152 = $22.80. After-tax profit: $152 - $22.80 = $129.20.",
@@ -1624,12 +1444,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four families—the Smiths, Joneses, Browns, and Davises—each own a different pet: a dog, a cat, a bird, or a fish. The Smiths own the dog. The Joneses do not own the cat. The Browns own the bird. The family that owns the fish is not the Davises. Which family owns the cat?",
-    options: [
-      "The Smiths",
-      "The Joneses",
-      "The Browns",
-      "The Davises"
-    ],
+    options: ["The Smiths", "The Joneses", "The Browns", "The Davises"],
     answer: 3,
     explanation:
       "We know Smiths own dog and Browns own bird. So cat and fish remain for Joneses and Davises. Joneses do not own cat, so they must own fish. Then Davises own cat. Thus, the Davises own the cat.",
@@ -1641,14 +1456,8 @@ export const bank: Question[] = [
     id: 101,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the word 'enervate' mean?",
-    options: [
-      "to invigorate",
-      "to weaken",
-      "to energize",
-      "to stimulate"
-    ],
+    question: "What does the word 'enervate' mean?",
+    options: ["to invigorate", "to weaken", "to energize", "to stimulate"],
     answer: 1,
     explanation:
       "The word 'enervate' means to weaken or drain of energy, often confused with 'energize' which means to invigorate. It comes from Latin 'enervare' (to remove sinew). Many incorrectly think it means to energize due to similarity with 'energize'.",
@@ -1666,7 +1475,7 @@ export const bank: Question[] = [
       "The unfairness of life's hardships",
       "Weapons used in battle",
       "The cruelty of his uncle",
-      "The inevitability of death"
+      "The inevitability of death",
     ],
     answer: 0,
     explanation:
@@ -1681,12 +1490,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "In standard English usage, what does the word 'disinterested' mean?",
-    options: [
-      "Uninterested",
-      "Impartial",
-      "Bored",
-      "Confused"
-    ],
+    options: ["Uninterested", "Impartial", "Bored", "Confused"],
     answer: 1,
     explanation:
       "Although 'disinterested' is sometimes used informally to mean 'uninterested,' its traditional and formal meaning is 'impartial' or 'neutral.' It refers to someone who has no personal stake or bias in a situation. For example, a judge should be disinterested in the case they are presiding over. The other options are incorrect: 'uninterested' and 'bored' imply a lack of interest or engagement, while 'confused' implies mental disarray.",
@@ -1700,12 +1504,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A smartphone is priced at $600. The store has a 20% off sale. After the discount, a 6% sales tax is added. What is the total cost?",
-    options: [
-      "$508.80",
-      "$480.00",
-      "$496.80",
-      "$504.00"
-    ],
+    options: ["$508.80", "$480.00", "$496.80", "$504.00"],
     answer: 0,
     explanation:
       "First, calculate the discount: 20% of $600 is $120, so the sale price is $600 - $120 = $480. Then, add 6% sales tax: 6% of $480 is $28.80. The total cost is $480 + $28.80 = $508.80.",
@@ -1719,12 +1518,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "On an island, every inhabitant is either a knight (always tells the truth) or a knave (always lies). Three inhabitants—Alex, Bailey, and Casey—make the following statements:\n- Alex says: 'Bailey is a knave.'\n- Bailey says: 'Alex and Casey are of the same type.'\n- Casey says: 'Bailey is a knave.'\nHow many knights are there?",
-    options: [
-      "0",
-      "1",
-      "2",
-      "3"
-    ],
+    options: ["0", "1", "2", "3"],
     answer: 1,
     explanation:
       "We test possibilities. Assume Alex is a knight. Then his statement is true, so Bailey is a knave. Bailey's statement must be false, so Alex and Casey are not of the same type. Since Alex is a knight, Casey must be a knave. Then Casey's statement 'Bailey is a knave' is true, but as a knave she must lie, contradiction. Thus Alex cannot be a knight. So Alex is a knave. Then his statement 'Bailey is a knave' is false, so Bailey is a knight. Bailey's statement is true, so Alex and Casey are of the same type. Since Alex is a knave, Casey must also be a knave. Then Casey's statement 'Bailey is a knave' is false (Bailey is a knight), and as a knave she lies, consistent. So we have Alex (knave), Bailey (knight), Casey (knave) — exactly one knight.",
@@ -1736,13 +1530,12 @@ export const bank: Question[] = [
     id: 106,
     type: "vocab",
     category: "vocab",
-    question:
-      "What is the correct meaning of the word 'nonplussed'?",
+    question: "What is the correct meaning of the word 'nonplussed'?",
     options: [
       "calm and unbothered",
       "confused and puzzled",
       "indifferent",
-      "angry"
+      "angry",
     ],
     answer: 1,
     explanation:
@@ -1757,12 +1550,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You buy 100 shares of a stock at $42 per share, paying a 2% commission on the purchase. Later, you sell all 100 shares at $48 per share, paying a 1.5% commission on the sale. What is your total profit from this transaction?",
-    options: [
-      "$444",
-      "$600",
-      "$528",
-      "$396"
-    ],
+    options: ["$444", "$600", "$528", "$396"],
     answer: 0,
     explanation:
       "Purchase cost: 100 shares × $42 = $4200. Commission on purchase: 2% of $4200 = $84. Total purchase cost: $4200 + $84 = $4284. Sale proceeds: 100 shares × $48 = $4800. Commission on sale: 1.5% of $4800 = $72. Net sale proceeds: $4800 - $72 = $4728. Profit = net sale proceeds - total purchase cost = $4728 - $4284 = $444.",
@@ -1776,12 +1564,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A car travels 240 miles on a full tank of 15 gallons. If gas costs $3.50 per gallon, how much does it cost per mile to drive this car?",
-    options: [
-      "$0.22",
-      "$0.35",
-      "$0.19",
-      "$0.28"
-    ],
+    options: ["$0.22", "$0.35", "$0.19", "$0.28"],
     answer: 0,
     explanation:
       "First, find fuel consumption per mile: 15 gallons / 240 miles = 0.0625 gallons per mile. Then multiply by cost per gallon: 0.0625 * $3.50 = $0.21875, which rounds to $0.22 per mile.",
@@ -1793,13 +1576,12 @@ export const bank: Question[] = [
     id: 109,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which of the following best defines the word 'enormity'?",
+    question: "Which of the following best defines the word 'enormity'?",
     options: [
       "Great size or magnitude",
       "A monstrous or evil act",
       "A huge building",
-      "A measure of mass"
+      "A measure of mass",
     ],
     answer: 1,
     explanation:
@@ -1814,12 +1596,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A laptop is priced at $800. During a sale, the price is reduced by 20%. After the sale, an additional 10% discount is applied to the sale price. Then 8% sales tax is added. What is the final price paid?",
-    options: [
-      "$576.00",
-      "$622.08",
-      "$640.00",
-      "$691.20"
-    ],
+    options: ["$576.00", "$622.08", "$640.00", "$691.20"],
     answer: 1,
     explanation:
       "First, apply the 20% discount: $800 × 0.80 = $640. Then apply the additional 10% discount on the sale price: $640 × 0.90 = $576. Finally, add 8% sales tax: $576 × 1.08 = $622.08. Option B is correct. Option A is the price before tax, option C is only the first discount, and option D results from applying tax to the original price after a 20% discount (i.e., $800 × 0.80 × 1.08 = $691.20).",
@@ -1833,12 +1610,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Which word best completes the sentence? 'She felt ___ about accepting the job offer, as it had both advantages and drawbacks.'",
-    options: [
-      "ambivalent",
-      "ambiguous",
-      "ambidextrous",
-      "ambulatory"
-    ],
+    options: ["ambivalent", "ambiguous", "ambidextrous", "ambulatory"],
     answer: 0,
     explanation:
       "'Ambivalent' means having mixed or contradictory feelings about something, which fits the context of both advantages and drawbacks. 'Ambiguous' means unclear or open to interpretation, not appropriate for describing feelings. 'Ambidextrous' refers to using both hands equally well, and 'ambulatory' relates to walking, both unrelated.",
@@ -1852,12 +1624,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A recipe requires 3 cups of sugar to make 24 cupcakes. How many cups of sugar are needed to make 40 cupcakes?",
-    options: [
-      "4",
-      "5",
-      "6",
-      "7"
-    ],
+    options: ["4", "5", "6", "7"],
     answer: 1,
     explanation:
       "Set up a proportion: 3 cups / 24 cupcakes = x cups / 40 cupcakes. Cross-multiply: 3 * 40 = 24 * x → 120 = 24x → x = 5. So 5 cups of sugar are needed.",
@@ -1871,12 +1638,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "If a train travels at 60 miles per hour, how far does it travel in 30 minutes?",
-    options: [
-      "30 miles",
-      "60 miles",
-      "90 miles",
-      "120 miles"
-    ],
+    options: ["30 miles", "60 miles", "90 miles", "120 miles"],
     answer: 0,
     explanation:
       "Since speed is 60 miles per hour, and 30 minutes is half an hour, the distance is 60 × 0.5 = 30 miles.",
@@ -1890,12 +1652,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Three statements are made: A, B, and C. Exactly one of them is true. A says: 'B is false.' B says: 'C is false.' C says: 'A and B are both false.' Which statement is true?",
-    options: [
-      "A",
-      "B",
-      "C",
-      "None"
-    ],
+    options: ["A", "B", "C", "None"],
     answer: 1,
     explanation:
       "Assume A is true. Then B is false. Since B is false, its statement 'C is false' is false, so C is true. Then C says 'A and B are both false', but A is true, contradiction. So A cannot be true.\n\nAssume B is true. Then C is false, so C's statement is false, meaning it is not the case that both A and B are false, i.e., at least one of A or B is true. Since B is true, that condition holds. Also, A says 'B is false', which is false because B is true, so A is false. All conditions are satisfied: only B is true.\n\nAssume C is true. Then A and B are both false. But if A is false, its statement 'B is false' is false, meaning B is actually true, which contradicts B being false. So C cannot be true.\n\nThus, only B is true.",
@@ -1909,12 +1666,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A jacket is on sale for 30% off. After the discount, an 8% sales tax is applied, and the final price is $75.60. What was the original price?",
-    options: [
-      "$90",
-      "$100",
-      "$110",
-      "$120"
-    ],
+    options: ["$90", "$100", "$110", "$120"],
     answer: 1,
     explanation:
       "Let the original price be x. After a 30% discount, the price is 0.7x. Then 8% sales tax means multiplying by 1.08, so final price = 0.7x * 1.08 = 0.756x. Set equal to $75.60: 0.756x = 75.60, so x = 75.60 / 0.756 = 100. Thus original price is $100.",
@@ -1928,12 +1680,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "John deposits $5,000 into a savings account that earns 4% annual interest compounded annually. How much will be in the account after 2 years?",
-    options: [
-      "$5,400",
-      "$5,408",
-      "$5,420",
-      "$5,200"
-    ],
+    options: ["$5,400", "$5,408", "$5,420", "$5,200"],
     answer: 1,
     explanation:
       "The formula for compound interest is A = P(1 + r)^t, where P = $5,000, r = 0.04, and t = 2. So A = 5000 * (1.04)^2 = 5000 * 1.0816 = $5,408. Option A is simple interest ($5,400), option C is a common miscalculation (either using 1.04*1.04 incorrectly as 1.084 or adding 1.04 twice), and option D only applies one year of interest.",
@@ -1945,14 +1692,8 @@ export const bank: Question[] = [
     id: 117,
     type: "vocab",
     category: "vocab",
-    question:
-      "What does the word 'ameliorate' mean?",
-    options: [
-      "to worsen",
-      "to improve",
-      "to complicate",
-      "to simplify"
-    ],
+    question: "What does the word 'ameliorate' mean?",
+    options: ["to worsen", "to improve", "to complicate", "to simplify"],
     answer: 1,
     explanation:
       "'Ameliorate' comes from the Latin 'melior' meaning 'better'. It means to make something bad or unsatisfactory better. Thus, the correct definition is 'to improve'. The other options are plausible but incorrect: 'to worsen' is an antonym, while 'to complicate' and 'to simplify' are unrelated actions.",
@@ -1965,13 +1706,8 @@ export const bank: Question[] = [
     type: "logic",
     category: "logic",
     question:
-      "Three friends, Amy, Brian, and Claire, each have a different favorite among the following types of music: jazz, rock, classical. They make the following statements:\n- Amy says: \"Brian's favorite is not rock.\"\n- Brian says: \"Claire's favorite is classical.\"\n- Claire says: \"Amy's favorite is jazz.\"\nIf exactly one of them is telling the truth, what is Brian's favorite music?",
-    options: [
-      "jazz",
-      "rock",
-      "classical",
-      "cannot be determined"
-    ],
+      'Three friends, Amy, Brian, and Claire, each have a different favorite among the following types of music: jazz, rock, classical. They make the following statements:\n- Amy says: "Brian\'s favorite is not rock."\n- Brian says: "Claire\'s favorite is classical."\n- Claire says: "Amy\'s favorite is jazz."\nIf exactly one of them is telling the truth, what is Brian\'s favorite music?',
+    options: ["jazz", "rock", "classical", "cannot be determined"],
     answer: 3,
     explanation:
       "Assume exactly one statement is true. Test each possibility.\n\nCase 1: Amy is truthful. Then Brian's favorite is not rock. Brian lies, so Claire's favorite is not classical. Claire lies, so Amy's favorite is not jazz. The remaining assignments: If Brian is jazz, then Amy must be classical and Claire rock (since not classical). Check: Amy true (Brian not rock), Brian false (Claire not classical), Claire false (Amy not jazz). Consistent. If Brian is classical, then Amy must be rock and Claire jazz. Check: Amy true (Brian not rock), Brian false (Claire not classical), Claire false (Amy not jazz). Also consistent. So Brian could be jazz or classical.\n\nCase 2: Brian is truthful. Then Claire's favorite is classical. Amy lies, so Brian's favorite is rock. Claire lies, so Amy's favorite is not jazz. Then Amy's favorite must be jazz? No, remaining is jazz but Claire's lie says Amy not jazz. Contradiction.\n\nCase 3: Claire is truthful. Then Amy's favorite is jazz. Amy lies, so Brian's favorite is rock. Brian lies, so Claire's favorite is not classical. Then Claire's favorite must be jazz or rock? But Amy has jazz, Brian has rock, so Claire must be classical, contradicting Brian's lie. \n\nThus only Case 1 yields consistent scenarios, but Brian's favorite is not uniquely determined; it could be jazz or classical. Therefore, the answer is \"cannot be determined.\"",
@@ -1985,12 +1721,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Which word means 'something that completes or brings to perfection'?",
-    options: [
-      "Compliment",
-      "Complement",
-      "Implement",
-      "Supplement"
-    ],
+    options: ["Compliment", "Complement", "Implement", "Supplement"],
     answer: 1,
     explanation:
       "'Complement' refers to something that completes or makes perfect, whereas 'compliment' is a polite expression of praise. 'Implement' means to put into effect or a tool, and 'supplement' is something added to complete or enhance. Therefore, 'complement' is the correct choice.",
@@ -2004,12 +1735,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You are planning a road trip. The distance is 1,200 miles. Your car gets 25 miles per gallon on the highway and 18 miles per gallon in the city. You estimate that 80% of the trip is highway and 20% is city. Gas costs $3.20 per gallon. How much will you spend on gas? (Round to the nearest cent.)",
-    options: [
-      "$160.00",
-      "$165.55",
-      "$170.00",
-      "$175.50"
-    ],
+    options: ["$160.00", "$165.55", "$170.00", "$175.50"],
     answer: 1,
     explanation:
       "First, compute highway miles: 1200 * 0.8 = 960 miles. Highway gallons: 960 / 25 = 38.4 gallons. City miles: 1200 * 0.2 = 240 miles. City gallons: 240 / 18 = 13.333... gallons. Total gallons: 38.4 + 13.333... = 51.7333... gallons. Total cost: 51.7333... * 3.20 = 165.54666..., which rounds to $165.55.",
@@ -2023,12 +1749,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Three people, Alice, Bob, and Charlie, are each either always truthful or always lying. They make the following statements:\n\nAlice says, 'Bob is a liar.'\nBob says, 'Charlie is a liar.'\nCharlie says, 'Alice and Bob are both liars.'\n\nWho is telling the truth?",
-    options: [
-      "Alice",
-      "Bob",
-      "Charlie",
-      "None of them"
-    ],
+    options: ["Alice", "Bob", "Charlie", "None of them"],
     answer: 1,
     explanation:
       "Assume Alice is truthful. Then Bob is a liar. Since Bob lies, his statement 'Charlie is a liar' is false, so Charlie is truthful. Then Charlie's statement 'Alice and Bob are both liars' would be false because Alice is truthful, contradiction. So Alice must be a liar. Then Bob is truthful (since Alice's lie implies the opposite). Bob truthful means Charlie is a liar. Charlie's statement 'Alice and Bob are both liars' is false because Bob is truthful, so consistent. Thus only Bob tells the truth.",
@@ -2040,13 +1761,12 @@ export const bank: Question[] = [
     id: 122,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which of the following best defines the word 'inchoate'?",
+    question: "Which of the following best defines the word 'inchoate'?",
     options: [
       "Partially developed or just begun",
       "Completely finished and perfect",
       "Chaotic and disorderly",
-      "Repeated many times"
+      "Repeated many times",
     ],
     answer: 0,
     explanation:
@@ -2065,7 +1785,7 @@ export const bank: Question[] = [
       "Alex takes Art",
       "Bailey's favorite is green",
       "Casey takes Biology",
-      "The person taking Art has favorite color green"
+      "The person taking Art has favorite color green",
     ],
     answer: 3,
     explanation:
@@ -2080,12 +1800,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "You are driving a total of 450 miles. Your car gets 30 miles per gallon on the highway and 20 miles per gallon in the city. If you drive two-thirds of the distance on the highway and the rest in the city, how many gallons of gas will you use?",
-    options: [
-      "15 gallons",
-      "17.5 gallons",
-      "18 gallons",
-      "20 gallons"
-    ],
+    options: ["15 gallons", "17.5 gallons", "18 gallons", "20 gallons"],
     answer: 1,
     explanation:
       "Highway distance: 2/3 × 450 = 300 miles. City distance: 450 - 300 = 150 miles. Gallons on highway: 300/30 = 10. Gallons in city: 150/20 = 7.5. Total: 10 + 7.5 = 17.5 gallons.",
@@ -2099,12 +1814,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A television is on sale for 25% off. The sale price is $375. What was the original price?",
-    options: [
-      "$500",
-      "$450",
-      "$400",
-      "$425"
-    ],
+    options: ["$500", "$450", "$400", "$425"],
     answer: 0,
     explanation:
       "The sale price is 75% of the original price (100% - 25% = 75%). So original price = sale price / 0.75 = 375 / 0.75 = 500.",
@@ -2118,12 +1828,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four friends - Emily, Jack, Olivia, and Ryan - are sitting in a row. Their ages are 22, 25, 28, and 31, but not necessarily in that order. Given the following clues: (1) Emily is not the youngest. (2) Jack is older than Olivia. (3) Ryan is younger than Jack but older than Emily. Who is 28 years old?",
-    options: [
-      "Emily",
-      "Jack",
-      "Olivia",
-      "Ryan"
-    ],
+    options: ["Emily", "Jack", "Olivia", "Ryan"],
     answer: 3,
     explanation:
       "From clue (3), Jack is older than Ryan, and Ryan is older than Emily, so the age order among these three is Jack > Ryan > Emily. Since Emily is not the youngest (clue 1), the youngest person (22) must be Olivia. Then Emily can be 25, Ryan 28, and Jack 31, satisfying all clues. Thus Ryan is 28.",
@@ -2137,12 +1842,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Which word means 'to examine or inspect closely and thoroughly'?",
-    options: [
-      "Scrutinize",
-      "Ignore",
-      "Neglect",
-      "Admire"
-    ],
+    options: ["Scrutinize", "Ignore", "Neglect", "Admire"],
     answer: 0,
     explanation:
       "'Scrutinize' comes from the Latin 'scrutari' meaning 'to search' and means to examine very carefully. 'Ignore' means to refuse to take notice, 'neglect' means to fail to care for properly, and 'admire' means to regard with respect or warm approval. Only 'scrutinize' matches the definition of close examination.",
@@ -2156,12 +1856,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "The word 'egregious' originally meant 'remarkably good' but is now used to mean 'outstandingly bad.' What is this type of semantic change called?",
-    options: [
-      "Pejoration",
-      "Amelioration",
-      "Semantic shift",
-      "Synecdoche"
-    ],
+    options: ["Pejoration", "Amelioration", "Semantic shift", "Synecdoche"],
     answer: 0,
     explanation:
       "Pejoration is the process by which a word's meaning shifts to a less favorable sense, as with 'egregious' (from Latin 'egregius' meaning 'distinguished' to its modern negative sense). Amelioration is the opposite (e.g., 'nice' from 'foolish' to 'pleasant'). Semantic shift is a broader term encompassing all meaning changes, while synecdoche is a figure of speech where a part represents the whole or vice versa.",
@@ -2179,7 +1874,7 @@ export const bank: Question[] = [
       "To accept something with skepticism or doubt",
       "To add flavor to food",
       "To agree enthusiastically",
-      "To ignore completely"
+      "To ignore completely",
     ],
     answer: 0,
     explanation:
@@ -2194,12 +1889,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A driver travels the first 60 miles of a trip at 40 miles per hour, and the next 60 miles at 60 miles per hour. What is the average speed for the entire 120-mile trip?",
-    options: [
-      "48 mph",
-      "50 mph",
-      "45 mph",
-      "52 mph"
-    ],
+    options: ["48 mph", "50 mph", "45 mph", "52 mph"],
     answer: 0,
     explanation:
       "The time for the first 60 miles is 60/40 = 1.5 hours. The time for the next 60 miles is 60/60 = 1 hour. Total time = 2.5 hours. Total distance = 120 miles. Average speed = 120/2.5 = 48 mph. The common mistake is to average 40 and 60, giving 50 mph, but that ignores the different times spent at each speed.",
@@ -2211,13 +1901,12 @@ export const bank: Question[] = [
     id: 131,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which sentence uses 'infer' correctly?",
+    question: "Which sentence uses 'infer' correctly?",
     options: [
       "The speaker inferred that the audience was bored.",
       "The data infers a strong correlation.",
       "I inferred from his tone that he was angry.",
-      "She inferred her opinion in the debate."
+      "She inferred her opinion in the debate.",
     ],
     answer: 2,
     explanation:
@@ -2232,12 +1921,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Three friends—Alice, Ben, and Carol—each have a different favorite subject among Math, Science, and History. They also each have a different favorite sport among Tennis, Basketball, and Soccer. We know that:\n1. Alice's favorite subject is not Math.\n2. The person who likes Science also likes Tennis.\n3. Ben's favorite sport is not Basketball.\n4. Carol's favorite subject is History.\nWhat is Ben's favorite sport?",
-    options: [
-      "Tennis",
-      "Basketball",
-      "Soccer",
-      "None of the above"
-    ],
+    options: ["Tennis", "Basketball", "Soccer", "None of the above"],
     answer: 2,
     explanation:
       "From clue 4, Carol's favorite subject is History. Therefore, the remaining subjects (Math and Science) are for Alice and Ben. Clue 1 says Alice does not like Math, so Alice must like Science, and consequently Ben likes Math. Clue 2 states that the person who likes Science (Alice) also likes Tennis, so Alice's favorite sport is Tennis. The remaining sports are Basketball and Soccer for Ben and Carol. Clue 3 says Ben's favorite sport is not Basketball, so Ben's favorite sport must be Soccer.",
@@ -2251,12 +1935,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "The temperature in a city is 68°F. If it rises by 10°C, what is the new temperature in Fahrenheit?",
-    options: [
-      "78°F",
-      "86°F",
-      "54°F",
-      "118°F"
-    ],
+    options: ["78°F", "86°F", "54°F", "118°F"],
     answer: 1,
     explanation:
       "First, convert 68°F to Celsius: C = (68 - 32) × 5/9 = 36 × 5/9 = 20°C. Adding 10°C gives 30°C. Then convert back to Fahrenheit: F = 30 × 9/5 + 32 = 54 + 32 = 86°F. Option A (78°F) results from simply adding 10 without conversion. Option C (54°F) comes from converting 30°C to Fahrenheit but forgetting to add 32. Option D (118°F) occurs if one fails to subtract 32 in the initial conversion.",
@@ -2268,13 +1947,12 @@ export const bank: Question[] = [
     id: 134,
     type: "vocab",
     category: "vocab",
-    question:
-      "Which of the following best defines the word 'meticulous'?",
+    question: "Which of the following best defines the word 'meticulous'?",
     options: [
       "Careful and precise",
       "Careless and sloppy",
       "Quick and energetic",
-      "Loud and forceful"
+      "Loud and forceful",
     ],
     answer: 0,
     explanation:
@@ -2293,7 +1971,7 @@ export const bank: Question[] = [
       "Alice is the truth-teller.",
       "Bob is the truth-teller.",
       "Both are truth-tellers.",
-      "Both are liars."
+      "Both are liars.",
     ],
     answer: 0,
     explanation:
@@ -2308,12 +1986,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A store is having a 20% off sale. After the discount, an additional 5% is taken off the sale price. What is the final price of an item originally priced at $200?",
-    options: [
-      "$150",
-      "$152",
-      "$154",
-      "$156"
-    ],
+    options: ["$150", "$152", "$154", "$156"],
     answer: 1,
     explanation:
       "First, apply the 20% discount: 20% of $200 = $40, so the sale price is $200 - $40 = $160. Then apply the additional 5% discount on the sale price: 5% of $160 = $8, so the final price is $160 - $8 = $152.",
@@ -2327,12 +2000,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Which word best fits the sentence: 'Despite his reputation as a talkative person, he was surprisingly _____ about his childhood.'",
-    options: [
-      "reluctant",
-      "reticent",
-      "redundant",
-      "irrelevant"
-    ],
+    options: ["reluctant", "reticent", "redundant", "irrelevant"],
     answer: 1,
     explanation:
       "'Reticent' means inclined to be silent or uncommunicative, which matches the context of being reserved about one's childhood. 'Reluctant' implies unwillingness to act, which is close but less precise for describing speech. 'Redundant' and 'irrelevant' do not fit the intended meaning.",
@@ -2346,12 +2014,7 @@ export const bank: Question[] = [
     category: "math",
     question:
       "A furniture store increases the price of a sofa by 20%. Later, during a sale, they decrease the new price by 20%. If the original price was $500, what is the final price?",
-    options: [
-      "$480",
-      "$500",
-      "$520",
-      "$460"
-    ],
+    options: ["$480", "$500", "$520", "$460"],
     answer: 0,
     explanation:
       "A 20% increase multiplies the original price by 1.2, resulting in $600. Then a 20% decrease multiplies that by 0.8, giving $480. Note that the two percentage changes do not cancel because the decrease is applied to the increased price.",
@@ -2365,12 +2028,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "Four employees—Tom, Jerry, Spike, and Tyke—each take a different day off from Monday to Thursday. Tom does not take Monday off. Jerry takes off the day before Spike. Tyke takes off the day after Tom. Which day does Tom take off?",
-    options: [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday"
-    ],
+    options: ["Monday", "Tuesday", "Wednesday", "Thursday"],
     answer: 2,
     explanation:
       "Let Monday=1, Tuesday=2, Wednesday=3, Thursday=4. Tom ≠1. Tyke = Tom +1. Jerry = Spike -1. All days distinct. If Tom=2, then Tyke=3. Then Jerry and Spike must be 1 and 4, but Jerry = Spike-1: if Spike=4, Jerry=3 (taken); if Spike=1, Jerry=0 (invalid). So Tom=2 fails. If Tom=3, then Tyke=4. Then Jerry and Spike are 1 and 2: if Spike=2, Jerry=1 works. If Tom=4, Tyke=5 invalid. Thus Tom=3 (Wednesday).",
@@ -2384,12 +2042,7 @@ export const bank: Question[] = [
     category: "vocab",
     question:
       "Which word best describes a person who is exceedingly idealistic, unrealistic, and motivated by lofty but impractical ideals?",
-    options: [
-      "Utopian",
-      "Quixotic",
-      "Romantic",
-      "Fanciful"
-    ],
+    options: ["Utopian", "Quixotic", "Romantic", "Fanciful"],
     answer: 1,
     explanation:
       "The word 'quixotic' derives from the character Don Quixote in Cervantes' novel, known for his impractical chivalrous pursuits. While 'utopian' refers to an idealized society, 'romantic' emphasizes emotion and imagination, and 'fanciful' suggests whimsy, only 'quixotic' specifically captures the blend of idealism and impracticality in a person's actions or ideas.",
@@ -2401,14 +2054,8 @@ export const bank: Question[] = [
     id: 141,
     type: "vocab",
     category: "vocab",
-    question:
-      "What is the meaning of the word 'bemused'?",
-    options: [
-      "Amused",
-      "Confused",
-      "Bored",
-      "Annoyed"
-    ],
+    question: "What is the meaning of the word 'bemused'?",
+    options: ["Amused", "Confused", "Bored", "Annoyed"],
     answer: 1,
     explanation:
       "Bemused means bewildered, confused, or lost in thought, not amused. It is a common error to think it means 'amused' because of the similarity in sound, but the prefix 'be-' intensifies 'muse' (to ponder), leading to a state of confusion or puzzlement.",
@@ -2422,12 +2069,7 @@ export const bank: Question[] = [
     category: "logic",
     question:
       "John is taller than Mary. Mary is taller than Sue. Who is the tallest?",
-    options: [
-      "John",
-      "Mary",
-      "Sue",
-      "Cannot be determined"
-    ],
+    options: ["John", "Mary", "Sue", "Cannot be determined"],
     answer: 0,
     explanation:
       "Since John is taller than Mary, and Mary is taller than Sue, we can deduce that John is taller than Sue as well. Therefore, John is the tallest among the three.",
@@ -2445,7 +2087,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Order these events by cause and effect:\n① The company quarterly earnings report shows a major loss\n② The CEO announces resignation\n③ The stock price drops sharply\n④ Investors sell off shares\n\nWhat is the correct causal order?",
-    options: ["①→②→③→④","②→①→④→③","③→④→①→②","④→③→②→①"],
+    options: ["①→②→③→④", "②→①→④→③", "③→④→①→②", "④→③→②→①"],
     answer: 0,
     difficulty: -0.5,
     discrimination: 1,
@@ -2459,7 +2101,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Order these events chronologically:\n① A new social media app goes viral among teenagers\n② Major brands create accounts on the platform\n③ The platform launches a creator monetization program\n④ Influencers and content creators flock to the platform\n\nWhat is the correct order?",
-    options: ["①→②→③→④","①→③→②→④","③→①→②→④","②→①→④→③"],
+    options: ["①→②→③→④", "①→③→②→④", "③→①→②→④", "②→①→④→③"],
     answer: 0,
     difficulty: -0.3,
     discrimination: 1,
@@ -2473,7 +2115,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Order these events by cause and effect:\n① A city implements a fare-free public transit policy\n② Public transit ridership increases by 35%\n③ Traffic congestion during peak hours drops significantly\n④ Air quality measurements show a measurable improvement\n\nWhat is the correct causal order?",
-    options: ["①→②→③→④","②→①→③→④","①→③→②→④","③→②→①→④"],
+    options: ["①→②→③→④", "②→①→③→④", "①→③→②→④", "③→②→①→④"],
     answer: 0,
     difficulty: 0,
     discrimination: 1,
@@ -2487,7 +2129,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Order these events chronologically in a scientific discovery process:\n① A graduate student notices an anomaly in experimental data\n② The research team replicates the finding across multiple labs\n③ A paper is submitted to a peer-reviewed journal\n④ The discovery is widely reported in mainstream media\n\nWhat is the correct order?",
-    options: ["①→②→③→④","②→①→④→③","①→③→②→④","④→①→②→③"],
+    options: ["①→②→③→④", "②→①→④→③", "①→③→②→④", "④→①→②→③"],
     answer: 0,
     difficulty: 0.3,
     discrimination: 1,
@@ -2510,7 +2152,7 @@ export const bank: Question[] = [
       "Severe drought, Water restrictions, Lower crop yields, Higher food prices",
       "Water restrictions, Severe drought, Lower crop yields, Higher food prices",
       "Lower crop yields, Severe drought, Water restrictions, Higher food prices",
-      "Severe drought, Lower crop yields, Water restrictions, Higher food prices"
+      "Severe drought, Lower crop yields, Water restrictions, Higher food prices",
     ],
     answer: 0,
     explanation:
@@ -2529,11 +2171,11 @@ export const bank: Question[] = [
       "1, 4, 3, 2, 5",
       "1, 3, 4, 2, 5",
       "1, 4, 2, 3, 5",
-      "1, 3, 5, 4, 2"
+      "1, 3, 5, 4, 2",
     ],
     answer: 0,
     explanation:
-      "The correct sequence starts with the launch (1) causing high sales (4). Then, competitor's release (3) leads to a sales drop (2), prompting a price reduction (5). Option 2 has competitor before high sales, option 3 has drop before competitor, and option 4 has price reduction before drop, which are illogical.",
+      "The correct sequence starts with the launch (1) causing high sales (4). Then, competitor's release (3) leads to a sales drop (2), prompting a price reduction (5). Option B has competitor before high sales, option C has drop before competitor, and option D has price reduction before drop, which are illogical.",
     difficulty: -0.4,
     discrimination: 1,
     guessing: 0.25,
@@ -2548,7 +2190,7 @@ export const bank: Question[] = [
       "Release → Complaints → Hire → Improve → Satisfaction",
       "Complaints → Release → Hire → Improve → Satisfaction",
       "Release → Hire → Complaints → Improve → Satisfaction",
-      "Release → Complaints → Improve → Hire → Satisfaction"
+      "Release → Complaints → Improve → Hire → Satisfaction",
     ],
     answer: 0,
     explanation:
@@ -2563,12 +2205,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) The company launched a new smartphone. (2) Sales of the smartphone exceeded projections. (3) The marketing team released an online advertising campaign for the smartphone. (4) Website traffic to the product page increased significantly.",
-    options: [
-      "1, 3, 4, 2",
-      "3, 1, 4, 2",
-      "1, 2, 3, 4",
-      "3, 4, 1, 2"
-    ],
+    options: ["1, 3, 4, 2", "3, 1, 4, 2", "1, 2, 3, 4", "3, 4, 1, 2"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the product launch (1), which enables the marketing team to create an advertising campaign (3). The campaign then drives an increase in website traffic (4), which subsequently leads to higher sales (2). Option A (1,3,4,2) reflects this logical chain. Other options either place marketing before the product is available (B), imply sales occurred before traffic increased (C), or suggest traffic increased before the launch or campaign (D).",
@@ -2586,7 +2223,7 @@ export const bank: Question[] = [
       "3 → 2 → 1 → 4",
       "1 → 3 → 2 → 4",
       "3 → 1 → 2 → 4",
-      "2 → 3 → 1 → 4"
+      "2 → 3 → 1 → 4",
     ],
     answer: 0,
     explanation:
@@ -2601,12 +2238,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence:\n(1) The company's sales decline significantly.\n(2) The company announces a price reduction campaign.\n(3) Competitors lower their prices as well.\n(4) The company's profit margins shrink.",
-    options: [
-      "1, 2, 3, 4",
-      "2, 1, 3, 4",
-      "1, 3, 2, 4",
-      "3, 2, 1, 4"
-    ],
+    options: ["1, 2, 3, 4", "2, 1, 3, 4", "1, 3, 2, 4", "3, 2, 1, 4"],
     answer: 0,
     explanation:
       "The correct causal sequence is that initial sales decline triggers a price reduction campaign, which prompts competitors to also lower prices, ultimately leading to reduced profit margins. Options B, C, and D place events out of order, violating the cause-effect relationships (e.g., price reduction cannot precede sales decline that caused it).",
@@ -2624,7 +2256,7 @@ export const bank: Question[] = [
       "5 → 1 → 3 → 4 → 2",
       "5 → 3 → 1 → 4 → 2",
       "1 → 5 → 3 → 4 → 2",
-      "5 → 1 → 4 → 3 → 2"
+      "5 → 1 → 4 → 3 → 2",
     ],
     answer: 0,
     explanation:
@@ -2643,7 +2275,7 @@ export const bank: Question[] = [
       "4 → 3 → 2 → 1",
       "3 → 4 → 2 → 1",
       "4 → 2 → 3 → 1",
-      "4 → 3 → 1 → 2"
+      "4 → 3 → 1 → 2",
     ],
     answer: 0,
     explanation:
@@ -2658,12 +2290,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Mark is offered a job at a top company. (2) Mark studies hard for several weeks. (3) Mark passes his final exams.",
-    options: [
-      "2, 3, 1",
-      "3, 2, 1",
-      "1, 2, 3",
-      "2, 1, 3"
-    ],
+    options: ["2, 3, 1", "3, 2, 1", "1, 2, 3", "2, 1, 3"],
     answer: 0,
     explanation:
       "Studying hard leads to passing exams, which then leads to being offered a job. The correct causal sequence is: Mark studies hard (2) → passes exams (3) → gets job offer (1). Thus, the order is 2, 3, 1.",
@@ -2677,12 +2304,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) City officials approve funding for subway construction. (2) Construction of subway tunnels begins. (3) Subway stations are built. (4) Subway service starts. (5) Commuters shift from cars to subway.",
-    options: [
-      "1,2,3,4,5",
-      "2,1,3,4,5",
-      "1,3,2,4,5",
-      "1,2,4,3,5"
-    ],
+    options: ["1,2,3,4,5", "2,1,3,4,5", "1,3,2,4,5", "1,2,4,3,5"],
     answer: 0,
     explanation:
       "The correct causal sequence begins with approval of funding (1), which enables tunnel construction (2). After tunnels are built, stations are constructed (3). Only then can subway service start (4), leading to commuters shifting from cars to subway (5). Any other order violates the temporal and causal dependencies between these events.",
@@ -2700,7 +2322,7 @@ export const bank: Question[] = [
       "1, 2, 3, 4, 5",
       "1, 3, 2, 4, 5",
       "2, 1, 3, 4, 5",
-      "1, 2, 4, 3, 5"
+      "1, 2, 4, 3, 5",
     ],
     answer: 0,
     explanation:
@@ -2715,12 +2337,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) City council passes a law requiring residents to separate recyclables. (2) Recycling contamination rates decrease. (3) Residents receive educational pamphlets on proper recycling. (4) Recycling processing facility reports higher quality materials. (5) City's recycling revenue increases.",
-    options: [
-      "1-2-3-4-5",
-      "1-3-2-4-5",
-      "3-1-2-4-5",
-      "1-3-4-2-5"
-    ],
+    options: ["1-2-3-4-5", "1-3-2-4-5", "3-1-2-4-5", "1-3-4-2-5"],
     answer: 1,
     explanation:
       "The law (1) is the initial cause, which leads to the distribution of educational pamphlets (3) to inform residents. Proper education results in decreased contamination (2), which in turn leads to higher quality materials at the facility (4). Finally, higher quality materials increase recycling revenue (5). Thus, the correct sequence is 1-3-2-4-5.",
@@ -2738,7 +2355,7 @@ export const bank: Question[] = [
       "1 → 3 → 4 → 2",
       "3 → 1 → 2 → 4",
       "4 → 1 → 3 → 2",
-      "1 → 4 → 2 → 3"
+      "1 → 4 → 2 → 3",
     ],
     answer: 0,
     explanation:
@@ -2753,12 +2370,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Anna's phone battery starts lasting longer. (2) Anna installs a battery optimization app. (3) Anna reads online about battery-saving tips. (4) Anna notices her phone battery drains quickly.",
-    options: [
-      "4, 3, 2, 1",
-      "1, 2, 3, 4",
-      "3, 4, 2, 1",
-      "2, 1, 4, 3"
-    ],
+    options: ["4, 3, 2, 1", "1, 2, 3, 4", "3, 4, 2, 1", "2, 1, 4, 3"],
     answer: 0,
     explanation:
       "The correct sequence is 4 (notice problem) → 3 (read tips) → 2 (install app) → 1 (battery lasts longer). Anna first notices the battery draining quickly, which motivates her to read online about solutions. After learning about battery-saving tips, she installs an optimization app, which then causes the battery to last longer. The other orders are illogical because they place events out of causal order (e.g., the battery lasting longer before installing the app, or reading tips before noticing the problem).",
@@ -2776,7 +2388,7 @@ export const bank: Question[] = [
       "3 → 4 → 5 → 2 → 1",
       "3 → 4 → 2 → 5 → 1",
       "4 → 3 → 5 → 2 → 1",
-      "3 → 5 → 4 → 2 → 1"
+      "3 → 5 → 4 → 2 → 1",
     ],
     answer: 0,
     explanation:
@@ -2791,12 +2403,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Reports of injuries surface, (2) Company issues a product recall, (3) Safety defect is identified in manufacturing, (4) Sales of the product decline.",
-    options: [
-      "1, 2, 3, 4",
-      "3, 1, 2, 4",
-      "2, 4, 1, 3",
-      "4, 3, 1, 2"
-    ],
+    options: ["1, 3, 2, 4", "3, 1, 2, 4", "2, 4, 1, 3", "4, 3, 1, 2"],
     answer: 1,
     explanation:
       "The causal sequence begins with the safety defect being identified in manufacturing (3), which leads to injuries caused by the defect, prompting reports to surface (1). In response to the reports, the company issues a recall (2), and as a result of the recall and negative publicity, sales decline (4). Thus, the correct order is 3, 1, 2, 4.",
@@ -2810,12 +2417,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) The company expands production capacity. (2) The company's electricity costs decrease. (3) The government announces tax credits for solar energy investment. (4) The company installs solar panels.",
-    options: [
-      "3, 4, 2, 1",
-      "3, 2, 4, 1",
-      "1, 3, 4, 2",
-      "4, 3, 2, 1"
-    ],
+    options: ["3, 4, 2, 1", "3, 2, 4, 1", "1, 3, 4, 2", "4, 3, 2, 1"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the government announcing tax credits (3), which incentivizes the company to install solar panels (4). The solar panels then cause a decrease in electricity costs (2), and the cost savings enable the company to expand production capacity (1). Option A is the only order that follows this logic. Option B incorrectly places the cost decrease before the installation. Option C starts with expansion, which is an effect, not a cause. Option D starts with installation before the tax credits that motivated it.",
@@ -2829,12 +2431,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Strong winds knock down a tree onto power lines, (2) The power outage lasts for several hours, (3) Residents start using generators to power their homes, (4) Carbon monoxide poisoning cases are reported at the local hospital.",
-    options: [
-      "1, 2, 3, 4",
-      "1, 3, 2, 4",
-      "2, 1, 3, 4",
-      "4, 3, 2, 1"
-    ],
+    options: ["1, 2, 3, 4", "1, 3, 2, 4", "2, 1, 3, 4", "4, 3, 2, 1"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the storm causing the tree to fall on power lines (1), which leads to a power outage (2). Because of the outage, residents use generators (3), and improper use of generators causes carbon monoxide poisoning (4). Therefore, the order is 1, 2, 3, 4.",
@@ -2847,13 +2444,8 @@ export const bank: Question[] = [
     type: "event",
     category: "event",
     question:
-      "Arrange the following events in the most logical causal sequence: (1) A major social media platform announces a new privacy policy that restricts data sharing with third-party advertisers. (2) The platform's advertising revenue declines significantly. (3) Many users express outrage and delete their accounts. (4) The company hires a public relations firm to improve its image.",
-    options: [
-      "1, 3, 2, 4",
-      "1, 2, 3, 4",
-      "3, 1, 2, 4",
-      "1, 3, 4, 2"
-    ],
+      "Arrange the following events in the most logical causal sequence: (1) A major social media platform announces a new privacy policy that sharing data with third-party advertisers. (2) The platform's advertising revenue declines significantly. (3) Many users express outrage and delete their accounts. (4) The company hires a public relations firm to improve its image.",
+    options: ["1, 3, 2, 4", "1, 2, 3, 4", "3, 1, 2, 4", "1, 3, 4, 2"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the announcement of the new privacy policy (1). This leads to user outrage and account deletions (3), which then causes a decline in advertising revenue (2) because fewer users mean less data and ad impressions. Finally, the company hires a PR firm (4) in response to the revenue decline and negative publicity. Option A (1,3,2,4) is the only order that follows this logical chain.",
@@ -2867,12 +2459,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Harmony introduces a personalized playlist algorithm. (2) Users spend more time on the platform, increasing ad revenue. (3) Competitors replicate the feature, leading to market saturation. (4) Harmony's user growth slows, so they reduce investment in algorithm improvement. (5) User engagement declines as algorithm quality stagnates.",
-    options: [
-      "1,2,3,4,5",
-      "1,3,2,4,5",
-      "1,2,4,3,5",
-      "2,1,3,4,5"
-    ],
+    options: ["1,2,3,4,5", "1,3,2,4,5", "1,2,4,3,5", "2,1,3,4,5"],
     answer: 0,
     explanation:
       "The correct sequence starts with Harmony introducing a new algorithm (1), which leads to increased user time and ad revenue (2). This success attracts competitors who copy the feature (3), causing market saturation and slowing Harmony's growth. In response, Harmony cuts investment in the algorithm (4), leading to stagnation and declining user engagement (5). Other orders break the cause-effect chain, e.g., competitors copying before user growth is implausible.",
@@ -2886,12 +2473,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the correct causal sequence: (1) Student studies regularly. (2) Student performs well on the test. (3) Student understands the material. (4) Student gets a good grade.",
-    options: [
-      "1, 3, 2, 4",
-      "2, 1, 3, 4",
-      "3, 1, 4, 2",
-      "1, 2, 3, 4"
-    ],
+    options: ["1, 3, 2, 4", "2, 1, 3, 4", "3, 1, 4, 2", "1, 2, 3, 4"],
     answer: 0,
     explanation:
       "Studying regularly (1) leads to understanding the material (3), which leads to performing well on the test (2), which then leads to getting a good grade (4). Thus the correct order is 1, 3, 2, 4.",
@@ -2909,7 +2491,7 @@ export const bank: Question[] = [
       "3, 1, 5, 2, 4",
       "1, 3, 5, 2, 4",
       "3, 5, 1, 2, 4",
-      "1, 5, 3, 2, 4"
+      "1, 5, 3, 2, 4",
     ],
     answer: 0,
     explanation:
@@ -2928,7 +2510,7 @@ export const bank: Question[] = [
       "1 → 2 → 3 → 4 → 5",
       "1 → 3 → 2 → 4 → 5",
       "2 → 1 → 3 → 4 → 5",
-      "1 → 2 → 4 → 3 → 5"
+      "1 → 2 → 4 → 3 → 5",
     ],
     answer: 0,
     explanation:
@@ -2945,7 +2527,12 @@ export const bank: Question[] = [
     category: "event-cause",
     question:
       "After a company introduced a four-day workweek, employee satisfaction scores rose by 35%, but overall productivity remained flat compared to the previous year. Which of the following best explains this outcome?",
-    options: ["Employees used the extra day off for leisure rather than rest","The company simultaneously reduced headcount by 10%","Employees condensed five days of work into four, leading to burnout","The productivity measurement included only output quantity, not quality"],
+    options: [
+      "Employees used the extra day off for leisure rather than rest",
+      "The company simultaneously reduced headcount by 10%",
+      "Employees condensed five days of work into four, leading to burnout",
+      "The productivity measurement included only output quantity, not quality",
+    ],
     answer: 0,
     difficulty: 0.2,
     discrimination: 1,
@@ -2959,7 +2546,12 @@ export const bank: Question[] = [
     category: "event-cause",
     question:
       "A national park introduced a mandatory reservation system to reduce overcrowding. Visitor numbers dropped by 45%, but visitor satisfaction scores also decreased. Which of the following best explains the decrease in satisfaction?",
-    options: ["The reservation system created access barriers for spontaneous visitors","Fewer visitors meant less revenue for park maintenance","Nearby parks without reservations saw increased attendance","Weather conditions were particularly poor during the study period"],
+    options: [
+      "The reservation system created access barriers for spontaneous visitors",
+      "Fewer visitors meant less revenue for park maintenance",
+      "Nearby parks without reservations saw increased attendance",
+      "Weather conditions were particularly poor during the study period",
+    ],
     answer: 0,
     difficulty: 0.3,
     discrimination: 1,
@@ -2975,7 +2567,12 @@ export const bank: Question[] = [
     category: "event-argument",
     question:
       "A study tracked 10,000 adults for 15 years and found that those who owned pets had a 25% lower risk of heart disease. The researchers concluded: 'Pet ownership reduces the risk of heart disease.'\n\nWhich of the following is an assumption the argument depends on?",
-    options: ["People who choose to own pets do not already have characteristics that lower heart disease risk","Dog ownership provides more cardiovascular benefit than cat ownership","The study participants accurately reported their pet ownership status","Heart disease risk does not vary significantly across different age groups"],
+    options: [
+      "People who choose to own pets do not already have characteristics that lower heart disease risk",
+      "Dog ownership provides more cardiovascular benefit than cat ownership",
+      "The study participants accurately reported their pet ownership status",
+      "Heart disease risk does not vary significantly across different age groups",
+    ],
     answer: 0,
     difficulty: 0.8,
     discrimination: 1,
@@ -2989,7 +2586,12 @@ export const bank: Question[] = [
     category: "event-argument",
     question:
       "A city council member argues: 'Since we installed security cameras in the downtown area, reported crimes have decreased by 20%. Security cameras are clearly effective at preventing crime.'\n\nWhich of the following, if true, most weakens the argument?",
-    options: ["Police patrols in the downtown area were doubled during the same period","The security cameras have frequent technical malfunctions","Reported crimes decreased by a similar percentage in nearby cities without cameras","Some crimes may have shifted to areas without cameras rather than being prevented"],
+    options: [
+      "Police patrols in the downtown area were doubled during the same period",
+      "The security cameras have frequent technical malfunctions",
+      "Reported crimes decreased by a similar percentage in nearby cities without cameras",
+      "Some crimes may have shifted to areas without cameras rather than being prevented",
+    ],
     answer: 2,
     difficulty: 1,
     discrimination: 1,
@@ -3012,7 +2614,7 @@ export const bank: Question[] = [
       "Severe drought, Water restrictions, Lower crop yields, Higher food prices",
       "Water restrictions, Severe drought, Lower crop yields, Higher food prices",
       "Lower crop yields, Severe drought, Water restrictions, Higher food prices",
-      "Severe drought, Lower crop yields, Water restrictions, Higher food prices"
+      "Severe drought, Lower crop yields, Water restrictions, Higher food prices",
     ],
     answer: 0,
     explanation:
@@ -3031,11 +2633,11 @@ export const bank: Question[] = [
       "1, 4, 3, 2, 5",
       "1, 3, 4, 2, 5",
       "1, 4, 2, 3, 5",
-      "1, 3, 5, 4, 2"
+      "1, 3, 5, 4, 2",
     ],
     answer: 0,
     explanation:
-      "The correct sequence starts with the launch (1) causing high sales (4). Then, competitor's release (3) leads to a sales drop (2), prompting a price reduction (5). Option 2 has competitor before high sales, option 3 has drop before competitor, and option 4 has price reduction before drop, which are illogical.",
+      "The correct sequence starts with the launch (1) causing high sales (4). Then, competitor's release (3) leads to a sales drop (2), prompting a price reduction (5). Option B has competitor before high sales, option C has drop before competitor, and option D has price reduction before drop, which are illogical.",
     difficulty: -0.4,
     discrimination: 1,
     guessing: 0.25,
@@ -3050,7 +2652,7 @@ export const bank: Question[] = [
       "Release → Complaints → Hire → Improve → Satisfaction",
       "Complaints → Release → Hire → Improve → Satisfaction",
       "Release → Hire → Complaints → Improve → Satisfaction",
-      "Release → Complaints → Improve → Hire → Satisfaction"
+      "Release → Complaints → Improve → Hire → Satisfaction",
     ],
     answer: 0,
     explanation:
@@ -3065,12 +2667,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) The company launched a new smartphone. (2) Sales of the smartphone exceeded projections. (3) The marketing team released an online advertising campaign for the smartphone. (4) Website traffic to the product page increased significantly.",
-    options: [
-      "1, 3, 4, 2",
-      "3, 1, 4, 2",
-      "1, 2, 3, 4",
-      "3, 4, 1, 2"
-    ],
+    options: ["1, 3, 4, 2", "3, 1, 4, 2", "1, 2, 3, 4", "3, 4, 1, 2"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the product launch (1), which enables the marketing team to create an advertising campaign (3). The campaign then drives an increase in website traffic (4), which subsequently leads to higher sales (2). Option A (1,3,4,2) reflects this logical chain. Other options either place marketing before the product is available (B), imply sales occurred before traffic increased (C), or suggest traffic increased before the launch or campaign (D).",
@@ -3088,7 +2685,7 @@ export const bank: Question[] = [
       "3 → 2 → 1 → 4",
       "1 → 3 → 2 → 4",
       "3 → 1 → 2 → 4",
-      "2 → 3 → 1 → 4"
+      "2 → 3 → 1 → 4",
     ],
     answer: 0,
     explanation:
@@ -3103,12 +2700,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence:\n(1) The company's sales decline significantly.\n(2) The company announces a price reduction campaign.\n(3) Competitors lower their prices as well.\n(4) The company's profit margins shrink.",
-    options: [
-      "1, 2, 3, 4",
-      "2, 1, 3, 4",
-      "1, 3, 2, 4",
-      "3, 2, 1, 4"
-    ],
+    options: ["1, 2, 3, 4", "2, 1, 3, 4", "1, 3, 2, 4", "3, 2, 1, 4"],
     answer: 0,
     explanation:
       "The correct causal sequence is that initial sales decline triggers a price reduction campaign, which prompts competitors to also lower prices, ultimately leading to reduced profit margins. Options B, C, and D place events out of order, violating the cause-effect relationships (e.g., price reduction cannot precede sales decline that caused it).",
@@ -3126,7 +2718,7 @@ export const bank: Question[] = [
       "5 → 1 → 3 → 4 → 2",
       "5 → 3 → 1 → 4 → 2",
       "1 → 5 → 3 → 4 → 2",
-      "5 → 1 → 4 → 3 → 2"
+      "5 → 1 → 4 → 3 → 2",
     ],
     answer: 0,
     explanation:
@@ -3145,7 +2737,7 @@ export const bank: Question[] = [
       "4 → 3 → 2 → 1",
       "3 → 4 → 2 → 1",
       "4 → 2 → 3 → 1",
-      "4 → 3 → 1 → 2"
+      "4 → 3 → 1 → 2",
     ],
     answer: 0,
     explanation:
@@ -3160,12 +2752,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Mark is offered a job at a top company. (2) Mark studies hard for several weeks. (3) Mark passes his final exams.",
-    options: [
-      "2, 3, 1",
-      "3, 2, 1",
-      "1, 2, 3",
-      "2, 1, 3"
-    ],
+    options: ["2, 3, 1", "3, 2, 1", "1, 2, 3", "2, 1, 3"],
     answer: 0,
     explanation:
       "Studying hard leads to passing exams, which then leads to being offered a job. The correct causal sequence is: Mark studies hard (2) → passes exams (3) → gets job offer (1). Thus, the order is 2, 3, 1.",
@@ -3179,12 +2766,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) City officials approve funding for subway construction. (2) Construction of subway tunnels begins. (3) Subway stations are built. (4) Subway service starts. (5) Commuters shift from cars to subway.",
-    options: [
-      "1,2,3,4,5",
-      "2,1,3,4,5",
-      "1,3,2,4,5",
-      "1,2,4,3,5"
-    ],
+    options: ["1,2,3,4,5", "2,1,3,4,5", "1,3,2,4,5", "1,2,4,3,5"],
     answer: 0,
     explanation:
       "The correct causal sequence begins with approval of funding (1), which enables tunnel construction (2). After tunnels are built, stations are constructed (3). Only then can subway service start (4), leading to commuters shifting from cars to subway (5). Any other order violates the temporal and causal dependencies between these events.",
@@ -3202,7 +2784,7 @@ export const bank: Question[] = [
       "1, 2, 3, 4, 5",
       "1, 3, 2, 4, 5",
       "2, 1, 3, 4, 5",
-      "1, 2, 4, 3, 5"
+      "1, 2, 4, 3, 5",
     ],
     answer: 0,
     explanation:
@@ -3217,12 +2799,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) City council passes a law requiring residents to separate recyclables. (2) Recycling contamination rates decrease. (3) Residents receive educational pamphlets on proper recycling. (4) Recycling processing facility reports higher quality materials. (5) City's recycling revenue increases.",
-    options: [
-      "1-2-3-4-5",
-      "1-3-2-4-5",
-      "3-1-2-4-5",
-      "1-3-4-2-5"
-    ],
+    options: ["1-2-3-4-5", "1-3-2-4-5", "3-1-2-4-5", "1-3-4-2-5"],
     answer: 1,
     explanation:
       "The law (1) is the initial cause, which leads to the distribution of educational pamphlets (3) to inform residents. Proper education results in decreased contamination (2), which in turn leads to higher quality materials at the facility (4). Finally, higher quality materials increase recycling revenue (5). Thus, the correct sequence is 1-3-2-4-5.",
@@ -3240,7 +2817,7 @@ export const bank: Question[] = [
       "1 → 3 → 4 → 2",
       "3 → 1 → 2 → 4",
       "4 → 1 → 3 → 2",
-      "1 → 4 → 2 → 3"
+      "1 → 4 → 2 → 3",
     ],
     answer: 0,
     explanation:
@@ -3255,12 +2832,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Anna's phone battery starts lasting longer. (2) Anna installs a battery optimization app. (3) Anna reads online about battery-saving tips. (4) Anna notices her phone battery drains quickly.",
-    options: [
-      "4, 3, 2, 1",
-      "1, 2, 3, 4",
-      "3, 4, 2, 1",
-      "2, 1, 4, 3"
-    ],
+    options: ["4, 3, 2, 1", "1, 2, 3, 4", "3, 4, 2, 1", "2, 1, 4, 3"],
     answer: 0,
     explanation:
       "The correct sequence is 4 (notice problem) → 3 (read tips) → 2 (install app) → 1 (battery lasts longer). Anna first notices the battery draining quickly, which motivates her to read online about solutions. After learning about battery-saving tips, she installs an optimization app, which then causes the battery to last longer. The other orders are illogical because they place events out of causal order (e.g., the battery lasting longer before installing the app, or reading tips before noticing the problem).",
@@ -3278,7 +2850,7 @@ export const bank: Question[] = [
       "3 → 4 → 5 → 2 → 1",
       "3 → 4 → 2 → 5 → 1",
       "4 → 3 → 5 → 2 → 1",
-      "3 → 5 → 4 → 2 → 1"
+      "3 → 5 → 4 → 2 → 1",
     ],
     answer: 0,
     explanation:
@@ -3293,15 +2865,10 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Reports of injuries surface, (2) Company issues a product recall, (3) Safety defect is identified in manufacturing, (4) Sales of the product decline.",
-    options: [
-      "1, 2, 3, 4",
-      "3, 1, 2, 4",
-      "2, 4, 1, 3",
-      "4, 3, 1, 2"
-    ],
-    answer: 1,
+    options: ["1, 3, 2, 4", "3, 1, 2, 4", "2, 4, 1, 3", "4, 3, 1, 2"],
+    answer: 0,
     explanation:
-      "The causal sequence begins with the safety defect being identified in manufacturing (3), which leads to injuries caused by the defect, prompting reports to surface (1). In response to the reports, the company issues a recall (2), and as a result of the recall and negative publicity, sales decline (4). Thus, the correct order is 3, 1, 2, 4.",
+      "The correct causal sequence begins with reports of injuries surfacing (1), which triggers an investigation that identifies the safety defect in manufacturing (3). The company then issues a recall (2), and as a result of the recall and negative publicity, sales decline (4). Thus, the correct order is 1, 3, 2, 4.",
     difficulty: 0.8,
     discrimination: 1,
     guessing: 0.25,
@@ -3312,12 +2879,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) The company expands production capacity. (2) The company's electricity costs decrease. (3) The government announces tax credits for solar energy investment. (4) The company installs solar panels.",
-    options: [
-      "3, 4, 2, 1",
-      "3, 2, 4, 1",
-      "1, 3, 4, 2",
-      "4, 3, 2, 1"
-    ],
+    options: ["3, 4, 2, 1", "3, 2, 4, 1", "1, 3, 4, 2", "4, 3, 2, 1"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the government announcing tax credits (3), which incentivizes the company to install solar panels (4). The solar panels then cause a decrease in electricity costs (2), and the cost savings enable the company to expand production capacity (1). Option A is the only order that follows this logic. Option B incorrectly places the cost decrease before the installation. Option C starts with expansion, which is an effect, not a cause. Option D starts with installation before the tax credits that motivated it.",
@@ -3331,12 +2893,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Strong winds knock down a tree onto power lines, (2) The power outage lasts for several hours, (3) Residents start using generators to power their homes, (4) Carbon monoxide poisoning cases are reported at the local hospital.",
-    options: [
-      "1, 2, 3, 4",
-      "1, 3, 2, 4",
-      "2, 1, 3, 4",
-      "4, 3, 2, 1"
-    ],
+    options: ["1, 2, 3, 4", "1, 3, 2, 4", "2, 1, 3, 4", "4, 3, 2, 1"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the storm causing the tree to fall on power lines (1), which leads to a power outage (2). Because of the outage, residents use generators (3), and improper use of generators causes carbon monoxide poisoning (4). Therefore, the order is 1, 2, 3, 4.",
@@ -3350,12 +2907,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) A major social media platform announces a new privacy policy that restricts data sharing with third-party advertisers. (2) The platform's advertising revenue declines significantly. (3) Many users express outrage and delete their accounts. (4) The company hires a public relations firm to improve its image.",
-    options: [
-      "1, 3, 2, 4",
-      "1, 2, 3, 4",
-      "3, 1, 2, 4",
-      "1, 3, 4, 2"
-    ],
+    options: ["1, 3, 2, 4", "1, 2, 3, 4", "3, 1, 2, 4", "1, 3, 4, 2"],
     answer: 0,
     explanation:
       "The correct causal sequence starts with the announcement of the new privacy policy (1). This leads to user outrage and account deletions (3), which then causes a decline in advertising revenue (2) because fewer users mean less data and ad impressions. Finally, the company hires a PR firm (4) in response to the revenue decline and negative publicity. Option A (1,3,2,4) is the only order that follows this logical chain.",
@@ -3369,12 +2921,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the most logical causal sequence: (1) Harmony introduces a personalized playlist algorithm. (2) Users spend more time on the platform, increasing ad revenue. (3) Competitors replicate the feature, leading to market saturation. (4) Harmony's user growth slows, so they reduce investment in algorithm improvement. (5) User engagement declines as algorithm quality stagnates.",
-    options: [
-      "1,2,3,4,5",
-      "1,3,2,4,5",
-      "1,2,4,3,5",
-      "2,1,3,4,5"
-    ],
+    options: ["1,2,3,4,5", "1,3,2,4,5", "1,2,4,3,5", "2,1,3,4,5"],
     answer: 0,
     explanation:
       "The correct sequence starts with Harmony introducing a new algorithm (1), which leads to increased user time and ad revenue (2). This success attracts competitors who copy the feature (3), causing market saturation and slowing Harmony's growth. In response, Harmony cuts investment in the algorithm (4), leading to stagnation and declining user engagement (5). Other orders break the cause-effect chain, e.g., competitors copying before user growth is implausible.",
@@ -3388,12 +2935,7 @@ export const bank: Question[] = [
     category: "event",
     question:
       "Arrange the following events in the correct causal sequence: (1) Student studies regularly. (2) Student performs well on the test. (3) Student understands the material. (4) Student gets a good grade.",
-    options: [
-      "1, 3, 2, 4",
-      "2, 1, 3, 4",
-      "3, 1, 4, 2",
-      "1, 2, 3, 4"
-    ],
+    options: ["1, 3, 2, 4", "2, 1, 3, 4", "3, 1, 4, 2", "1, 2, 3, 4"],
     answer: 0,
     explanation:
       "Studying regularly (1) leads to understanding the material (3), which leads to performing well on the test (2), which then leads to getting a good grade (4). Thus the correct order is 1, 3, 2, 4.",
@@ -3411,7 +2953,7 @@ export const bank: Question[] = [
       "3, 1, 5, 2, 4",
       "1, 3, 5, 2, 4",
       "3, 5, 1, 2, 4",
-      "1, 5, 3, 2, 4"
+      "1, 5, 3, 2, 4",
     ],
     answer: 0,
     explanation:
@@ -3430,7 +2972,7 @@ export const bank: Question[] = [
       "1 → 2 → 3 → 4 → 5",
       "1 → 3 → 2 → 4 → 5",
       "2 → 1 → 3 → 4 → 5",
-      "1 → 2 → 4 → 3 → 5"
+      "1 → 2 → 4 → 3 → 5",
     ],
     answer: 0,
     explanation:
@@ -3449,7 +2991,7 @@ export const bank: Question[] = [
       "The argument fails to consider that people with lower blood pressure might be more inclined to attend religious services.",
       "The argument assumes that attending religious services is the cause of lower blood pressure, but other factors such as diet or exercise could be responsible.",
       "The argument relies on a sample that may not be representative of the general population.",
-      "The argument confuses correlation with causation, but does not specify which direction."
+      "The argument confuses correlation with causation, but does not specify which direction.",
     ],
     answer: 1,
     explanation:
@@ -3468,7 +3010,7 @@ export const bank: Question[] = [
       "A nearby shipping company shifted its route closer to shore, and ship emissions have increased the concentration of aerosol particles that serve as cloud condensation nuclei.",
       "The town constructed a new desalination plant that releases large amounts of warm, moist air, increasing local humidity.",
       "A major reforestation project has significantly increased tree cover, leading to higher rates of transpiration and local humidity.",
-      "The local airport extended its runway and now handles more flights, increasing contrails and cirrus clouds."
+      "The local airport extended its runway and now handles more flights, increasing contrails and cirrus clouds.",
     ],
     answer: 0,
     explanation:
@@ -3487,11 +3029,11 @@ export const bank: Question[] = [
       "Employees worked longer shifts on the four days to compensate for the lost day.",
       "The reduced workweek allowed employees to rest more, increasing their efficiency.",
       "The company also introduced new automation software during the same period.",
-      "The company fired low-performing employees and rehired more productive ones."
+      "The company fired low-performing employees and rehired more productive ones.",
     ],
     answer: 1,
     explanation:
-      "The correct answer is that the reduced workweek improved employee well-being and focus, leading to higher productivity per hour. Studies on four-day workweeks show that employees often maintain similar output despite fewer hours due to reduced burnout and better work-life balance. Option 1 is a common but mistaken assumption; in practice, employees typically do not significantly extend their shifts, so total hours decrease. Option 3 introduces a confounding factor that is not the direct result of the schedule change, and without evidence, it is less plausible as the primary cause. Option 4 is unsupported and unlikely to account for a broad 15% increase across all employees. Therefore, option 2 is the most direct and evidence-based explanation.",
+      "The correct answer is that the reduced workweek improved employee well-being and focus, leading to higher productivity per hour. Studies on four-day workweeks show that employees often maintain similar output despite fewer hours due to reduced burnout and better work-life balance. Option A is a common but mistaken assumption; in practice, employees typically do not significantly extend their shifts, so total hours decrease. Option C introduces a confounding factor that is not the direct result of the schedule change, and without evidence, it is less plausible as the primary cause. Option D is unsupported and unlikely to account for a broad 15% increase across all employees. Therefore, option B is the most direct and evidence-based explanation.",
     difficulty: -0.1,
     discrimination: 1,
     guessing: 0.25,
@@ -3506,11 +3048,11 @@ export const bank: Question[] = [
       "The CEO assumes that the training program was the only factor affecting sales.",
       "The CEO fails to consider that sales might have increased even without the training program.",
       "The CEO incorrectly believes that correlation implies causation.",
-      "The CEO ignores the possibility that the training program could have long-term negative effects."
+      "The CEO ignores the possibility that the training program could have long-term negative effects.",
     ],
-    answer: 0,
+    answer: 2,
     explanation:
-      "The argument concludes that the training program caused the sales increase based solely on a temporal correlation. However, the increase could be due to other factors (e.g., seasonal demand, improved economy). The flaw is assuming that the program was the only cause. Option 0 directly states this assumption. Option 1 is similar but less precise; option 2 is a general statement but not as specific to the argument; option 3 introduces an irrelevant possibility.",
+      "The argument concludes that the training program caused the sales increase based solely on a temporal correlation. This is the classic post hoc ergo propter hoc fallacy — confusing correlation with causation. The CEO observed that sales increased after the training and concluded the training caused it, without considering alternative explanations. Option C correctly identifies this flaw. Option A imputes a stronger claim (that the program was the only factor) than the CEO actually made. Option B is a specific alternative explanation but does not describe the logical flaw itself. Option D introduces an irrelevant possibility.",
     difficulty: -0.3,
     discrimination: 1,
     guessing: 0.25,
@@ -3525,7 +3067,7 @@ export const bank: Question[] = [
       "The correlation between green spaces and lower crime is causal.",
       "Other factors that reduce crime are already at optimal levels.",
       "Parks are more effective at reducing crime than community policing.",
-      "The funds for park development will not be taken from other crime prevention programs."
+      "The funds for park development will not be taken from other crime prevention programs.",
     ],
     answer: 0,
     explanation:
@@ -3544,7 +3086,7 @@ export const bank: Question[] = [
       "The argument assumes that the sales increase is due solely to the campaign, ignoring other factors.",
       "The argument confuses cause and effect.",
       "The argument relies on a small sample size.",
-      "The argument fails to consider that the campaign might have increased sales but also increased costs."
+      "The argument fails to consider that the campaign might have increased sales but also increased costs.",
     ],
     answer: 0,
     explanation:
@@ -3563,7 +3105,7 @@ export const bank: Question[] = [
       "It assumes without evidence that the amount of homework affects test scores.",
       "It fails to consider that other factors, such as changes in teaching methods or student demographics, could have caused the increase.",
       "It confuses cause and effect by suggesting that higher test scores led to less homework.",
-      "It relies on a sample size that is too small to draw any meaningful conclusions."
+      "It relies on a sample size that is too small to draw any meaningful conclusions.",
     ],
     answer: 1,
     explanation:
@@ -3582,7 +3124,7 @@ export const bank: Question[] = [
       "The robots were not calibrated properly for precision tasks.",
       "The remaining workers became demotivated and made more errors.",
       "The robots worked faster but with less accuracy than humans.",
-      "The company reduced quality control staff to cut costs."
+      "The company reduced quality control staff to cut costs.",
     ],
     answer: 2,
     explanation:
@@ -3601,7 +3143,7 @@ export const bank: Question[] = [
       "The survey only included loyalty program members, not all customers.",
       "The CEO did not consider that customers who joined the program might already have been more satisfied.",
       "The time period of six months is too short to measure satisfaction accurately.",
-      "The increase in satisfaction could be due to improved coffee quality."
+      "The increase in satisfaction could be due to improved coffee quality.",
     ],
     answer: 1,
     explanation:
@@ -3620,7 +3162,7 @@ export const bank: Question[] = [
       "Employees felt more valued because the company invested in their comfort, boosting morale.",
       "Full-spectrum lighting reduces eye strain and fatigue, improving concentration and efficiency.",
       "The new lighting made the office look more modern, attracting more clients and increasing revenue.",
-      "The installation required employees to work from home for a week, which reduced burnout."
+      "The installation required employees to work from home for a week, which reduced burnout.",
     ],
     answer: 1,
     explanation:
@@ -3639,7 +3181,7 @@ export const bank: Question[] = [
       "It confuses correlation with causation.",
       "It overlooks the possibility that the snacks were not popular.",
       "It assumes that the turnover rate was high before.",
-      "It fails to consider that employees might have left for other reasons anyway."
+      "It fails to consider that employees might have left for other reasons anyway.",
     ],
     answer: 0,
     explanation:
@@ -3658,11 +3200,11 @@ export const bank: Question[] = [
       "The argument overlooks the possibility that the increase in recycling rates might be due to a new state law that mandates recycling.",
       "The argument assumes that the recycling program is the only factor affecting recycling rates.",
       "The argument fails to consider that the program may not be cost-effective.",
-      "The argument concludes that the program should be expanded without providing data on its costs."
+      "The argument concludes that the program should be expanded without providing data on its costs.",
     ],
     answer: 1,
     explanation:
-      "The argument concludes that the recycling program caused the increase in recycling rates, but it does not consider alternative explanations. By implicitly assuming that the program is the sole cause, the argument commits the flaw of ignoring other possible factors (e.g., a new state law, public awareness campaigns). This is a classic causal oversimplification error. Options 3 and 4 discuss cost, which is not the logical flaw. Option 1 points to a specific alternative, but the general flaw is the assumption of exclusive causation, which option 2 best captures.",
+      "The argument concludes that the recycling program caused the increase in recycling rates, but it does not consider alternative explanations. By implicitly assuming that the program is the sole cause, the argument commits the flaw of ignoring other possible factors (e.g., a new state law, public awareness campaigns). This is a classic causal oversimplification error. Options C and D discuss cost, which is not the logical flaw. Option A points to a specific alternative, but the general flaw is the assumption of exclusive causation, which option B best captures.",
     difficulty: -2.3,
     discrimination: 1,
     guessing: 0.25,
@@ -3677,11 +3219,11 @@ export const bank: Question[] = [
       "It assumes that the decrease in accidents is due solely to the speed bumps, without considering other possible causes.",
       "It concludes that the speed bumps were effective without considering the cost of installation.",
       "It relies on data from only one road, which may not be representative.",
-      "It ignores the possibility that accidents might have increased on other roads."
+      "It ignores the possibility that accidents might have increased on other roads.",
     ],
     answer: 0,
     explanation:
-      "The argument presents a correlation (speed bumps followed by accident decrease) and concludes causation. The flaw is that it ignores other factors that could have caused the decrease, such as changes in traffic volume, weather, or driver behavior. Option 1 identifies this unwarranted causal assumption. Option 2 is irrelevant to effectiveness in reducing accidents; cost is a separate consideration. Option 3 is about representativeness, but the argument is about this specific road. Option 4 discusses displacement, which is a different issue and does not directly address the flawed causal reasoning on this road.",
+      "The argument presents a correlation (speed bumps followed by accident decrease) and concludes causation. The flaw is that it ignores other factors that could have caused the decrease, such as changes in traffic volume, weather, or driver behavior. Option A identifies this unwarranted causal assumption. Option B is irrelevant to effectiveness in reducing accidents; cost is a separate consideration. Option C is about representativeness, but the argument is about this specific road. Option D discusses displacement, which is a different issue and does not directly address the flawed causal reasoning on this road.",
     difficulty: -0.9,
     discrimination: 1,
     guessing: 0.25,
@@ -3696,11 +3238,11 @@ export const bank: Question[] = [
       "The light rail system provided a convenient alternative, leading many commuters to switch from driving to public transit.",
       "The city also implemented a new parking pricing policy that increased rates in the downtown area during the same period.",
       "A major employer relocated its headquarters from the city center to the suburbs, reducing the number of commuters.",
-      "The city experienced a mild winter, resulting in fewer weather-related traffic disruptions and smoother traffic flow."
+      "The city experienced a mild winter, resulting in fewer weather-related traffic disruptions and smoother traffic flow.",
     ],
     answer: 0,
     explanation:
-      "The most likely explanation is that the light rail system directly caused the decrease in traffic congestion by providing a convenient alternative to driving. Option 0 is the direct causal effect the city intended. Option 1 is a plausible confounder but could be part of a package of policies; however, the question asks for the most likely explanation given the introduction of the light rail. Option 2 could reduce congestion but is less likely because a major employer relocation would be a notable event, not mentioned. Option 3 is a natural factor that could temporarily affect traffic, but it is less directly linked to the light rail introduction and a mild winter alone is unlikely to produce a 15% decrease sustained over a year.",
+      "The most likely explanation is that the light rail system directly caused the decrease in traffic congestion by providing a convenient alternative to driving. Option A is the direct causal effect the city intended. Option B is a plausible confounder but could be part of a package of policies; however, the question asks for the most likely explanation given the introduction of the light rail. Option C could reduce congestion but is less likely because a major employer relocation would be a notable event, not mentioned. Option D is a natural factor that could temporarily affect traffic, but it is less directly linked to the light rail introduction and a mild winter alone is unlikely to produce a 15% decrease sustained over a year.",
     difficulty: 0.3,
     discrimination: 1,
     guessing: 0.25,
@@ -3715,7 +3257,7 @@ export const bank: Question[] = [
       "During the same period, the city also added more traffic lights and crosswalks on Main Street.",
       "The number of accidents on nearby streets increased by 10% over the same period.",
       "Surveys show that drivers on Main Street now drive an average of 5 mph slower than before the change.",
-      "The city's overall accident rate across all streets has remained unchanged."
+      "The city's overall accident rate across all streets has remained unchanged.",
     ],
     answer: 0,
     explanation:
@@ -3734,7 +3276,7 @@ export const bank: Question[] = [
       "The hybrid model provided employees with greater flexibility and work-life balance.",
       "The home office allowance allowed employees to purchase better equipment.",
       "Both the hybrid model and the home office allowance contributed equally.",
-      "The increase was part of a broader trend of rising satisfaction in the tech industry during that quarter."
+      "The increase was part of a broader trend of rising satisfaction in the tech industry during that quarter.",
     ],
     answer: 0,
     explanation:
@@ -3753,11 +3295,11 @@ export const bank: Question[] = [
       "Taking breaks prevents mental fatigue, allowing employees to maintain focus and energy throughout the day.",
       "Employees who take breaks are more conscientious and thus more productive for reasons unrelated to breaks.",
       "The study measured productivity over a short period, so the results may not reflect long-term effects.",
-      "Employees who take breaks are often in managerial roles, which involve higher productivity."
+      "Employees who take breaks are often in managerial roles, which involve higher productivity.",
     ],
     answer: 0,
     explanation:
-      "The correct answer is option 0. Regular breaks help prevent mental fatigue, which improves sustained focus and productivity—a direct causal mechanism. Option 1 is a plausible confounder (conscientiousness), but it does not explain how breaks themselves cause higher productivity; it suggests reverse causation. Option 2 is a methodological limitation, not a causal explanation. Option 3 is a confounder (job role), but the study likely compared employees with similar roles; even if not, the most direct causal link is through fatigue reduction.",
+      "The correct answer is option A. Regular breaks help prevent mental fatigue, which improves sustained focus and productivity—a direct causal mechanism. Option B is a plausible confounder (conscientiousness), but it does not explain how breaks themselves cause higher productivity; it suggests reverse causation. Option C is a methodological limitation, not a causal explanation. Option D is a confounder (job role), but the study likely compared employees with similar roles; even if not, the most direct causal link is through fatigue reduction.",
     difficulty: -0.8,
     discrimination: 1,
     guessing: 0.25,
@@ -3772,7 +3314,7 @@ export const bank: Question[] = [
       "The reduction in respiratory visits was likely due to a milder winter that year.",
       "The control group also replaced their stoves independently, so the comparison is flawed.",
       "The new gas stoves reduced indoor air pollution directly, but outdoor air quality is influenced by many other sources.",
-      "The program was implemented only in neighborhoods with already low respiratory rates."
+      "The program was implemented only in neighborhoods with already low respiratory rates.",
     ],
     answer: 2,
     explanation:
@@ -3791,7 +3333,7 @@ export const bank: Question[] = [
       "The new location had lower foot traffic, reducing the number of walk-in customers.",
       "The coffee shop raised its prices at the same time as the move.",
       "The new neighborhood had a higher crime rate, deterring customers.",
-      "The coffee shop changed its coffee blend shortly before the move."
+      "The coffee shop changed its coffee blend shortly before the move.",
     ],
     answer: 0,
     explanation:
@@ -3805,12 +3347,12 @@ export const bank: Question[] = [
     type: "event-argument",
     category: "event-argument",
     question:
-      "School board member: \"A recent survey of 100 high schools found that those with a uniform policy have average test scores that are 10% higher than those without. Therefore, requiring uniforms will improve academic performance at our school.\" Which of the following best describes the logical flaw in this argument?",
+      'School board member: "A recent survey of 100 high schools found that those with a uniform policy have average test scores that are 10% higher than those without. Therefore, requiring uniforms will improve academic performance at our school." Which of the following best describes the logical flaw in this argument?',
     options: [
       "It assumes that a correlation between uniforms and test scores implies a causal relationship.",
       "It relies on a sample that is too small to draw any reliable conclusions.",
       "It fails to consider that the schools with uniforms might have had higher test scores before adopting uniforms.",
-      "It confuses the cause of improved test scores with the effect of higher socioeconomic status."
+      "It confuses the cause of improved test scores with the effect of higher socioeconomic status.",
     ],
     answer: 0,
     explanation:
@@ -3829,11 +3371,11 @@ export const bank: Question[] = [
       "Employees began working longer hours to compensate for taking more time off.",
       "The company hired additional staff during the same period.",
       "Employees felt more rested and motivated, leading to higher efficiency.",
-      "The policy attracted more skilled workers who replaced less productive ones."
+      "The policy attracted more skilled workers who replaced less productive ones.",
     ],
     answer: 2,
     explanation:
-      "Unlimited vacation policies often improve work-life balance, reducing burnout and increasing motivation, which directly boosts productivity. Option 1 is unlikely because unlimited vacation usually encourages taking time off, not longer hours. Option 2, while possible, is not directly caused by the policy and could be a separate factor. Option 4 might occur over a longer period, but the productivity increase within one year is more likely due to existing employees' improved morale and efficiency.",
+      "Unlimited vacation policies often improve work-life balance, reducing burnout and increasing motivation, which directly boosts productivity. Option A is unlikely because unlimited vacation usually encourages taking time off, not longer hours. Option B, while possible, is not directly caused by the policy and could be a separate factor. Option D might occur over a longer period, but the productivity increase within one year is more likely due to existing employees' improved morale and efficiency.",
     difficulty: -0.5,
     discrimination: 1,
     guessing: 0.25,
@@ -3848,7 +3390,7 @@ export const bank: Question[] = [
       "More frequent service attracted more riders.",
       "The city lowered bus fares.",
       "Gas prices increased significantly.",
-      "A new shopping mall opened near the route."
+      "A new shopping mall opened near the route.",
     ],
     answer: 0,
     explanation:
@@ -3867,7 +3409,7 @@ export const bank: Question[] = [
       "The argument treats a necessary condition as if it were a sufficient condition.",
       "The argument assumes that the poll is accurate despite possible sampling errors.",
       "The argument overlooks the possibility that the candidate's support among women might decrease before the election.",
-      "The argument concludes that because the candidate has achieved a milestone, victory is certain, which is a post hoc fallacy."
+      "The argument concludes that because the candidate has achieved a milestone, victory is certain, which is a post hoc fallacy.",
     ],
     answer: 0,
     explanation:
@@ -3886,7 +3428,7 @@ export const bank: Question[] = [
       "The free yoga classes attracted new people to join the gym.",
       "The gym lowered its monthly membership fee.",
       "The gym renovated its locker rooms.",
-      "The weather improved, encouraging more people to exercise."
+      "The weather improved, encouraging more people to exercise.",
     ],
     answer: 0,
     explanation:
@@ -3905,7 +3447,7 @@ export const bank: Question[] = [
       "It assumes that the program is the only possible cause of the increase.",
       "It overlooks the possibility that households might have recycled more even without the program.",
       "It mistakenly interprets a correlation as a causal relationship.",
-      "It fails to consider that the cash reward might be too small to motivate significant change."
+      "It fails to consider that the cash reward might be too small to motivate significant change.",
     ],
     answer: 2,
     explanation:
@@ -3924,7 +3466,7 @@ export const bank: Question[] = [
       "The highway construction was poorly designed and caused bottlenecks.",
       "The highway attracted more drivers, leading to induced demand and congestion.",
       "The highway was built with fewer lanes than the old road.",
-      "The old road was closed for repairs during the construction."
+      "The old road was closed for repairs during the construction.",
     ],
     answer: 1,
     explanation:

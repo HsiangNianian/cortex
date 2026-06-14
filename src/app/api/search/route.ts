@@ -12,6 +12,18 @@ export async function GET(request: Request) {
   }
 
   try {
+    // Fetch calibrated IRT params (best-effort)
+    let calibratedParams: Record<string, { a: number; b: number }> = {}
+    try {
+      const { env } = await import("@opennextjs/cloudflare").then((m) =>
+        m.getCloudflareContext(),
+      )
+      if (env.CORTEX_KV) {
+        const raw = await env.CORTEX_KV.get("calibrated_params:all")
+        if (raw) calibratedParams = JSON.parse(raw)
+      }
+    } catch {}
+
     const results = search(q, locale, limit)
     return NextResponse.json({
       results: results.map((r) => ({
@@ -23,6 +35,7 @@ export async function GET(request: Request) {
         answer: r.question.answer,
         explanation: r.question.explanation,
         difficulty: r.question.difficulty,
+        calibratedDifficulty: calibratedParams[r.question.id]?.b ?? null,
         score: r.score,
       })),
       query: q,

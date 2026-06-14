@@ -146,11 +146,44 @@ export function useTestState() {
   // (except mid-test — questions are frozen once the test starts)
   useEffect(() => {
     if (phase === "testing" || phase === "processing") return;
-    ensureBank(locale).then(() => {
+    ensureBank(locale).then(async () => {
+      // Fetch calibrated IRT params (best-effort)
+      let calibratedParams: Record<string, { a: number; b: number; c?: number }> = {};
+      try {
+        const res = await fetch("/api/question-params");
+        if (res.ok) calibratedParams = await res.json();
+      } catch {}
+
+      const hasParams = Object.keys(calibratedParams).length > 0;
+
       if (ADAPTIVE_MODE) {
-        setAllQuestions(getAllQuestions(locale));
+        const all = getAllQuestions(locale);
+        if (hasParams) {
+          setAllQuestions(
+            all.map((q) => ({
+              ...q,
+              difficulty: calibratedParams[q.id]?.b ?? q.difficulty,
+              discrimination: calibratedParams[q.id]?.a ?? q.discrimination,
+              guessing: calibratedParams[q.id]?.c ?? q.guessing,
+            })),
+          );
+        } else {
+          setAllQuestions(all);
+        }
       } else {
-        setQuestions(selectQuestions(QUESTIONS_PER_TEST, locale));
+        let qs = selectQuestions(QUESTIONS_PER_TEST, locale);
+        if (hasParams) {
+          setQuestions(
+            qs.map((q) => ({
+              ...q,
+              difficulty: calibratedParams[q.id]?.b ?? q.difficulty,
+              discrimination: calibratedParams[q.id]?.a ?? q.discrimination,
+              guessing: calibratedParams[q.id]?.c ?? q.guessing,
+            })),
+          );
+        } else {
+          setQuestions(qs);
+        }
       }
     });
   }, [locale, phase]);
@@ -289,6 +322,31 @@ export function useTestState() {
         // ignore
       }
       const elapsedMs = testStartTime.current ? Date.now() - testStartTime.current : null;
+
+      // Build per-question response records for IRT calibration
+      const responseRecords: Array<{questionId: number; correct: number; theta: number | null}> = []
+      if (ADAPTIVE_MODE && adaptiveSessionRef.current?.responses) {
+        const finalTheta = r.theta ?? null
+        for (const rr of adaptiveSessionRef.current.responses) {
+          responseRecords.push({
+            questionId: rr.questionId,
+            correct: rr.score >= 0.5 ? 1 : 0,
+            theta: finalTheta,
+          })
+        }
+      } else if (!ADAPTIVE_MODE && questions.length > 0) {
+        for (let i = 0; i < questions.length; i++) {
+          const qScore = scoreAnswer(answers[i], questions[i].answer)
+          responseRecords.push({
+            questionId: questions[i].id,
+            correct: qScore >= 0.5 ? 1 : 0,
+            theta: null,
+          })
+        }
+      }
+
+      const deviceId = (() => { try { return localStorage.getItem("cortex:device-id") ?? "anon" } catch { return "anon" } })()
+
       const payload = {
         degradationIndex: r.degradationIndex,
         tierLabel: r.tier.tierKey,
@@ -297,7 +355,10 @@ export function useTestState() {
         aiUsageLevel: aiUsage !== null ? AI_CANONICAL_LEVELS[aiUsage] : null,
         estimationMethod: r.estimationMethod,
         elapsedMs,
-      };
+        theta: r.theta ?? null,
+        deviceId,
+        responses: responseRecords.length > 0 ? responseRecords : undefined,
+      }
       fetch("/api/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

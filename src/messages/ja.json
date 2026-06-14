@@ -217,7 +217,12 @@
 		"resultCount": "{count}件",
 		"expand": "解説を表示",
 		"collapse": "解説を隠す",
-		"correctAnswer": "正解"
+		"correctAnswer": "正解",
+		"diffEasy": "簡単",
+		"diffMedium": "普通",
+		"diffHard": "難しい",
+		"thetaLabel": "θ={theta}",
+		"scoreLabel": "score: {score}"
 	},
 	"sponsors": {
 		"backToTest": "テストに戻る",

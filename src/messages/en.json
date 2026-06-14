@@ -217,7 +217,12 @@
 		"resultCount": "{count} results",
 		"expand": "Show explanation",
 		"collapse": "Hide explanation",
-		"correctAnswer": "Correct answer"
+		"correctAnswer": "Correct answer",
+		"diffEasy": "Easy",
+		"diffMedium": "Medium",
+		"diffHard": "Hard",
+		"thetaLabel": "θ={theta}",
+		"scoreLabel": "score: {score}"
 	},
 	"sponsors": {
 		"backToTest": "Back to Test",
