@@ -264,10 +264,13 @@ export function calculateResult(
   // Per-dimension scores
   const dimCorrect: Record<string, { correct: number; total: number }> = {}
   for (let i = 0; i < questions.length; i++) {
-    const type = questions[i].type
-    if (!dimCorrect[type]) dimCorrect[type] = { correct: 0, total: 0 }
-    dimCorrect[type].total++
-    dimCorrect[type].correct += scoreAnswer(answers[i], questions[i].answer)
+    // Map sub-types to their parent dimension for scoring
+    const dim = questions[i].type === "event-argument" || questions[i].type === "event-cause"
+      ? "event"
+      : questions[i].type
+    if (!dimCorrect[dim]) dimCorrect[dim] = { correct: 0, total: 0 }
+    dimCorrect[dim].total++
+    dimCorrect[dim].correct += scoreAnswer(answers[i], questions[i].answer)
   }
 
   const dimensionScores: DimensionScores = {
