@@ -58,12 +58,7 @@
 		"timeLimit": "各問題{seconds}秒の制限時間、超過すると自動スキップ",
 		"aiUsageLabel": "AIツールの1日の使用時間は？",
 		"aiUsageHint": "ChatGPT、Claude、Copilot、Geminiなどを含む",
-		"aiLevels": [
-			"30分未満",
-			"30分〜2時間",
-			"2〜5時間",
-			"5時間以上"
-		],
+		"aiLevels": ["30分未満", "30分〜2時間", "2〜5時間", "5時間以上"],
 		"pledge": "本テストでは一切のAI補助ツールを使用しないことを誓います",
 		"startButton": "回答を開始",
 		"selectAiFirst": "AI使用量を選択してください",
@@ -76,8 +71,8 @@
 		"flagLabel": "問題を報告",
 		"flagTip": "問題の改善にご協力ください",
 		"flagged": "報告済み",
-	"flagAdded": "問題を報告しました",
-	"flagRemoved": "報告をキャンセルしました"
+		"flagAdded": "問題を報告しました",
+		"flagRemoved": "報告をキャンセルしました"
 	},
 	"processing": {
 		"title": "テスト完了",
@@ -286,7 +281,7 @@
 	},
 	"siteGoal": {
 		"achieved": "サイト目標達成！",
-		"title": "サイト目標",
+		"title": "目標",
 		"progressAchieved": "平均退化指数 {current}、目標 {goal} 未満達成",
 		"progressBelow": "平均退化指数 {current} → 目標 < {goal}",
 		"participants": "{count} 回のテスト参加 · 協力して平均退化指数を下げよう"

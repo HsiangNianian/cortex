@@ -58,12 +58,7 @@
 		"timeLimit": "Each question has a {seconds}-second limit, auto-skip on timeout",
 		"aiUsageLabel": "How much time do you spend using AI tools daily?",
 		"aiUsageHint": "ChatGPT, Claude, Copilot, Gemini, etc. all count",
-		"aiLevels": [
-			"< 30 min",
-			"30 min - 2 hr",
-			"2 - 5 hr",
-			"> 5 hr"
-		],
+		"aiLevels": ["< 30 min", "30 min - 2 hr", "2 - 5 hr", "> 5 hr"],
 		"pledge": "I pledge not to use any AI assistance during this test",
 		"startButton": "Start Quiz",
 		"selectAiFirst": "Please select your AI usage first",
@@ -76,8 +71,8 @@
 		"flagLabel": "Report issue",
 		"flagTip": "Help us improve our question bank",
 		"flagged": "Flagged",
-	"flagAdded": "Question issue reported",
-	"flagRemoved": "Report cancelled"
+		"flagAdded": "Question issue reported",
+		"flagRemoved": "Report cancelled"
 	},
 	"processing": {
 		"title": "Test Complete",
@@ -286,7 +281,7 @@
 	},
 	"siteGoal": {
 		"achieved": "Site goal achieved!",
-		"title": "Site Goal",
+		"title": "Goal",
 		"progressAchieved": "Avg degradation {current}, below target {goal}",
 		"progressBelow": "Avg degradation {current} → target < {goal}",
 		"participants": "{count} tests taken · working together to lower the avg degradation index"
