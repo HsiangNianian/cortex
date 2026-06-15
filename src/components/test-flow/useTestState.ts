@@ -13,6 +13,7 @@ import {
 import {
   calculateResult,
   abilityToDegradationIndex,
+  thetaToDimensionScore,
   generateShareText,
   getTierByIndex,
   scoreAnswer,
@@ -335,9 +336,17 @@ export function useTestState() {
               ? r.type === "event" || r.type === "event-cause" || r.type === "event-argument"
               : r.type === dim
           );
-          if (dimResponses.length >= 3) {
+          if (dimResponses.length >= 5) {
             const est = estimateAbility(dimResponses);
             thetaByType[dim] = { theta: est.theta, se: est.standardError };
+          }
+        }
+
+        // Override dimensionScores with IRT-based scores when available
+        const irtDimScores = { ...base.dimensionScores }
+        for (const dim of ["logic", "math", "vocab", "event"] as const) {
+          if (thetaByType[dim]) {
+            irtDimScores[dim] = thetaToDimensionScore(thetaByType[dim]!.theta)
           }
         }
 
@@ -348,6 +357,7 @@ export function useTestState() {
           estimationMethod: "irt",
           theta,
           thetaSE: se,
+          dimensionScores: irtDimScores,
           thetaByType,
         };
       } else {

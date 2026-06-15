@@ -240,6 +240,11 @@ export function abilityToDegradationIndex(theta: number): number {
   return Math.round(Math.max(0, Math.min(100, 100 - percentile)))
 }
 
+/** Convert per-dimension IRT theta to a 0-100 score (higher θ → higher score). */
+export function thetaToDimensionScore(theta: number): number {
+  return Math.round(Math.max(0, Math.min(100, normalCDF(theta) * 100)))
+}
+
 /**
  * Calculate test result from user's answers.
  */
