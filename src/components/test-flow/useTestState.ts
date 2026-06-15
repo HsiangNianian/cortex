@@ -366,6 +366,7 @@ export function useTestState() {
           flaggedIds: [...flaggedIds],
         };
         localStorage.setItem("cognitive-rust-result", JSON.stringify(entry));
+        setSavedResult(entry)
         localStorage.setItem("cognitive-rust-full-result", JSON.stringify({ result: r, aiUsage }));
         const raw = localStorage.getItem("cognitive-rust-history");
         const history = raw ? JSON.parse(raw) : [];
