@@ -11,12 +11,6 @@ export function SiteFooter({ namespace }: { namespace: FooterNamespace }) {
   const ts = useTranslations("sponsors")
   const [toast, setToast] = useState(false)
 
-  function handleDdlRoastClick() {
-    if (toast) return
-    setToast(true)
-    setTimeout(() => setToast(false), 6000)
-  }
-
   return (
     <>
       <div
@@ -72,13 +66,14 @@ export function SiteFooter({ namespace }: { namespace: FooterNamespace }) {
           {t("otherXingce")}
         </a>
         <span className="text-muted-foreground/40">|</span>
-        <button
-          type="button"
-          onClick={handleDdlRoastClick}
+        <a
+          href="https://ddlroast.hydroroll.team"
+          target="_blank"
+          rel="noreferrer"
           className="transition-colors hover:text-foreground hover:underline underline-offset-4"
         >
           {t("ddlRoast")}
-        </button>
+        </a>
       </div>
 
       </footer>
