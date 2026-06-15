@@ -39,8 +39,71 @@ import {
 } from "./helpers"
 import { usePremium } from "../premium/usePremium"
 
-const COOLDOWN_MS = process.env.NODE_ENV === "development" ? 0 : 7 * 24 * 60 * 60 * 1000
-const LAST_FREE_TEST_KEY = "cortex:last-free-test";
+const FREE_LIMIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
+const MAX_FREE_TESTS = 7
+const FREE_TEST_TIMESTAMPS_KEY = "cortex:free-test-timestamps";
+const OLD_FREE_TEST_KEY = "cortex:last-free-test";
+
+function readTimestamps(): number[] {
+  const raw = localStorage.getItem(FREE_TEST_TIMESTAMPS_KEY)
+  const timestamps: number[] = raw ? JSON.parse(raw) : []
+  return Array.isArray(timestamps) ? timestamps : []
+}
+
+function saveTimestamps(timestamps: number[]): void {
+  const now = Date.now()
+  const windowStart = now - FREE_LIMIT_WINDOW_MS
+  const valid = timestamps.filter(ts => typeof ts === "number" && ts > windowStart)
+  localStorage.setItem(FREE_TEST_TIMESTAMPS_KEY, JSON.stringify(valid))
+}
+
+/** Migrate old single-timestamp key into the new array, then remove it. */
+function migrateOldCooldown(): void {
+  try {
+    const oldRaw = localStorage.getItem(OLD_FREE_TEST_KEY)
+    if (!oldRaw) return
+    const oldTs = parseInt(oldRaw, 10)
+    if (isNaN(oldTs)) {
+      localStorage.removeItem(OLD_FREE_TEST_KEY)
+      return
+    }
+    // Only migrate if still within the window
+    if (Date.now() - oldTs < FREE_LIMIT_WINDOW_MS) {
+      const timestamps = readTimestamps()
+      if (!timestamps.includes(oldTs)) {
+        timestamps.push(oldTs)
+        saveTimestamps(timestamps)
+      }
+    }
+    localStorage.removeItem(OLD_FREE_TEST_KEY)
+  } catch { /* ignore */ }
+}
+
+function getFreeTestCooldownEndsAt(): number | null {
+  try {
+    migrateOldCooldown()
+    const timestamps = readTimestamps()
+    const now = Date.now()
+    const windowStart = now - FREE_LIMIT_WINDOW_MS
+    const valid = timestamps.filter(ts => ts > windowStart)
+    if (valid.length >= MAX_FREE_TESTS) {
+      const oldest = Math.min(...valid)
+      return oldest + FREE_LIMIT_WINDOW_MS
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+function recordFreeTest(): void {
+  try {
+    migrateOldCooldown()
+    const timestamps = readTimestamps()
+    timestamps.push(Date.now())
+    saveTimestamps(timestamps)
+  } catch { /* ignore */ }
+}
 
 type Phase = "landing" | "declaration" | "testing" | "processing" | "result";
 
@@ -310,9 +373,9 @@ export function useTestState() {
         if (history.length > 20) history.shift();
         localStorage.setItem("cognitive-rust-history", JSON.stringify(history));
 
-        // Set cooldown for free users
+        // Track free test count within rolling 7-day window
         if (!isPremium) {
-          localStorage.setItem(LAST_FREE_TEST_KEY, String(Date.now()))
+          recordFreeTest()
         }
         // Sync to cloud for premium users
         if (isPremium) {
@@ -455,11 +518,12 @@ export function useTestState() {
     return () => stopTimer();
   }, [stopTimer]);
 
-  // Clear cooldown when premium status changes to true
+  // Clear free test timestamps when premium
   useEffect(() => {
     if (isPremium) {
       setCooldownEndsAt(0)
-      localStorage.removeItem(LAST_FREE_TEST_KEY)
+      localStorage.removeItem(FREE_TEST_TIMESTAMPS_KEY)
+      localStorage.removeItem(OLD_FREE_TEST_KEY)
     }
   }, [isPremium])
 
@@ -523,18 +587,12 @@ export function useTestState() {
         window.history.replaceState({}, "", window.location.pathname);
       }
 
-      // Check cooldown for free users
+      // Check 7-day / 7-test limit for free users
       if (!isPremium) {
-        try {
-          const lastFree = localStorage.getItem(LAST_FREE_TEST_KEY)
-          if (lastFree) {
-            const lastTs = parseInt(lastFree, 10)
-            const cooldownEnd = lastTs + COOLDOWN_MS
-            if (Date.now() < cooldownEnd) {
-              setCooldownEndsAt(cooldownEnd)
-            }
-          }
-        } catch { /* ignore */ }
+        const cooldownEnd = getFreeTestCooldownEndsAt()
+        if (cooldownEnd !== null && Date.now() < cooldownEnd) {
+          setCooldownEndsAt(cooldownEnd)
+        }
       }
     });
     return () => {
@@ -577,20 +635,14 @@ export function useTestState() {
   /* ─── Event Handlers ─── */
 
   function handleStart() {
-    // Check cooldown for free users
+    // Check 7-day / 7-test limit for free users
     if (!isPremium) {
-      try {
-        const lastFree = localStorage.getItem(LAST_FREE_TEST_KEY)
-        if (lastFree) {
-          const lastTs = parseInt(lastFree, 10)
-          const cooldownEnd = lastTs + COOLDOWN_MS
-          if (Date.now() < cooldownEnd) {
-            setCooldownEndsAt(cooldownEnd)
-            setCooldownVersion((v) => v + 1)
-            return // blocked by cooldown
-          }
-        }
-      } catch { /* ignore */ }
+      const cooldownEnd = getFreeTestCooldownEndsAt()
+      if (cooldownEnd !== null && Date.now() < cooldownEnd) {
+        setCooldownEndsAt(cooldownEnd)
+        setCooldownVersion((v) => v + 1)
+        return // blocked by limit
+      }
     }
     clearProgress();
     setSavedProgress(null);

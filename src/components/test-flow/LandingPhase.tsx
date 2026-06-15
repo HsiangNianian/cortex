@@ -194,6 +194,10 @@ export function LandingPhase({
               </div>
             </div>
 
+            <div className="rounded-lg border border-amber-200/60 bg-amber-50/50 p-3 text-xs leading-relaxed text-amber-700 dark:border-amber-800/30 dark:bg-amber-950/30 dark:text-amber-400">
+              {n("landing.disclaimer")}
+            </div>
+
             {savedResult && (
               <div
                 className="cursor-default rounded-lg p-3 text-sm"
