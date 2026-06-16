@@ -176,6 +176,81 @@ export async function createLicenseFromOrder(
   return { success: true, licenseKey }
 }
 
+export interface AbilityProfileRow {
+  overall_theta: number;
+  overall_se: number;
+  logic_theta: number | null;
+  logic_se: number | null;
+  math_theta: number | null;
+  math_se: number | null;
+  vocab_theta: number | null;
+  vocab_se: number | null;
+  event_theta: number | null;
+  event_se: number | null;
+  questions_answered: number;
+  updated_at: string;
+}
+
+export async function getAbilityProfile(licenseKey: string): Promise<AbilityProfileRow | null> {
+  return d1First<AbilityProfileRow>(
+    "SELECT * FROM ability_profiles WHERE license_key = ?",
+    [licenseKey],
+  );
+}
+
+export async function saveAbilityProfile(
+  licenseKey: string,
+  profile: {
+    overallTheta: number;
+    overallSe: number;
+    logicTheta: number | null;
+    logicSe: number | null;
+    mathTheta: number | null;
+    mathSe: number | null;
+    vocabTheta: number | null;
+    vocabSe: number | null;
+    eventTheta: number | null;
+    eventSe: number | null;
+    questionsAnswered: number;
+  },
+): Promise<void> {
+  await d1Run(
+    `INSERT INTO ability_profiles
+     (license_key, overall_theta, overall_se,
+      logic_theta, logic_se, math_theta, math_se,
+      vocab_theta, vocab_se, event_theta, event_se,
+      questions_answered, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+     ON CONFLICT(license_key) DO UPDATE SET
+      overall_theta = excluded.overall_theta,
+      overall_se = excluded.overall_se,
+      logic_theta = excluded.logic_theta,
+      logic_se = excluded.logic_se,
+      math_theta = excluded.math_theta,
+      math_se = excluded.math_se,
+      vocab_theta = excluded.vocab_theta,
+      vocab_se = excluded.vocab_se,
+      event_theta = excluded.event_theta,
+      event_se = excluded.event_se,
+      questions_answered = excluded.questions_answered,
+      updated_at = datetime('now')`,
+    [
+      licenseKey,
+      profile.overallTheta,
+      profile.overallSe,
+      profile.logicTheta,
+      profile.logicSe,
+      profile.mathTheta,
+      profile.mathSe,
+      profile.vocabTheta,
+      profile.vocabSe,
+      profile.eventTheta,
+      profile.eventSe,
+      profile.questionsAnswered,
+    ],
+  );
+}
+
 export async function getLicenseResults(licenseKey: string) {
   return d1Query<{
     id: number

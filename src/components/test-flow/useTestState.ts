@@ -39,6 +39,13 @@ import {
   type SavedProgress,
 } from "./helpers"
 import { usePremium } from "../premium/usePremium"
+import {
+  loadProfile,
+  saveProfile,
+  uploadProfile,
+  downloadProfile,
+} from "@/lib/sync/profile-sync"
+import type { StoredAbilityProfile } from "@/lib/sync/profile-sync"
 
 const FREE_LIMIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
 const MAX_FREE_TESTS = 7
@@ -153,7 +160,7 @@ function normalizeStoredEntry<T extends { dimensionScores?: unknown; thetaByType
 export function useTestState() {
   const n = useTranslations();
   const locale = useLocale();
-  const { isPremium, syncNow } = usePremium();
+  const { isPremium, licenseKey, syncNow } = usePremium();
   const testStartTime = useRef<number>(0);
   const [phase, setPhase] = useState<Phase>("landing");
   const [declared, setDeclared] = useState(false);
@@ -405,6 +412,27 @@ export function useTestState() {
         // Sync to cloud for premium users
         if (isPremium) {
           syncNow().catch(() => {})
+        }
+
+        // Save theta profile for cross-session persistence (all users)
+        if (r.theta != null) {
+          const abilityProfile: StoredAbilityProfile = {
+            overall: { theta: r.theta, standardError: r.thetaSE ?? 0 },
+            byType: {
+              logic: r.thetaByType?.logic ? { theta: r.thetaByType.logic.theta, standardError: r.thetaByType.logic.se } : null,
+              math: r.thetaByType?.math ? { theta: r.thetaByType.math.theta, standardError: r.thetaByType.math.se } : null,
+              vocab: r.thetaByType?.vocab ? { theta: r.thetaByType.vocab.theta, standardError: r.thetaByType.vocab.se } : null,
+              event: r.thetaByType?.event ? { theta: r.thetaByType.event.theta, standardError: r.thetaByType.event.se } : null,
+            },
+            testDate: new Date().toISOString(),
+            questionsAnswered: r.totalQuestions,
+          };
+          saveProfile(abilityProfile);
+
+          // Premium users: also upload to cloud
+          if (isPremium && licenseKey) {
+            uploadProfile(licenseKey, abilityProfile).catch(() => {})
+          }
         }
       } catch {
         // ignore
@@ -714,6 +742,30 @@ export function useTestState() {
     showToast(n("toast.resumeRestored"), 2000);
   }
 
+  /** Refresh theta profile from cloud for premium users. Async — first question
+   *  uses local profile; subsequent questions benefit from the cloud update. */
+  async function refreshProfileFromCloud(
+    key: string,
+    localProfile: StoredAbilityProfile | null,
+  ): Promise<void> {
+    try {
+      const cloudProfile = await downloadProfile(key)
+      if (!cloudProfile || !adaptiveSessionRef.current) return
+      const localTs = localProfile ? new Date(localProfile.testDate).getTime() : 0
+      const cloudTs = new Date(cloudProfile.testDate).getTime()
+      if (cloudTs > localTs) {
+        // Cloud has a newer profile — update session and local cache
+        adaptiveSessionRef.current.thetaEstimate = {
+          theta: cloudProfile.overall.theta,
+          standardError: cloudProfile.overall.standardError,
+        }
+        saveProfile(cloudProfile)
+      }
+    } catch {
+      /* background refresh — silent fail */
+    }
+  }
+
   function handleBeginTest() {
     if (aiUsage === null) return;
     testStartTime.current = Date.now();
@@ -728,9 +780,24 @@ export function useTestState() {
 
     if (ADAPTIVE_MODE) {
       const session = createTestSession(QUESTIONS_PER_TEST);
+
+      // Load theta profile from localStorage (all users)
+      const profile = loadProfile();
+      if (profile) {
+        session.thetaEstimate = {
+          theta: profile.overall.theta,
+          standardError: profile.overall.standardError,
+        };
+      }
+
       adaptiveSessionRef.current = session;
       const firstQ = selectNextQuestion(session, allQuestions);
       setQuestions(firstQ ? [firstQ] : selectQuestions(1, locale));
+
+      // Premium users: async refresh profile from cloud and update session
+      if (isPremium && licenseKey) {
+        refreshProfileFromCloud(licenseKey, profile).catch(() => {});
+      }
     } else {
       // Phase 0: questions already pre-selected on mount
     }
