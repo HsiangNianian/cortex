@@ -405,7 +405,7 @@ async function callAI(
           temperature: 0.7,
         }),
         new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("env.AI timeout")), 15000),
+          setTimeout(() => reject(new Error("env.AI timeout")), 30000),
         ),
       ])
       return result as { response: string; usage?: { prompt_tokens: number; completion_tokens: number } }
@@ -414,11 +414,10 @@ async function callAI(
     console.warn("[ai/generate-question] env.AI failed:", String(e))
   }
 
-  // Dev fallback: REST API
-  if (process.env.NODE_ENV === "development") {
-    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-    const apiToken = process.env.CLOUDFLARE_API_TOKEN
-    if (accountId && apiToken) {
+  // Fallback: REST API (dev + production if env vars are set)
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  if (accountId && apiToken) {
       try {
         const res = await fetch(
           `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
@@ -449,7 +448,6 @@ async function callAI(
         console.warn("[ai/generate-question] REST fallback failed:", String(e))
       }
     }
-  }
 
   return null
 }

@@ -19,7 +19,10 @@ export function IntlErrorBoundary({ children, ...props }: Props) {
     <NextIntlClientProvider
       {...props}
       onError={(error) => {
+        // Benign: locale context briefly lost during HMR
         if (error.code === "INVALID_MESSAGE") return
+        // Benign: environment formatting fallback
+        if (error.code === "ENVIRONMENT_FALLBACK") return
         console.error(error)
       }}
     >
