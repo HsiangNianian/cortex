@@ -408,7 +408,10 @@ async function callAI(
           setTimeout(() => reject(new Error("env.AI timeout")), 30000),
         ),
       ])
-      return result as { response: string; usage?: { prompt_tokens: number; completion_tokens: number } }
+      const r = result as { response?: unknown; usage?: { prompt_tokens: number; completion_tokens: number } }
+      if (r && typeof r.response === "string") {
+        return { response: r.response, usage: r.usage }
+      }
     }
   } catch (e) {
     console.warn("[ai/generate-question] env.AI failed:", String(e))
@@ -439,8 +442,13 @@ async function callAI(
         )
         const data = await res.json()
         if (data.success && data.result) {
+          const resp = data.result.response
+          if (typeof resp !== "string") {
+            console.warn("[ai/generate-question] REST response is not a string:", typeof resp)
+            return null
+          }
           return {
-            response: data.result.response,
+            response: resp,
             usage: data.result.usage,
           }
         }
@@ -454,12 +462,13 @@ async function callAI(
 
 // ─── JSON Parser ──────────────────────────────────────────────────────────
 
-function parseJsonResponse(text: string): {
+function parseJsonResponse(text: unknown): {
   question: string
   options: string[]
   answer: number
   explanation: string
 } | null {
+  if (typeof text !== "string") return null
   try {
     // Try direct parse first
     const trimmed = text.trim()

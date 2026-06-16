@@ -110,99 +110,180 @@ export async function POST(request: Request) {
 
     const sysPrompt = SYSTEM_PROMPTS[locale] ?? SYSTEM_PROMPTS["en"]
 
-    // Try Workers AI binding first (Cloudflare runtime)
-    async function callAI(): Promise<string> {
-      // 1) Try env.AI binding (production or wrangler dev)
-      try {
-        const { env } = await import("@opennextjs/cloudflare").then((m) =>
-          m.getCloudflareContext(),
-        )
-        if ((env as any).AI) {
-          console.log("[ai/interpret] method=env.AI", logCtx)
-          const result = await Promise.race([
-            (env as any).AI.run("@cf/qwen/qwen3-30b-a3b-fp8", {
-              messages: [
-                { role: "system", content: sysPrompt },
-                { role: "user", content: prompt },
-              ],
-              max_tokens: 512,
-              temperature: 0.5,
-            }),
-            new Promise<never>((_, reject) =>
-              setTimeout(() => reject(new Error("env.AI timeout")), 5000)
-            ),
-          ])
-          const analysisLen = (result as { response: string }).response.length
-          const elapsed = Date.now() - startTs
-          console.log("[ai/interpret] method=env.AI ok", { ...logCtx, analysisLen, elapsed })
-          return (result as { response: string }).response
-        }
-      } catch (e) {
-        console.warn("[ai/interpret] method=env.AI failed", { ...logCtx, error: String(e) })
-      }
+    // ─── Try streaming first ──────────────────────────────────────────────────
 
-      // 2) Dev fallback: use REST API directly with Cloudflare credentials
-      if (process.env.NODE_ENV === "development") {
-        const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-        const apiToken = process.env.CLOUDFLARE_API_TOKEN
-        if (accountId && apiToken) {
-          console.log("[ai/interpret] method=REST", logCtx)
-          try {
-            const res = await fetch(
-              `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${apiToken}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  messages: [
-                    { role: "system", content: sysPrompt },
-                    { role: "user", content: prompt },
-                  ],
-                  max_tokens: 512,
-                  temperature: 0.5,
-                }),
-              },
-            )
-            const data = await res.json()
-            if (data.success && data.result?.response) {
-              const analysisLen = data.result.response.length
-              const elapsed = Date.now() - startTs
-              console.log("[ai/interpret] method=REST ok", { ...logCtx, analysisLen, elapsed })
-              return data.result.response
-            }
-            console.warn("[ai/interpret] method=REST api_error", { ...logCtx, status: res.status, apiResult: data })
-          } catch (e) {
-            console.warn("[ai/interpret] method=REST failed", { ...logCtx, error: String(e) })
-          }
-        } else {
-          console.log("[ai/interpret] method=REST skipped (no credentials)", logCtx)
-        }
-      }
-
-      // 3) Last resort: dev mock
-      if (process.env.NODE_ENV === "development") {
-        const mockAnalyses: Record<string, string> = {
-          "zh-CN": `[DEV] 整体退化指数 ${degradationIndex}（${tierLabelKey}）。各维度：逻辑推理 ${dimensionScores.logic ?? "N/A"} 分、速算 ${dimensionScores.math ?? "N/A"} 分、词汇语义 ${dimensionScores.vocab ?? "N/A"} 分、事理分析 ${dimensionScores.event ?? "N/A"} 分。建议关注较低维度，定期复测追踪趋势。`,
-          "ja": `[DEV] 全体的な退化指数 ${degradationIndex}（${tierLabelKey}）。各次元：論理 ${dimensionScores.logic ?? "N/A"}、暗算 ${dimensionScores.math ?? "N/A"}、語彙 ${dimensionScores.vocab ?? "N/A"}、事象 ${dimensionScores.event ?? "N/A"}。低い次元に注目し、定期的に再測定して傾向を追跡してください。`,
-        }
-        const mock = mockAnalyses[locale] ?? `[DEV] Overall degradation index ${degradationIndex} (${tierLabelKey}). Dimensions: logic ${dimensionScores.logic ?? "N/A"}, math ${dimensionScores.math ?? "N/A"}, vocab ${dimensionScores.vocab ?? "N/A"}, event ${dimensionScores.event ?? "N/A"}. Focus on weaker areas and retest regularly.`
-        console.log("[ai/interpret] method=mock", { ...logCtx, analysisLen: mock.length })
-        return mock
-      }
-
-      throw new Error("ai_unavailable")
+    try {
+      const stream = await callAIStream(sysPrompt, prompt)
+      const elapsed = Date.now() - startTs
+      console.log("[ai/interpret] response streaming", { ...logCtx, elapsed })
+      return new Response(stream, {
+        headers: { "Content-Type": "text/event-stream" },
+      })
+    } catch (e) {
+      console.warn("[ai/interpret] streaming unavailable, falling back:", { ...logCtx, error: String(e) })
     }
 
-    const analysis = (await callAI()).trim()
-    const elapsed = Date.now() - startTs
-    console.log("[ai/interpret] response ok", { ...logCtx, analysisLen: analysis.length, analysisPreview: analysis.slice(0, 50), elapsed })
-    return NextResponse.json({ analysis })
+    // ─── Fallback: non-streaming ──────────────────────────────────────────────
+
+    try {
+      const analysis = await callAI(sysPrompt, prompt)
+      const elapsed = Date.now() - startTs
+      console.log("[ai/interpret] response ok", { ...logCtx, analysisLen: analysis.length, analysisPreview: analysis.slice(0, 50), elapsed })
+      return NextResponse.json({ analysis })
+    } catch (e) {
+      console.warn("[ai/interpret] non-streaming also failed:", { ...logCtx, error: String(e) })
+    }
+
+    // ─── Dev mock (last resort) ──────────────────────────────────────────────
+
+    if (process.env.NODE_ENV === "development") {
+      const mockAnalyses: Record<string, string> = {
+        "zh-CN": `[DEV] 整体退化指数 ${degradationIndex}（${tierLabelKey}）。各维度：逻辑推理 ${dimensionScores.logic ?? "N/A"} 分、速算 ${dimensionScores.math ?? "N/A"} 分、词汇语义 ${dimensionScores.vocab ?? "N/A"} 分、事理分析 ${dimensionScores.event ?? "N/A"} 分。建议关注较低维度，定期复测追踪趋势。`,
+        "ja": `[DEV] 全体的な退化指数 ${degradationIndex}（${tierLabelKey}）。各次元：論理 ${dimensionScores.logic ?? "N/A"}、暗算 ${dimensionScores.math ?? "N/A"}、語彙 ${dimensionScores.vocab ?? "N/A"}、事象 ${dimensionScores.event ?? "N/A"}。低い次元に注目し、定期的に再測定して傾向を追跡してください。`,
+      }
+      const mock = mockAnalyses[locale] ?? `[DEV] Overall degradation index ${degradationIndex} (${tierLabelKey}). Dimensions: logic ${dimensionScores.logic ?? "N/A"}, math ${dimensionScores.math ?? "N/A"}, vocab ${dimensionScores.vocab ?? "N/A"}, event ${dimensionScores.event ?? "N/A"}. Focus on weaker areas and retest regularly.`
+      console.log("[ai/interpret] method=mock", { ...logCtx, analysisLen: mock.length })
+      return NextResponse.json({ analysis: mock })
+    }
+
+    throw new Error("ai_unavailable")
   } catch (err) {
     const elapsed = Date.now() - startTs
     console.error("[ai/interpret] Error:", { ...logCtx, error: String(err), elapsed })
     return NextResponse.json({ error: "internal_error" }, { status: 500 })
   }
+}
+
+// ─── Streaming AI call ─────────────────────────────────────────────────────
+
+async function callAIStream(sysPrompt: string, userPrompt: string): Promise<ReadableStream> {
+  // 1) Try env.AI binding with streaming
+  try {
+    const { env } = await import("@opennextjs/cloudflare").then((m) =>
+      m.getCloudflareContext(),
+    )
+    if ((env as any).AI) {
+      const stream = await Promise.race([
+        (env as any).AI.run("@cf/qwen/qwen3-30b-a3b-fp8", {
+          messages: [
+            { role: "system", content: sysPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          max_tokens: 512,
+          temperature: 0.5,
+          stream: true,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("env.AI streaming startup timeout")), 15000),
+        ),
+      ])
+      return stream as ReadableStream
+    }
+  } catch (e) {
+    console.warn("[ai/interpret] env.AI streaming failed:", String(e))
+  }
+
+  // 2) REST API with streaming (production + dev)
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  if (accountId && apiToken) {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
+    try {
+      const res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: "system", content: sysPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            max_tokens: 512,
+            temperature: 0.5,
+            stream: true,
+          }),
+          signal: controller.signal,
+        },
+      )
+      clearTimeout(timeoutId)
+      if (res.ok && res.body) {
+        return res.body
+      }
+      console.warn("[ai/interpret] REST streaming api_error", { status: res.status })
+    } catch (e) {
+      clearTimeout(timeoutId)
+      console.warn("[ai/interpret] REST streaming failed:", String(e))
+    }
+  }
+
+  throw new Error("streaming_unavailable")
+}
+
+// ─── Non-streaming AI call (fallback) ──────────────────────────────────────
+
+async function callAI(sysPrompt: string, userPrompt: string): Promise<string> {
+  // 1) Try env.AI binding
+  try {
+    const { env } = await import("@opennextjs/cloudflare").then((m) =>
+      m.getCloudflareContext(),
+    )
+    if ((env as any).AI) {
+      const result = await Promise.race([
+        (env as any).AI.run("@cf/qwen/qwen3-30b-a3b-fp8", {
+          messages: [
+            { role: "system", content: sysPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          max_tokens: 512,
+          temperature: 0.5,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("env.AI timeout")), 30000),
+        ),
+      ])
+      return (result as { response: string }).response
+    }
+  } catch (e) {
+    console.warn("[ai/interpret] env.AI failed:", String(e))
+  }
+
+  // 2) REST API fallback (production + dev, not dev-only anymore)
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  if (accountId && apiToken) {
+    try {
+      const res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: "system", content: sysPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            max_tokens: 512,
+            temperature: 0.5,
+          }),
+        },
+      )
+      const data = await res.json()
+      if (data.success && data.result?.response) {
+        return data.result.response
+      }
+      console.warn("[ai/interpret] REST api_error", { status: res.status, apiResult: data })
+    } catch (e) {
+      console.warn("[ai/interpret] REST failed:", String(e))
+    }
+  }
+
+  throw new Error("ai_unavailable")
 }

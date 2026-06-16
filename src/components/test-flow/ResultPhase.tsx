@@ -144,18 +144,63 @@ export function ResultPhase({
         body: JSON.stringify(body),
       })
       if (!res.ok) throw new Error("API error")
-      const data = await res.json()
-      setAiAnalysis(data.analysis)
-      // Cache to localStorage for this test session
-      try {
-        const entryRaw = localStorage.getItem("cognitive-rust-result")
-        if (entryRaw) {
-          const entry = JSON.parse(entryRaw)
-          if (entry.timestamp) {
-            localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, data.analysis)
+
+      const contentType = res.headers.get("Content-Type") || ""
+
+      if (contentType.includes("text/event-stream")) {
+        // Streaming response
+        const reader = res.body!.getReader()
+        const decoder = new TextDecoder()
+        let buffer = ""
+        let fullAnalysis = ""
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          buffer += decoder.decode(value, { stream: true })
+
+          const lines = buffer.split("\n")
+          buffer = lines.pop() || ""
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6)
+              if (data === "[DONE]") break
+              try {
+                const parsed = JSON.parse(data)
+                if (parsed.response) {
+                  fullAnalysis += parsed.response
+                  setAiAnalysis(fullAnalysis)
+                }
+              } catch { /* ignore */ }
+            }
           }
         }
-      } catch { /* ignore */ }
+
+        // Cache to localStorage
+        try {
+          const entryRaw = localStorage.getItem("cognitive-rust-result")
+          if (entryRaw) {
+            const entry = JSON.parse(entryRaw)
+            if (entry.timestamp) {
+              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, fullAnalysis)
+            }
+          }
+        } catch { /* ignore */ }
+      } else {
+        // Non-streaming fallback
+        const data = await res.json()
+        setAiAnalysis(data.analysis)
+        try {
+          const entryRaw = localStorage.getItem("cognitive-rust-result")
+          if (entryRaw) {
+            const entry = JSON.parse(entryRaw)
+            if (entry.timestamp) {
+              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, data.analysis)
+            }
+          }
+        } catch { /* ignore */ }
+      }
     } catch {
       setAiError(n("result.aiInterpretError"))
     } finally {
@@ -713,18 +758,7 @@ export function ResultPhase({
             )}
 
             {aiError && (
-              <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                <span>{aiError}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 text-xs"
-                  onClick={handleAiInterpret}
-                  disabled={aiLoading}
-                >
-                  {n("result.aiInterpretButton")}
-                </Button>
-              </div>
+              <p className="mt-2 text-sm text-red-600">{aiError}</p>
             )}
 
             {aiAnalysis && (

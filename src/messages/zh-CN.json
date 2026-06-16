@@ -154,7 +154,7 @@
 		"aiInterpretDesc": "基于你的测试数据，AI 将生成个性化的认知分析报告",
 		"aiInterpretButton": "生成 AI 解读",
 		"aiInterpretRegenerate": "重新生成",
-		"aiInterpretLoading": "AI 正在分析你的认知数据…",
+		"aiInterpretLoading": "正在分析你的认知数据…",
 		"aiInterpretError": "生成失败，请重试",
 		"aiInterpretPremiumOnly": "Premium 专属功能",
 		"aiInterpretAnnounceTitle": "新功能：AI 深度解读",

@@ -154,7 +154,7 @@
 		"aiInterpretDesc": "AI will generate a personalized cognitive analysis based on your test data",
 		"aiInterpretButton": "Generate AI Analysis",
 		"aiInterpretRegenerate": "Regenerate",
-		"aiInterpretLoading": "AI is analyzing your cognitive data…",
+		"aiInterpretLoading": "Analyzing your cognitive data…",
 		"aiInterpretError": "Generation failed, please try again",
 		"aiInterpretPremiumOnly": "Premium Feature",
 		"aiInterpretAnnounceTitle": "New: AI Deep Analysis",
