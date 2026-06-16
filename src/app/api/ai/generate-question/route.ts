@@ -409,8 +409,12 @@ async function callAI(
         ),
       ])
       const r = result as { response?: unknown; usage?: { prompt_tokens: number; completion_tokens: number } }
-      if (r && typeof r.response === "string") {
-        return { response: r.response, usage: r.usage }
+      if (r) {
+        if (typeof r.response === "string") return { response: r.response, usage: r.usage }
+        // CF Workers AI may auto-parse JSON model output into an object
+        if (typeof r.response === "object" && r.response !== null) {
+          return { response: JSON.stringify(r.response), usage: r.usage }
+        }
       }
     }
   } catch (e) {
@@ -442,7 +446,11 @@ async function callAI(
         )
         const data = await res.json()
         if (data.success && data.result) {
-          const resp = data.result.response
+          let resp = data.result.response
+          if (typeof resp === "object" && resp !== null) {
+            // CF Workers AI may auto-parse JSON model output into an object
+            resp = JSON.stringify(resp)
+          }
           if (typeof resp !== "string") {
             console.warn("[ai/generate-question] REST response is not a string:", typeof resp)
             return null

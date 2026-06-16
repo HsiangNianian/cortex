@@ -110,17 +110,52 @@ export async function POST(request: Request) {
 
     const sysPrompt = SYSTEM_PROMPTS[locale] ?? SYSTEM_PROMPTS["en"]
 
-    // ─── Try streaming first ──────────────────────────────────────────────────
+
+    // ─── Try streaming (collect full response server-side to avoid truncation) ──
 
     try {
       const stream = await callAIStream(sysPrompt, prompt)
-      const elapsed = Date.now() - startTs
-      console.log("[ai/interpret] response streaming", { ...logCtx, elapsed })
-      return new Response(stream, {
-        headers: { "Content-Type": "text/event-stream" },
-      })
+      const reader = stream.getReader()
+      const decoder = new TextDecoder()
+      let sseBuf = ""
+      let fullText = ""
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        sseBuf += decoder.decode(value, { stream: true })
+
+        const lines = sseBuf.split("\n")
+        sseBuf = lines.pop() || ""
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6)
+            if (data === "[DONE]") { sseBuf = ""; break }
+            try {
+              const parsed = JSON.parse(data)
+              if (parsed.response) fullText += parsed.response
+            } catch { /* ignore */ }
+          }
+        }
+      }
+
+      // Drain any remaining partial line
+      if (sseBuf.startsWith("data: ") && sseBuf.slice(6) !== "[DONE]") {
+        try {
+          const parsed = JSON.parse(sseBuf.slice(6))
+          if (parsed.response) fullText += parsed.response
+        } catch { /* ignore */ }
+      }
+
+      if (fullText) {
+        const analysis = fullText.trim()
+        const elapsed = Date.now() - startTs
+        console.log("[ai/interpret] streaming ok", { ...logCtx, analysisLen: analysis.length, analysisPreview: analysis.slice(0, 50), elapsed })
+        return NextResponse.json({ analysis })
+      }
     } catch (e) {
-      console.warn("[ai/interpret] streaming unavailable, falling back:", { ...logCtx, error: String(e) })
+      console.warn("[ai/interpret] streaming failed, falling back:", { ...logCtx, error: String(e) })
     }
 
     // ─── Fallback: non-streaming ──────────────────────────────────────────────
