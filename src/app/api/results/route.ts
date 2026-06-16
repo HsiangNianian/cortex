@@ -31,10 +31,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "invalid payload" }, { status: 400 })
     }
 
-    // Minimum test duration check (60 seconds)
-    if (typeof elapsedMs === "number" && elapsedMs < 60_000) {
-      return NextResponse.json({ error: "too fast" }, { status: 400 })
-    }
+    // Note: minimum duration check intentionally removed — it was
+    // causing false rejections for real users completing the test quickly.
 
     await saveResult({
       degradationIndex,
