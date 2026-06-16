@@ -146,7 +146,17 @@
 		"scoringPctFormula": "退化指数 = 100 − (正确数 / 总题数 × 100)",
 		"scoringIrtResult": "退化指数",
 		"scoringByDimension": "各维度能力估计",
-		"reviewPartial": "部分正确 ({score}%)"
+		"reviewPartial": "部分正确 ({score}%)",
+		"aiInterpretTitle": "AI 深度解读",
+		"aiInterpretDesc": "基于你的测试数据，AI 将生成个性化的认知分析报告",
+		"aiInterpretButton": "生成 AI 解读",
+		"aiInterpretRegenerate": "重新生成",
+		"aiInterpretLoading": "AI 正在分析你的认知数据…",
+		"aiInterpretError": "生成失败，请重试",
+		"aiInterpretPremiumOnly": "Premium 专属功能",
+		"aiInterpretAnnounceTitle": "新功能：AI 深度解读",
+		"aiInterpretAnnounceDesc": "现在可以在测试结果页使用 AI 分析功能，获取基于你测试数据的个性化认知分析报告。",
+		"aiInterpretAnnounceCta": "知道了"
 	},
 	"unlock": {
 		"backToTest": "回到测试",
@@ -157,7 +167,7 @@
 		"step1Title": "第一步：选择方案并付款",
 		"step1Desc": "三个档位任选，微信/支付宝均可。付款后复制订单号。",
 		"planUnlockTitle": "解锁高级版",
-		"planUnlockDesc": "无限测试 · 云端同步 · 逐维度分析 · 个性化智能体训练",
+		"planUnlockDesc": "无限测试 · 云端同步 · 逐维度分析 · AI 深度解读 · 个性化智能体训练",
 		"planSponsorTitle": "赞助者名单",
 		"planSponsorDesc": "含高级版全部 + 赞助墙留名 + 新功能内测",
 		"planSupportTitle": "纯支持",
@@ -210,6 +220,7 @@
 		"featureAnalysis": "逐维度深度分析",
 		"featureExport": "数据导出 CSV",
 		"featureWatermark": "无水印分享图",
+		"featureAiInterpret": "AI 深度解读",
 		"dangerTitle": "清除此设备上的 License",
 		"dangerDesc": "清除后此设备恢复免费版，但 License Key 仍然有效。可用于释放设备名额。",
 		"dangerButton": "清除 License"
@@ -322,7 +333,8 @@
 			"全平台统计与个人趋势（正态分布/百分位排名/AI分组/折线图/雷达图）",
 			"分享与留存（OG 卡片/挑战分享/PWA/7天提醒/主题切换）",
 			"多语言 UI（中文/English/日本語 + 语言切换器）",
-			"基建优化（Redis 迁移/组件拆分/hydration 修复/构建验证）"
+			"基建优化（Redis 迁移/组件拆分/hydration 修复/构建验证）",
+			"AI 深度解读（Premium 专属）"
 		],
 		"roadmapNearItems": [
 			"AI 出题接入测试流程——Pure AI / Hybrid / Adaptive+AI 三种模式",

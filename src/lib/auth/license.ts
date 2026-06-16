@@ -31,6 +31,21 @@ export interface LicenseInfo {
 export async function validateLicense(
   licenseKey: string,
 ): Promise<{ valid: boolean; license?: LicenseInfo; reason?: string }> {
+  // Development-only bypass key
+  const DEV_LICENSE_KEY = "cx_DEV_DEV_DEV_DEV_DEV_DEV_DEV"
+  if (process.env.NODE_ENV === "development" && licenseKey === DEV_LICENSE_KEY) {
+    return {
+      valid: true,
+      license: {
+        licenseKey: DEV_LICENSE_KEY,
+        status: "active",
+        deviceCount: 0,
+        maxDevices: 99,
+        createdAt: new Date().toISOString(),
+      },
+    }
+  }
+
   const row = await d1First<{
     license_key: string
     status: string

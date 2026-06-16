@@ -146,7 +146,17 @@
 		"scoringPctFormula": "退化指数 = 100 − (正解数 / 合計問題数 × 100)",
 		"scoringIrtResult": "退化指数",
 		"scoringByDimension": "次元別能力推定",
-		"reviewPartial": "部分的 ({score}%)"
+		"reviewPartial": "部分的 ({score}%)",
+		"aiInterpretTitle": "AI 深層分析",
+		"aiInterpretDesc": "テストデータに基づいて、AIがパーソナライズされた認知分析レポートを生成します",
+		"aiInterpretButton": "AI 分析を生成",
+		"aiInterpretRegenerate": "再生成",
+		"aiInterpretLoading": "AIが認知データを分析中…",
+		"aiInterpretError": "生成に失敗しました。もう一度お試しください",
+		"aiInterpretPremiumOnly": "プレミアム機能",
+		"aiInterpretAnnounceTitle": "新機能：AI 深層分析",
+		"aiInterpretAnnounceDesc": "テスト結果ページでAI分析機能が使えるようになりました。テストデータに基づいたパーソナライズされた認知分析レポートを取得できます。",
+		"aiInterpretAnnounceCta": "OK"
 	},
 	"unlock": {
 		"backToTest": "テストに戻る",
@@ -157,7 +167,7 @@
 		"step1Title": "ステップ1: プランを選んで支払い",
 		"step1Desc": "3つのプランから選択。WeChat Pay / Alipay対応。支払い後に注文番号をコピー。",
 		"planUnlockTitle": "プレミアム解除",
-		"planUnlockDesc": "無制限テスト · クラウド同期 · 次元別分析 · パーソナライズドエージェントトレーニング",
+		"planUnlockDesc": "無制限テスト · クラウド同期 · 次元別分析 · AI 深層分析 · パーソナライズドエージェントトレーニング",
 		"planSponsorTitle": "スポンサーリスト",
 		"planSponsorDesc": "全プレミアム機能 + スポンサーウォール掲載 + ベータアクセス",
 		"planSupportTitle": "応援",
@@ -210,6 +220,7 @@
 		"featureAnalysis": "次元別詳細分析",
 		"featureExport": "データエクスポート CSV",
 		"featureWatermark": "透かしなし共有画像",
+		"featureAiInterpret": "AI 深層分析",
 		"dangerTitle": "このデバイスのライセンスを消去",
 		"dangerDesc": "消去後、このデバイスは無料版に戻ります。ライセンスキーは引き続き有効で、デバイス枠を解放できます。",
 		"dangerButton": "ライセンスを消去"
@@ -322,7 +333,8 @@
 			"全体統計と個人傾向（正規分布/百分位/AIグループ/折れ線/レーダーチャート）",
 			"共有と定着（OGカード/チャレンジ共有/PWA/7日通知/テーマ切替）",
 			"多言語 UI（中文/English/日本語 + 言語切替）",
-			"基盤最適化（Redis移行/コンポーネント分割/hydration修正/ビルド検証）"
+			"基盤最適化（Redis移行/コンポーネント分割/hydration修正/ビルド検証）",
+			"AI 深層分析（プレミアム機能）"
 		],
 		"roadmapNearItems": [
 			"AI出題のテストフロー統合 — Pure AI / Hybrid / Adaptive+AI の3モード",

@@ -146,7 +146,17 @@
 		"scoringPctFormula": "Degradation index = 100 − (correct / total × 100)",
 		"scoringIrtResult": "Degradation index",
 		"scoringByDimension": "Per-dimension ability",
-		"reviewPartial": "Partial ({score}%)"
+		"reviewPartial": "Partial ({score}%)",
+		"aiInterpretTitle": "AI Deep Analysis",
+		"aiInterpretDesc": "AI will generate a personalized cognitive analysis based on your test data",
+		"aiInterpretButton": "Generate AI Analysis",
+		"aiInterpretRegenerate": "Regenerate",
+		"aiInterpretLoading": "AI is analyzing your cognitive data…",
+		"aiInterpretError": "Generation failed, please try again",
+		"aiInterpretPremiumOnly": "Premium Feature",
+		"aiInterpretAnnounceTitle": "New: AI Deep Analysis",
+		"aiInterpretAnnounceDesc": "You can now use AI analysis on the test results page to get a personalized cognitive analysis report based on your test data.",
+		"aiInterpretAnnounceCta": "Got it"
 	},
 	"unlock": {
 		"backToTest": "Back to Test",
@@ -157,7 +167,7 @@
 		"step1Title": "Step 1: Choose plan & pay",
 		"step1Desc": "Three tiers available. WeChat Pay / Alipay supported. Copy the order number after payment.",
 		"planUnlockTitle": "Unlock Premium",
-		"planUnlockDesc": "Unlimited tests · Cloud sync · Per-dimension analysis · Personalized agent training",
+		"planUnlockDesc": "Unlimited tests · Cloud sync · Per-dimension analysis · AI deep analysis · Personalized agent training",
 		"planSponsorTitle": "Sponsor Wall",
 		"planSponsorDesc": "All Premium features + wall of fame + beta access",
 		"planSupportTitle": "Support",
@@ -210,6 +220,7 @@
 		"featureAnalysis": "Per-dimension Deep Analysis",
 		"featureExport": "Data Export CSV",
 		"featureWatermark": "Watermark-free Share Image",
+		"featureAiInterpret": "AI Deep Analysis",
 		"dangerTitle": "Clear License on This Device",
 		"dangerDesc": "After clearing, this device reverts to free tier. The License Key remains valid and can free up a device slot.",
 		"dangerButton": "Clear License"
@@ -322,7 +333,8 @@
 			"Global stats & personal trends (normal distribution/percentile/AI grouping/line chart/radar chart)",
 			"Sharing & retention (OG cards/challenge sharing/PWA/7-day reminder/theme toggle)",
 			"Multi-language UI (中文/English/日本語 + language switcher)",
-			"Infrastructure (Redis migration/component refactor/hydration fixes/build verification)"
+			"Infrastructure (Redis migration/component refactor/hydration fixes/build verification)",
+			"AI deep analysis (Premium feature)"
 		],
 		"roadmapNearItems": [
 			"AI question integration into test flow — Pure AI / Hybrid / Adaptive+AI modes",

@@ -189,6 +189,11 @@ export default function PremiumPage() {
                 <Check className="h-4 w-4 text-green-600" />
                 {t("featureWatermark")}
               </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600" />
+                {t("featureAiInterpret")}
+                <sup className="text-sm text-amber-500">*</sup>
+              </li>
             </ul>
           </CardContent>
         </Card>

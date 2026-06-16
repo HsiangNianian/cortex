@@ -57,15 +57,62 @@ export function LandingPhase({
 }: LandingPhaseProps) {
   const n = useTranslations();
   const locale = useLocale();
-  const { isPremium } = usePremium();
+  const { isPremium, licenseKey } = usePremium();
   const isChallenge = challengeRef !== null;
   const isChinese = locale === "zh-CN";
   const [showCommunityBanner, setShowCommunityBanner] = useState(true);
   const [cooldownDismissed, setCooldownDismissed] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
 
   useEffect(() => {
     setCooldownDismissed(false);
   }, [cooldownVersion]);
+
+  // Check announcement state for premium users on mount
+  useEffect(() => {
+    if (!isPremium) return
+    const key = "premium:announcement:ai_interpret:seen"
+    if (localStorage.getItem(key)) return
+    // In dev mode, skip cloud check — just show the announcement (localStorage only)
+    if (process.env.NODE_ENV === "development") {
+      setShowAnnouncement(true)
+      return
+    }
+    ;(async () => {
+      try {
+        const res = await fetch("/api/premium/ack-announcement?announcement=ai_interpret", {
+          headers: { Authorization: `Bearer ${licenseKey}` },
+        })
+        if (!res.ok) return
+        const data = await res.json()
+        if (data.seen) {
+          localStorage.setItem(key, "true")
+          return
+        }
+        setShowAnnouncement(true)
+      } catch {
+        setShowAnnouncement(true)
+      }
+    })()
+  }, [isPremium, licenseKey])
+
+  async function handleDismissAnnouncement() {
+    const key = "premium:announcement:ai_interpret:seen"
+    localStorage.setItem(key, "true")
+    setShowAnnouncement(false)
+    // In dev mode, skip cloud ack
+    if (process.env.NODE_ENV === "development") return
+    try {
+      await fetch("/api/premium/ack-announcement", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${licenseKey}`,
+        },
+        body: JSON.stringify({ announcement: "ai_interpret" }),
+      })
+    } catch { /* silent */ }
+  }
 
   const isCoolingDown = cooldownEndsAt > Date.now() && !cooldownDismissed;
 
@@ -319,6 +366,26 @@ export function LandingPhase({
           </CardFooter>
         </Card>
       </div>
+
+      {/* Announcement dialog for new AI interpret feature */}
+      {showAnnouncement && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-2xl">
+            <h3 className="text-lg font-semibold">
+              {n("result.aiInterpretAnnounceTitle")}
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {n("result.aiInterpretAnnounceDesc")}
+            </p>
+            <Button
+              className="mt-5 w-full"
+              onClick={handleDismissAnnouncement}
+            >
+              {n("result.aiInterpretAnnounceCta")}
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
