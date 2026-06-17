@@ -98,6 +98,7 @@
     "adviceTitle": "トレーニング提案",
     "adviceWeakest": "{dimension}次元が比較的弱いです。",
     "adviceDefault": "継続的な練習が改善をもたらします。",
+    "interpretLimitExhausted": "本日の解釈回数が上限に達しました。また明日お試しください。",
     "adviceTips": {
       "logic": "毎日1問ロジック問題（数独や推理問題など）を解き、分析力を段階的に向上させましょう。",
       "math": "暗算する前にすぐに電卓を出さないで——自分で計算してみて、たとえ遅くても。",

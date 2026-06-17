@@ -32,7 +32,8 @@ import * as path from "path";
 const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
 const OUTPUT_DIR = path.resolve(SCRIPT_DIR, "output");
 const PROGRESS_FILE = path.join(OUTPUT_DIR, "progress.json");
-const API_KEY = process.env.OPENAI_API_KEY ?? process.env.DEEPSEEK_API_KEY ?? "";
+const API_KEY =
+  process.env.OPENAI_API_KEY ?? process.env.DEEPSEEK_API_KEY ?? "";
 const BASE_URL = process.env.OPENAI_BASE_URL ?? "https://api.deepseek.com";
 const MODEL = process.env.OPENAI_MODEL ?? "deepseek-chat";
 const CONCURRENCY = 3;
@@ -46,34 +47,38 @@ const BATCH_SIZE_PER_WRITE = 5; // flush output every N questions
  * Existing: zh-CN=44, en=54, ja=54
  * So we need: zh-CN +106, en +96, ja +96
  */
-const GENERATION_PLAN: { locale: string; type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument"; count: number }[] = [
-  // zh-CN
-  { locale: "zh-CN", type: "logic", count: 25 },
-  { locale: "zh-CN", type: "math", count: 25 },
-  { locale: "zh-CN", type: "vocab", count: 25 },
-  { locale: "zh-CN", type: "event", count: 25 },
-  { locale: "zh-CN", type: "event-cause", count: 15 },
-  { locale: "zh-CN", type: "event-argument", count: 15 },
-  // en
-  { locale: "en", type: "logic", count: 23 },
-  { locale: "en", type: "math", count: 23 },
-  { locale: "en", type: "vocab", count: 23 },
-  { locale: "en", type: "event", count: 23 },
-  { locale: "en", type: "event-cause", count: 13 },
-  { locale: "en", type: "event-argument", count: 13 },
-  // ja
-  { locale: "ja", type: "logic", count: 23 },
-  { locale: "ja", type: "math", count: 23 },
-  { locale: "ja", type: "vocab", count: 23 },
-  { locale: "ja", type: "event", count: 23 },
-  { locale: "ja", type: "event-cause", count: 13 },
-  { locale: "ja", type: "event-argument", count: 13 },
-];
+const GENERATION_PLAN: {
+  locale: string;
+  type: "logic" | "math" | "vocab" | "event" | "event-cause" | "event-argument";
+  count: number;
+}[] = [
+    // zh-CN
+    { locale: "zh-CN", type: "logic", count: 25 },
+    { locale: "zh-CN", type: "math", count: 25 },
+    { locale: "zh-CN", type: "vocab", count: 25 },
+    { locale: "zh-CN", type: "event", count: 25 },
+    { locale: "zh-CN", type: "event-cause", count: 15 },
+    { locale: "zh-CN", type: "event-argument", count: 15 },
+    // en
+    { locale: "en", type: "logic", count: 23 },
+    { locale: "en", type: "math", count: 23 },
+    { locale: "en", type: "vocab", count: 23 },
+    { locale: "en", type: "event", count: 23 },
+    { locale: "en", type: "event-cause", count: 13 },
+    { locale: "en", type: "event-argument", count: 13 },
+    // ja
+    { locale: "ja", type: "logic", count: 23 },
+    { locale: "ja", type: "math", count: 23 },
+    { locale: "ja", type: "vocab", count: 23 },
+    { locale: "ja", type: "event", count: 23 },
+    { locale: "ja", type: "event-cause", count: 13 },
+    { locale: "ja", type: "event-argument", count: 13 },
+  ];
 
 /** Difficulty distribution: normal-ish across -3 to +3 */
 const DIFFICULTY_BUCKETS = [
   { min: -3.0, max: -1.5, weight: 0.12 },
-  { min: -1.5, max: -0.5, weight: 0.20 },
+  { min: -1.5, max: -0.5, weight: 0.2 },
   { min: -0.5, max: 0.5, weight: 0.32 },
   { min: 0.5, max: 1.5, weight: 0.24 },
   { min: 1.5, max: 3.0, weight: 0.12 },
@@ -143,7 +148,9 @@ function getExistingQuestions(locale: string): GeneratedQuestion[] {
   if (fs.existsSync(filePath)) {
     try {
       return JSON.parse(fs.readFileSync(filePath, "utf-8"));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
   return [];
 }
@@ -167,11 +174,16 @@ function loadProgress(): GenerationProgress | null {
     if (fs.existsSync(PROGRESS_FILE)) {
       return JSON.parse(fs.readFileSync(PROGRESS_FILE, "utf-8"));
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return null;
 }
 
-function buildUsedQuestionsList(existing: GeneratedQuestion[], newBatch: GeneratedQuestion[]): string[] {
+function buildUsedQuestionsList(
+  existing: GeneratedQuestion[],
+  newBatch: GeneratedQuestion[],
+): string[] {
   const all = [...existing, ...newBatch];
   // Return brief summaries (first 80 chars of question text)
   return all.map((q) => q.question.slice(0, 80).replace(/\n/g, " "));
@@ -181,7 +193,11 @@ function buildUsedQuestionsList(existing: GeneratedQuestion[], newBatch: Generat
    Culture-Specific Prompt Builders
    ═══════════════════════════════════════════════════════════════ */
 
-function buildSystemPrompt(locale: string, type: string, difficulty: number): string {
+function buildSystemPrompt(
+  locale: string,
+  type: string,
+  difficulty: number,
+): string {
   const cultureGuidance = getCultureGuidance(locale, type, difficulty);
   const formatInstruction = getFormatInstruction(locale);
   return `${formatInstruction}\n\n${cultureGuidance}`;
@@ -198,6 +214,7 @@ function getFormatInstruction(locale: string): string {
 4. 必须包含详细的答案解析
 5. 题目和选项使用中文
 6. **选项内容必须是纯文本，不要加 A. B. C. D. 前缀**
+7. 不要有任何 Markdown 元素
 
 输出格式为 JSON，包含字段：question, options (长度为4的字符串数组，每个元素就是选项文本本身，不含前缀), answer (0-3的数字索引), explanation`;
   } else if (locale === "ja") {
@@ -227,7 +244,11 @@ Output format: JSON with fields: question, options (array of 4 strings, each is 
   }
 }
 
-function getCultureGuidance(locale: string, type: string, difficulty: number): string {
+function getCultureGuidance(
+  locale: string,
+  type: string,
+  difficulty: number,
+): string {
   const diffLabel = difficultyLabel(difficulty);
 
   if (locale === "zh-CN") {
@@ -575,28 +596,62 @@ function difficultyLabel(d: number): string {
   return "困难/難しい/hard";
 }
 
-function buildUserPrompt(locale: string, type: string, difficulty: number, usedQuestions: string[]): string {
-  const base = locale === "zh-CN"
-    ? `请生成一道难度约为 ${difficulty} 的${
-      type === "logic" ? "逻辑推理" : type === "math" ? "速算" : type === "vocab" ? "词汇语义" : type === "event" ? "事件排序" : type === "event-cause" ? "因果推断" : "论证分析"
-    }题。`
-    : locale === "ja"
-      ? `難易度 ${difficulty} の${
-        type === "logic" ? "論理推論" : type === "math" ? "暗算" : type === "vocab" ? "語彙意味" : type === "event" ? "出来事並替" : type === "event-cause" ? "因果推論" : "論証分析"
-      }問題を1問生成してください。`
-      : `Generate one ${
-        type === "event" ? "event sequencing" : type === "event-cause" ? "causal inference" : type === "event-argument" ? "argument analysis" : type
-      } question with difficulty approximately ${difficulty}.`;
+function buildUserPrompt(
+  locale: string,
+  type: string,
+  difficulty: number,
+  usedQuestions: string[],
+): string {
+  const base =
+    locale === "zh-CN"
+      ? `请生成一道难度约为 ${difficulty} 的${type === "logic"
+        ? "逻辑推理"
+        : type === "math"
+          ? "速算"
+          : type === "vocab"
+            ? "词汇语义"
+            : type === "event"
+              ? "事件排序"
+              : type === "event-cause"
+                ? "因果推断"
+                : "论证分析"
+      }题。`
+      : locale === "ja"
+        ? `難易度 ${difficulty} の${type === "logic"
+          ? "論理推論"
+          : type === "math"
+            ? "暗算"
+            : type === "vocab"
+              ? "語彙意味"
+              : type === "event"
+                ? "出来事並替"
+                : type === "event-cause"
+                  ? "因果推論"
+                  : "論証分析"
+        }問題を1問生成してください。`
+        : `Generate one ${type === "event"
+          ? "event sequencing"
+          : type === "event-cause"
+            ? "causal inference"
+            : type === "event-argument"
+              ? "argument analysis"
+              : type
+        } question with difficulty approximately ${difficulty}.`;
 
-  const avoidText = usedQuestions.length > 0
-    ? `\n\n避免与以下题目重复（Avoid duplicating these topics）：\n${usedQuestions.map((q, i) => `${i + 1}. ${q}`).slice(-20).join("\n")}`
-    : "";
+  const avoidText =
+    usedQuestions.length > 0
+      ? `\n\n避免与以下题目重复（Avoid duplicating these topics）：\n${usedQuestions
+        .map((q, i) => `${i + 1}. ${q}`)
+        .slice(-20)
+        .join("\n")}`
+      : "";
 
-  const formatHint = locale === "zh-CN"
-    ? `\n\n确保：\n- 题目和选项用中文\n- 选项是纯文本，不要加 A. B. C. D. 前缀\n- 答案唯一且正确\n- 解析详细\n- 区分度好（不要有选项明显错误）\n- 每道题的场景或主题应尽量不同，不要和已有的题目重复`
-    : locale === "ja"
-      ? `\n\n確認：\n- 問題文と選択肢は日本語\n- 選択肢に A. B. C. D. などの接頭辞を付けない\n- 答えは一意で正しい\n- 解説は詳細\n- 選択肢に明らかに間違ったものがないこと\n- 問題のシチュエーションやテーマは毎回変えてください`
-      : `\n\nEnsure:\n- Question and options in English\n- Options are raw text only, no A. B. C. D. prefixes\n- Answer is unique and correct\n- Explanation is detailed\n- No obviously wrong distractors\n- Vary the scenario/topic with each question — no two questions should use the same scenario`;
+  const formatHint =
+    locale === "zh-CN"
+      ? `\n\n确保：\n- 题目和选项用中文\n- 选项是纯文本，不要加 A. B. C. D. 前缀\n- 答案唯一且正确\n- 解析详细\n- 区分度好（不要有选项明显错误）\n- 每道题的场景或主题应尽量不同，不要和已有的题目重复`
+      : locale === "ja"
+        ? `\n\n確認：\n- 問題文と選択肢は日本語\n- 選択肢に A. B. C. D. などの接頭辞を付けない\n- 答えは一意で正しい\n- 解説は詳細\n- 選択肢に明らかに間違ったものがないこと\n- 問題のシチュエーションやテーマは毎回変えてください`
+        : `\n\nEnsure:\n- Question and options in English\n- Options are raw text only, no A. B. C. D. prefixes\n- Answer is unique and correct\n- Explanation is detailed\n- No obviously wrong distractors\n- Vary the scenario/topic with each question — no two questions should use the same scenario`;
 
   return base + avoidText + formatHint;
 }
@@ -613,7 +668,11 @@ function validateQuestion(
   const errors: string[] = [];
 
   const question = raw.question;
-  if (!question || typeof question !== "string" || question.trim().length < 10) {
+  if (
+    !question ||
+    typeof question !== "string" ||
+    question.trim().length < 10
+  ) {
     errors.push("question must be a string ≥10 chars");
   }
 
@@ -629,12 +688,21 @@ function validateQuestion(
   }
 
   const answer = raw.answer;
-  if (typeof answer !== "number" || !Number.isInteger(answer) || answer < 0 || answer > 3) {
+  if (
+    typeof answer !== "number" ||
+    !Number.isInteger(answer) ||
+    answer < 0 ||
+    answer > 3
+  ) {
     errors.push("answer must be an integer 0-3");
   }
 
   const explanation = raw.explanation;
-  if (!explanation || typeof explanation !== "string" || explanation.trim().length < 10) {
+  if (
+    !explanation ||
+    typeof explanation !== "string" ||
+    explanation.trim().length < 10
+  ) {
     errors.push("explanation must be a string ≥10 chars");
   }
 
@@ -644,7 +712,9 @@ function validateQuestion(
   }
 
   if (errors.length > 0) {
-    throw new Error(`Validation failed: ${errors.join("; ")}\nRaw: ${JSON.stringify(raw).slice(0, 200)}`);
+    throw new Error(
+      `Validation failed: ${errors.join("; ")}\nRaw: ${JSON.stringify(raw).slice(0, 200)}`,
+    );
   }
 
   return {
@@ -675,8 +745,17 @@ async function generateSingleQuestion(
   config: CellConfig,
   usedQuestions: string[],
 ): Promise<GeneratedQuestion> {
-  const system = buildSystemPrompt(config.locale, config.type, config.difficulty);
-  const user = buildUserPrompt(config.locale, config.type, config.difficulty, usedQuestions);
+  const system = buildSystemPrompt(
+    config.locale,
+    config.type,
+    config.difficulty,
+  );
+  const user = buildUserPrompt(
+    config.locale,
+    config.type,
+    config.difficulty,
+    usedQuestions,
+  );
 
   // Random temperature for diversity (0.6-1.0)
   const temperature = 0.6 + Math.random() * 0.4;
@@ -711,7 +790,9 @@ async function generateWithRetry(
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
       if (attempt > 0) {
-        console.log(`  [retry ${attempt}/${MAX_RETRIES}] ${config.locale} ${config.type} diff=${config.difficulty}`);
+        console.log(
+          `  [retry ${attempt}/${MAX_RETRIES}] ${config.locale} ${config.type} diff=${config.difficulty}`,
+        );
         await countdown(2000 * attempt); // backoff
       }
       return await generateSingleQuestion(config, usedQuestions, attempt);
@@ -767,9 +848,15 @@ async function main() {
   console.log("╚════════════════════════════════════════════════════╝");
 
   if (!API_KEY) {
-    console.error("\n❌ No API key found. Set OPENAI_API_KEY or DEEPSEEK_API_KEY.");
-    console.error("   Usage: OPENAI_API_KEY=sk-xxx npx tsx scripts/batch-generate.ts");
-    console.error("   Or:    npx tsx --env-file=.env.local scripts/batch-generate.ts\n");
+    console.error(
+      "\n❌ No API key found. Set OPENAI_API_KEY or DEEPSEEK_API_KEY.",
+    );
+    console.error(
+      "   Usage: OPENAI_API_KEY=sk-xxx npx tsx scripts/batch-generate.ts",
+    );
+    console.error(
+      "   Or:    npx tsx --env-file=.env.local scripts/batch-generate.ts\n",
+    );
     process.exit(1);
   }
 
@@ -779,14 +866,17 @@ async function main() {
     const models = await client.models.list();
     console.log(`   ✓ Connected (${models.data.length} models available)`);
   } catch (err) {
-    console.error(`\n⚠  Warning: Could not verify API connection: ${err instanceof Error ? err.message : String(err)}`);
+    console.error(
+      `\n!  Warning: Could not verify API connection: ${err instanceof Error ? err.message : String(err)}`,
+    );
     console.error("   Continuing anyway (the model may still work)...\n");
   }
 
   // Parse args
   const resume = process.argv.includes("--resume");
   const limitIdx = process.argv.indexOf("--limit");
-  const limit = limitIdx >= 0 ? parseInt(process.argv[limitIdx + 1], 10) : Infinity;
+  const limit =
+    limitIdx >= 0 ? parseInt(process.argv[limitIdx + 1], 10) : Infinity;
   const isTest = process.argv.includes("--test");
 
   let progress: GenerationProgress;
@@ -794,13 +884,23 @@ async function main() {
     const loaded = loadProgress();
     if (loaded) {
       progress = loaded;
-      console.log(`\n📂 Resuming from previous run (${progress.completed.length} questions already generated)`);
+      console.log(
+        `\n📂 Resuming from previous run (${progress.completed.length} questions already generated)`,
+      );
     } else {
       console.log("\n📂 No progress file found, starting fresh.");
-      progress = { completed: [], output: {}, startedAt: new Date().toISOString() };
+      progress = {
+        completed: [],
+        output: {},
+        startedAt: new Date().toISOString(),
+      };
     }
   } else {
-    progress = { completed: [], output: {}, startedAt: new Date().toISOString() };
+    progress = {
+      completed: [],
+      output: {},
+      startedAt: new Date().toISOString(),
+    };
   }
 
   // Init output records
@@ -828,14 +928,20 @@ async function main() {
   }
 
   const totalCells = allCells.length;
-  const remaining = allCells.filter((c) => !progress.completed.includes(cellId(c)));
+  const remaining = allCells.filter(
+    (c) => !progress.completed.includes(cellId(c)),
+  );
 
   console.log(`\n📊 Generation plan:`);
   for (const { locale, type, count } of GENERATION_PLAN) {
     const existing = progress.output[locale]?.length ?? 0;
-    console.log(`   ${locale.padEnd(6)} ${type.padEnd(6)} ${count} new (→ total ${existing + count})`);
+    console.log(
+      `   ${locale.padEnd(6)} ${type.padEnd(6)} ${count} new (→ total ${existing + count})`,
+    );
   }
-  console.log(`\n   Total: ${totalCells} questions to generate (${remaining.length} remaining)\n`);
+  console.log(
+    `\n   Total: ${totalCells} questions to generate (${remaining.length} remaining)\n`,
+  );
 
   if (remaining.length === 0) {
     console.log("✅ All questions already generated. Nothing to do.");
@@ -855,23 +961,37 @@ async function main() {
       const existingForLocale = progress.output[config.locale] ?? [];
       const used = buildUsedQuestionsList(existingForLocale, []);
 
-      console.log(`  [W${workerId}] ${config.locale} ${config.type} diff=${config.difficulty.toFixed(1)} (${completedCount + 1}/${totalCells})`);
+      console.log(
+        `  [W${workerId}] ${config.locale} ${config.type} diff=${config.difficulty.toFixed(1)} (${completedCount + 1}/${totalCells})`,
+      );
 
       const question = await generateWithRetry(config, used);
       if (question) {
-        progress.output[config.locale] = [...(progress.output[config.locale] ?? []), question];
+        progress.output[config.locale] = [
+          ...(progress.output[config.locale] ?? []),
+          question,
+        ];
         progress.completed.push(id);
         completedCount++;
-        console.log(`  ✓ ${config.locale} ${config.type} diff=${config.difficulty.toFixed(1)}`);
+        console.log(
+          `  ✓ ${config.locale} ${config.type} diff=${config.difficulty.toFixed(1)}`,
+        );
       } else {
         failedCount++;
-        console.error(`  ✗ ${config.locale} ${config.type} diff=${config.difficulty.toFixed(1)} — FAILED after ${MAX_RETRIES + 1} attempts`);
+        console.error(
+          `  ✗ ${config.locale} ${config.type} diff=${config.difficulty.toFixed(1)} — FAILED after ${MAX_RETRIES + 1} attempts`,
+        );
       }
 
       // Periodic flush
-      if ((completedCount - lastFlushIdx) >= BATCH_SIZE_PER_WRITE || remaining.length === 0) {
+      if (
+        completedCount - lastFlushIdx >= BATCH_SIZE_PER_WRITE ||
+        remaining.length === 0
+      ) {
         // Save per-locale JSON
-        for (const locale of [...new Set(GENERATION_PLAN.map((p) => p.locale))]) {
+        for (const locale of [
+          ...new Set(GENERATION_PLAN.map((p) => p.locale)),
+        ]) {
           const qs = progress.output[locale] ?? [];
           if (qs.length > 0) {
             saveQuestions(locale, qs);
@@ -879,7 +999,9 @@ async function main() {
         }
         saveProgress(progress);
         lastFlushIdx = completedCount;
-        console.log(`  💾 Saved progress (${completedCount} completed, ${failedCount} failed)`);
+        console.log(
+          `  💾 Saved progress (${completedCount} completed, ${failedCount} failed)`,
+        );
       }
     }
   }
@@ -917,7 +1039,9 @@ async function main() {
     console.log(`     ${path.join(OUTPUT_DIR, `${locale}.json`)}`);
   }
   console.log(`     ${PROGRESS_FILE} (progress)`);
-  console.log("\n   Next: review the JSON files, then merge into src/lib/question-bank/\n");
+  console.log(
+    "\n   Next: review the JSON files, then merge into src/lib/question-bank/\n",
+  );
 }
 
 main().catch((err) => {

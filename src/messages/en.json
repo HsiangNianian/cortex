@@ -98,6 +98,7 @@
     "adviceTitle": "Targeted Training Suggestions",
     "adviceWeakest": "Your {dimension} dimension is relatively weaker.",
     "adviceDefault": "Consistent practice will lead to improvement.",
+    "interpretLimitExhausted": "Daily interpretation limit reached. Come back tomorrow.",
     "adviceTips": {
       "logic": "Do one logic puzzle a day (e.g., Sudoku or reasoning puzzles) to gradually improve analytical skills.",
       "math": "Don't reach for a calculator right away when doing mental math—try calculating it yourself first, even if it's slow.",

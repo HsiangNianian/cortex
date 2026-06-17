@@ -143,6 +143,11 @@ export function ResultPhase({
         },
         body: JSON.stringify(body),
       })
+      if (res.status === 429) {
+        setAiError(n("result.interpretLimitExhausted"))
+        setAiLoading(false)
+        return
+      }
       if (!res.ok) throw new Error("API error")
 
       const contentType = res.headers.get("Content-Type") || ""

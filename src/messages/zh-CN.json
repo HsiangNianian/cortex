@@ -98,6 +98,7 @@
     "adviceTitle": "针对性训练建议",
     "adviceWeakest": "你的 {dimension} 维度相对较弱。",
     "adviceDefault": "持续练习会带来改善。",
+    "interpretLimitExhausted": "今日解读次数已用完，明天再来吧。",
     "adviceTips": {
       "logic": "每天做一道逻辑题（比如数独或推理题），逐步提升分析能力。",
       "math": "在心算之前不要立刻掏出计算器——先自己算一遍，哪怕慢一点。",
