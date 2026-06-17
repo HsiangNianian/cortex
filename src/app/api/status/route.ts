@@ -33,8 +33,9 @@ async function graphql(query: string, variables: Record<string, unknown>): Promi
   // In opennextjs/cloudflare Workers, secrets set via `wrangler secret put` are available
   // through the Cloudflare env binding, not process.env.
   const { env } = await getCloudflareContext()
+  const envKeys = Object.keys(env as Record<string, unknown>)
   const token = (env as Record<string, string>).CLOUDFLARE_API_TOKEN ?? process.env.CLOUDFLARE_API_TOKEN
-  if (!token) throw new Error("CLOUDFLARE_API_TOKEN not available in Worker env or process.env")
+  if (!token) throw new Error(`CLOUDFLARE_API_TOKEN not available. env keys: [${envKeys.join(", ")}], process.env present: ${!!process.env.CLOUDFLARE_API_TOKEN}`)
 
   const res = await fetch(GRAPHQL_ENDPOINT, {
     method: "POST",
