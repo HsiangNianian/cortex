@@ -554,6 +554,7 @@
     "live": "实时",
     "error": "加载失败",
     "retry": "重试",
+    "degradationTrend": "退化指数趋势",
     "autoRefresh": "每 5 分钟自动刷新 · 数据来自 Cloudflare API",
     "requestsMonth": "30 日请求"
   }

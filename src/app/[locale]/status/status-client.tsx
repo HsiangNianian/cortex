@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { SiteFooter } from "@/components/site-footer"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 interface StatusData {
   cached: boolean
@@ -48,6 +48,7 @@ interface StatusData {
     activeLicenses: number
     itemResponses: number
     degradationAvg: number | null
+    degradationTrend: [string, number][]
   }
 }
 
@@ -303,6 +304,30 @@ export default function StatusClient() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Degradation trend */}
+            {data.app.degradationTrend.length > 1 && (
+              <Card className="mb-6">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-1"><TrendingUp className="size-4" />{t("degradationTrend")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <LineChart data={data.app.degradationTrend.map(([d, v]) => ({ date: d.slice(5), value: v }))} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} width={36} />
+                      <Tooltip
+                        contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px", fontSize: "12px", padding: "6px 10px" }}
+                        labelStyle={{ color: "var(--muted-foreground)" }}
+                        formatter={(value) => [Number(value).toFixed(1), "Avg Degradation"]}
+                      />
+                      <Line type="monotone" dataKey="value" stroke="var(--primary)" strokeWidth={2} dot={{ r: 2, fill: "var(--primary)" }} activeDot={{ r: 4 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            )}
           </>
         )}
 

@@ -21,7 +21,7 @@ interface CfMetrics {
 
 interface InternalMetrics {
   ai: { neuronsUsed: number; neuronsLimit: number; neuronsRemaining: number; questionsInPool: number; questionsGeneratedToday: number; avgNeuronCost: number; totalInputTokens: number; totalOutputTokens: number }
-  app: { totalTests: number; activeLicenses: number; itemResponses: number; degradationAvg: number | null }
+  app: { totalTests: number; activeLicenses: number; itemResponses: number; degradationAvg: number | null; degradationTrend: [string, number][] }
 }
 
 interface StatusPayload extends CfMetrics, InternalMetrics {
@@ -207,6 +207,18 @@ async function fetchInternalMetrics(): Promise<InternalMetrics> {
     activeLicenses = await countActiveLicenses()
   } catch { /* ignore */ }
 
+  // Degradation trend — daily averages from test_results
+  let degradationTrend: [string, number][] = []
+  try {
+    const db = await getDB()
+    const rows = await db.prepare(
+      "SELECT DATE(created_at) AS date, ROUND(AVG(degradation_index), 1) AS avg_degradation FROM test_results GROUP BY DATE(created_at) ORDER BY date ASC LIMIT 60"
+    ).all<{ date: string; avg_degradation: number }>()
+    if (rows.results) {
+      degradationTrend = rows.results.map((r) => [r.date, r.avg_degradation])
+    }
+  } catch { /* ignore */ }
+
   return {
     ai: {
       neuronsUsed: Math.round(quota.totalNeurons),
@@ -223,6 +235,7 @@ async function fetchInternalMetrics(): Promise<InternalMetrics> {
       activeLicenses,
       itemResponses,
       degradationAvg,
+      degradationTrend,
     },
   }
 }
@@ -288,7 +301,7 @@ export async function GET() {
   }
   const fallbackInternal: InternalMetrics = {
     ai: { neuronsUsed: 0, neuronsLimit: 10000, neuronsRemaining: 10000, questionsInPool: 0, questionsGeneratedToday: 0, avgNeuronCost: 0, totalInputTokens: 0, totalOutputTokens: 0 },
-    app: { totalTests: 0, activeLicenses: 0, itemResponses: 0, degradationAvg: null },
+    app: { totalTests: 0, activeLicenses: 0, itemResponses: 0, degradationAvg: null, degradationTrend: [] },
   }
 
   const cf = cfMetrics.status === "fulfilled" ? cfMetrics.value : fallbackCf
