@@ -1,4 +1,10 @@
 import { NextResponse } from "next/server"
+import { getCloudflareContext } from "@opennextjs/cloudflare"
+
+async function getKV() {
+  const { env } = await getCloudflareContext()
+  return (env as any).CORTEX_KV
+}
 
 // GET: return flag counts for all questions or a specific one
 export async function GET(request: Request) {
@@ -6,16 +12,19 @@ export async function GET(request: Request) {
   const qid = searchParams.get("qid")
 
   try {
+    const kv = await getKV()
+    if (!kv) return NextResponse.json(qid ? { qid, count: 0 } : {})
+
     if (qid) {
-      const raw = await (process.env as any).CORTEX_KV?.get?.(`flag:v1:${qid}`) ?? "0"
-      return NextResponse.json({ qid, count: parseInt(String(raw), 10) || 0 })
+      const raw = await kv.get(`flag:v1:${qid}`)
+      return NextResponse.json({ qid, count: parseInt(String(raw ?? "0"), 10) || 0 })
     }
     // List all flagged questions
     const result: Record<string, number> = {}
-    const list = await (process.env as any).CORTEX_KV?.list?.({ prefix: "flag:v1:" }) ?? { keys: [] }
-    for (const key of list.keys || []) {
-      const raw = await (process.env as any).CORTEX_KV?.get?.(key.name) ?? "0"
-      result[key.name.replace("flag:v1:", "")] = parseInt(String(raw), 10) || 0
+    const list = await kv.list({ prefix: "flag:v1:" })
+    for (const key of list.keys) {
+      const raw = await kv.get(key.name)
+      result[key.name.replace("flag:v1:", "")] = parseInt(String(raw ?? "0"), 10) || 0
     }
     return NextResponse.json(result)
   } catch (err) {
@@ -32,11 +41,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "invalid questionId" }, { status: 400 })
     }
 
+    const kv = await getKV()
+    if (!kv) return NextResponse.json({ error: "kv unavailable" }, { status: 500 })
+
     const key = `flag:v1:${questionId}`
-    // Atomic increment — KV supports string-based counters
-    const prev = await (process.env as any).CORTEX_KV?.get?.(key)
+    const prev = await kv.get(key)
     const next = (parseInt(String(prev ?? "0"), 10) || 0) + 1
-    await (process.env as any).CORTEX_KV?.put?.(key, String(next))
+    await kv.put(key, String(next))
 
     return NextResponse.json({ questionId, count: next })
   } catch (err) {
