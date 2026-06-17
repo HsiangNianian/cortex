@@ -8,7 +8,6 @@ import { getStats } from "@/lib/storage"
 // ---- GraphQL client ----
 
 const GRAPHQL_ENDPOINT = "https://api.cloudflare.com/client/v4/graphql"
-const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID ?? "d6b620c5ad2c4ca81de6c0b76c719995"
 const CORTEX_DB_ID = "1e4abc9a-cad9-4796-85d0-4c8be768ca2e"
 
 const STATUS_CACHE_KEY = "status:dashboard"
@@ -31,8 +30,11 @@ interface StatusPayload extends CfMetrics, InternalMetrics {
 }
 
 async function graphql(query: string, variables: Record<string, unknown>): Promise<unknown> {
-  const token = process.env.CLOUDFLARE_API_TOKEN
-  if (!token) throw new Error("CLOUDFLARE_API_TOKEN not set")
+  // In opennextjs/cloudflare Workers, secrets set via `wrangler secret put` are available
+  // through the Cloudflare env binding, not process.env.
+  const { env } = await getCloudflareContext()
+  const token = (env as Record<string, string>).CLOUDFLARE_API_TOKEN ?? process.env.CLOUDFLARE_API_TOKEN
+  if (!token) throw new Error("CLOUDFLARE_API_TOKEN not available in Worker env or process.env")
 
   const res = await fetch(GRAPHQL_ENDPOINT, {
     method: "POST",
@@ -50,6 +52,9 @@ async function fetchCloudflareMetrics(): Promise<CfMetrics> {
   const today = new Date().toISOString().slice(0, 10)
   const start = `${today}T00:00:00Z`
   const end = new Date().toISOString()
+
+  const { env } = await getCloudflareContext()
+  const accountId = (env as Record<string, string>).CLOUDFLARE_ACCOUNT_ID ?? process.env.CLOUDFLARE_ACCOUNT_ID ?? "d6b620c5ad2c4ca81de6c0b76c719995"
 
   const data = await graphql(
     `query($accountTag: string!, $start: Time!, $end: Time!, $dateStart: Date!, $dateEnd: Date!) {
@@ -88,7 +93,7 @@ async function fetchCloudflareMetrics(): Promise<CfMetrics> {
         }
       }
     }`,
-    { accountTag: ACCOUNT_ID, start, end, dateStart: today, dateEnd: today },
+    { accountTag: accountId, start, end, dateStart: today, dateEnd: today },
   ) as {
     viewer: {
       accounts: [{
