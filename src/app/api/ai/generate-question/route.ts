@@ -389,7 +389,40 @@ async function callAI(
   sysPrompt: string,
   userPrompt: string,
 ): Promise<{ response: string; usage?: { prompt_tokens: number; completion_tokens: number } } | null> {
-  // Try env.AI binding (production or wrangler dev)
+  // Primary: DeepSeek REST API
+  const deepseekKey = process.env.DEEPSEEK_API_KEY
+  if (deepseekKey) {
+    try {
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${deepseekKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "deepseek-v4-flash",
+          messages: [
+            { role: "system", content: sysPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          max_tokens: 1024,
+          temperature: 0.3,
+        }),
+      })
+      const data = await res.json()
+      if (data.choices?.[0]?.message?.content) {
+        return {
+          response: data.choices[0].message.content,
+          usage: data.usage,
+        }
+      }
+      console.warn("[ai/generate-question] DeepSeek unexpected response:", JSON.stringify(data).slice(0, 200))
+    } catch (e) {
+      console.warn("[ai/generate-question] DeepSeek failed:", String(e))
+    }
+  }
+
+  // Fallback: CF Workers AI binding
   try {
     const { env } = await import("@opennextjs/cloudflare").then((m) =>
       m.getCloudflareContext(),
@@ -402,7 +435,7 @@ async function callAI(
             { role: "user", content: userPrompt },
           ],
           max_tokens: 1024,
-          temperature: 0.7,
+          temperature: 0.4,
         }),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error("env.AI timeout")), 30000),
@@ -411,7 +444,6 @@ async function callAI(
       const r = result as { response?: unknown; usage?: { prompt_tokens: number; completion_tokens: number } }
       if (r) {
         if (typeof r.response === "string") return { response: r.response, usage: r.usage }
-        // CF Workers AI may auto-parse JSON model output into an object
         if (typeof r.response === "object" && r.response !== null) {
           return { response: JSON.stringify(r.response), usage: r.usage }
         }
@@ -420,50 +452,6 @@ async function callAI(
   } catch (e) {
     console.warn("[ai/generate-question] env.AI failed:", String(e))
   }
-
-  // Fallback: REST API (dev + production if env vars are set)
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-  if (accountId && apiToken) {
-      try {
-        const res = await fetch(
-          `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${apiToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              messages: [
-                { role: "system", content: sysPrompt },
-                { role: "user", content: userPrompt },
-              ],
-              max_tokens: 1024,
-              temperature: 0.7,
-            }),
-          },
-        )
-        const data = await res.json()
-        if (data.success && data.result) {
-          let resp = data.result.response
-          if (typeof resp === "object" && resp !== null) {
-            // CF Workers AI may auto-parse JSON model output into an object
-            resp = JSON.stringify(resp)
-          }
-          if (typeof resp !== "string") {
-            console.warn("[ai/generate-question] REST response is not a string:", typeof resp)
-            return null
-          }
-          return {
-            response: resp,
-            usage: data.result.usage,
-          }
-        }
-      } catch (e) {
-        console.warn("[ai/generate-question] REST fallback failed:", String(e))
-      }
-    }
 
   return null
 }
