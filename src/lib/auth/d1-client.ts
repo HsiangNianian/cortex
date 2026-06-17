@@ -1,6 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 
-async function getDB() {
+export async function getDB() {
   const { env } = await getCloudflareContext()
   if (!env.CORTEX_DB) {
     throw new Error("CORTEX_DB binding not available — is the D1 database configured?")

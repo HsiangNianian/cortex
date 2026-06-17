@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { saveResult } from "@/lib/storage"
-import { d1Run } from "@/lib/auth/d1-client"
+import { getDB } from "@/lib/auth/d1-client"
 import { TIER_KEYS } from "@/lib/scoring"
 import { AI_CANONICAL_LEVELS } from "@/lib/constants"
 
@@ -45,16 +45,17 @@ export async function POST(request: Request) {
     if (body.responses && Array.isArray(body.responses) && body.responses.length > 0) {
       const userId = typeof body.deviceId === "string" ? body.deviceId : "anon"
       const thetaVal = typeof body.theta === "number" ? body.theta : null
-      for (const r of body.responses) {
-        if (typeof r?.questionId !== "number") continue
-        try {
-          await d1Run(
-            "INSERT INTO item_responses (question_id, user_id, correct, theta) VALUES (?, ?, ?, ?)",
-            [r.questionId, userId, r.correct ? 1 : 0, thetaVal],
+      try {
+        const db = await getDB()
+        const stmts = body.responses
+          .filter((r: { questionId?: number }) => typeof r?.questionId === "number")
+          .map((r: { questionId: number; correct: number }) =>
+            db.prepare("INSERT INTO item_responses (question_id, user_id, correct, theta) VALUES (?, ?, ?, ?)")
+              .bind(r.questionId, userId, r.correct ? 1 : 0, thetaVal)
           )
-        } catch {
-          // Silently skip individual insert failures
-        }
+        if (stmts.length > 0) await db.batch(stmts)
+      } catch {
+        // Silently skip batch insert failures
       }
     }
 

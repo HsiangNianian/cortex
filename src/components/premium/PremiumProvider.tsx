@@ -33,7 +33,6 @@ export const PremiumContext = createContext<PremiumState>({
 
 const STORAGE_KEY = "cortex:license-key"
 const PREMIUM_KEY = "cortex:premium"
-const REVALIDATE_MS = 5 * 60 * 1000 // re-validate at most every 5 min in background
 const CACHE_VERSION = 2 // bump to invalidate all old caches
 const DEVICE_ID_KEY = "cortex:device-id"
 
@@ -63,7 +62,8 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     } catch { /* background sync, silent fail */ }
   }, [licenseKey])
 
-  // Check cached premium status on mount
+  // Restore cached premium status on mount (seconds-fast UI, no server call).
+  // Validation only happens on explicit premium actions (activate, test start).
   useEffect(() => {
     const cached = localStorage.getItem(PREMIUM_KEY)
     const cachedKey = localStorage.getItem(STORAGE_KEY)
@@ -71,72 +71,14 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     if (cached && cachedKey) {
       try {
         const data = JSON.parse(cached)
-        // Bump cache version → discard stale caches that lack fields
         if (data.version === CACHE_VERSION) {
-          // Restore cached state immediately so UI is never blank
           setIsPremium(true)
           setLicenseKey(cachedKey)
           setExpiresAt(data.expiresAt ?? null)
           setDeviceCount(data.deviceCount ?? 0)
           setMaxDevices(data.maxDevices ?? 3)
         }
-      } catch { /* ignore — will re-fetch from server */ }
-    }
-
-    // Always revalidate with server in background (stale-while-revalidate).
-    // Skips server call if we just revalidated within REVALIDATE_MS.
-    if (cachedKey) {
-      try {
-        const data = JSON.parse(localStorage.getItem(PREMIUM_KEY) ?? "null")
-        if (data?.version === CACHE_VERSION && Date.now() - data.timestamp < REVALIDATE_MS) {
-          setIsLoading(false)
-          return // cache is still fresh enough
-        }
       } catch { /* ignore */ }
-      validateWithServer(cachedKey)
-    } else {
-      setIsLoading(false)
-    }
-  }, [])
-
-  const validateWithServer = useCallback(async (key: string) => {
-    try {
-      const deviceId = generateDeviceId()
-      const res = await fetch("/api/license/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ licenseKey: key, deviceId }),
-      })
-      const data = await res.json()
-
-      if (data.valid) {
-        setIsPremium(true)
-        setLicenseKey(key)
-        setExpiresAt(data.license?.expiresAt ?? null)
-        setDeviceCount(data.device?.deviceCount ?? 0)
-        setMaxDevices(data.device?.maxDevices ?? 3)
-        // Cache the premium status with full metadata
-        localStorage.setItem(PREMIUM_KEY, JSON.stringify({ version: CACHE_VERSION, timestamp: Date.now(), expiresAt: data.license?.expiresAt ?? null, deviceCount: data.device?.deviceCount ?? 0, maxDevices: data.device?.maxDevices ?? 3 }))
-        localStorage.setItem(STORAGE_KEY, key)
-        // Background revalidation: don't show device_limit as error — key is valid, premium works
-        setError(null)
-      } else {
-        setIsPremium(false)
-        setLicenseKey(null)
-        setExpiresAt(null)
-        setDeviceCount(0)
-        localStorage.removeItem(PREMIUM_KEY)
-        localStorage.removeItem(STORAGE_KEY)
-        if (data.reason === "not_found") {
-          setError("License Key 无效。")
-        } else if (data.reason === "expired") {
-          setError("License Key 已过期。")
-        } else if (data.reason === "inactive") {
-          setError("License Key 已失效。")
-        }
-      }
-    } catch {
-      setError("无法验证 License，请稍后重试。")
     }
     setIsLoading(false)
   }, [])

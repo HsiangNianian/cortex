@@ -97,11 +97,7 @@ export async function activateDevice(
     [licenseKey, deviceId],
   )
   if (existing) {
-    // Already registered — update last_seen and return success
-    await d1Run("UPDATE devices SET last_seen = datetime('now') WHERE license_key = ? AND device_id = ?", [
-      licenseKey,
-      deviceId,
-    ])
+    // Already registered — return success (no D1 write needed; last_seen was never read)
     return {
       success: true,
       deviceCount: license.license!.deviceCount,

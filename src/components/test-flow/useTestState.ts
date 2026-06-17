@@ -262,17 +262,7 @@ export function useTestState() {
         setAllQuestions(mapped);
         adaptivePoolRef.current = mapped;
 
-        // Load AI pool questions from D1 and merge into adaptive pool
-        fetch("/api/ai/generate-question?locale=" + locale)
-          .then((r) => r.json())
-          .then((data) => {
-            if (data.questions?.length > 0) {
-              const merged = [...mapped, ...data.questions];
-              setAllQuestions(merged);
-              adaptivePoolRef.current = merged;
-            }
-          })
-          .catch(() => {});
+        // AI pool questions now loaded on demand in handleBeginTest
       } else {
         let qs = selectQuestions(QUESTIONS_PER_TEST, locale);
         if (hasParams) {
@@ -724,7 +714,25 @@ export function useTestState() {
 
   /* ─── Event Handlers ─── */
 
-  function handleStart() {
+  async function handleStart() {
+    // Premium users: validate license server-side before bypassing free limit
+    if (isPremium && licenseKey) {
+      try {
+        const deviceId = (() => { try { return localStorage.getItem("cortex:device-id") ?? "anon" } catch { return "anon" } })()
+        const res = await fetch("/api/license/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ licenseKey, deviceId }),
+        })
+        const data = await res.json()
+        if (!data.valid) {
+          // License became invalid — fall through to free user checks
+        }
+      } catch {
+        // Network error — allow through (don't block legitimate users on transient failures)
+      }
+    }
+
     // Check 7-day / 7-test limit for free users
     if (!isPremium) {
       const cooldownEnd = getFreeTestCooldownEndsAt()
@@ -803,6 +811,21 @@ export function useTestState() {
 
   function handleBeginTest() {
     if (aiUsage === null) return;
+
+    // Load AI pool questions on demand (deferred from mount to avoid wasting D1 reads on idle visitors)
+    fetch("/api/ai/generate-question?locale=" + locale)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.questions?.length > 0) {
+          const existing = new Set(adaptivePoolRef.current.map((q) => q.id))
+          const fresh = data.questions.filter((q: Question) => !existing.has(q.id))
+          if (fresh.length > 0) {
+            adaptivePoolRef.current = [...adaptivePoolRef.current, ...fresh]
+          }
+        }
+      })
+      .catch(() => {});
+
     testStartTime.current = Date.now();
     clearProgress();
     setSavedProgress(null);
