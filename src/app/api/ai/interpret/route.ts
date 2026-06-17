@@ -1,5 +1,40 @@
 import { NextResponse } from "next/server"
 import { validateLicense } from "@/lib/auth/license"
+import { getCloudflareContext } from "@opennextjs/cloudflare"
+
+const INTERPRET_DAILY_LIMIT = 1
+
+async function getKV() {
+  const { env } = await getCloudflareContext()
+  return (env as any).CORTEX_KV
+}
+
+function dailyKey(licenseKey: string): string {
+  const today = new Date().toISOString().slice(0, 10)
+  return `ai-interpret:daily:${today}:${licenseKey}`
+}
+
+async function checkInterpretLimit(licenseKey: string): Promise<boolean> {
+  try {
+    const kv = await getKV()
+    if (!kv) return false
+    const key = dailyKey(licenseKey)
+    const count = parseInt(await kv.get(key) ?? "0", 10) || 0
+    return count >= INTERPRET_DAILY_LIMIT
+  } catch {
+    return false
+  }
+}
+
+async function recordInterpretUse(licenseKey: string): Promise<void> {
+  try {
+    const kv = await getKV()
+    if (!kv) return
+    const key = dailyKey(licenseKey)
+    const count = (parseInt(await kv.get(key) ?? "0", 10) || 0) + 1
+    await kv.put(key, String(count), { expirationTtl: 86400 })
+  } catch { /* non-critical */ }
+}
 
 interface InterpretBody {
   locale: string
@@ -67,6 +102,12 @@ export async function POST(request: Request) {
     if (!license.valid) {
       console.log("[ai/interpret] invalid_license", { ...logCtx, reason: license.reason })
       return NextResponse.json({ error: "invalid_license" }, { status: 403 })
+    }
+
+    // Daily retry limit (default: 1)
+    if (await checkInterpretLimit(licenseKey)) {
+      console.log("[ai/interpret] daily_limit_exhausted", logCtx)
+      return NextResponse.json({ error: "daily_limit_exhausted" }, { status: 429 })
     }
 
     const body: InterpretBody = await request.json()
@@ -160,6 +201,7 @@ export async function POST(request: Request) {
         const analysis = fullText.trim()
         const elapsed = Date.now() - startTs
         console.log("[ai/interpret] streaming ok", { ...logCtx, analysisLen: analysis.length, analysisPreview: analysis.slice(0, 50), elapsed })
+        recordInterpretUse(licenseKey).catch(() => {})
         return NextResponse.json({ analysis })
       }
     } catch (e) {
@@ -172,6 +214,7 @@ export async function POST(request: Request) {
       const analysis = await callAI(sysPrompt, prompt)
       const elapsed = Date.now() - startTs
       console.log("[ai/interpret] response ok", { ...logCtx, analysisLen: analysis.length, analysisPreview: analysis.slice(0, 50), elapsed })
+      recordInterpretUse(licenseKey).catch(() => {})
       return NextResponse.json({ analysis })
     } catch (e) {
       console.warn("[ai/interpret] non-streaming also failed:", { ...logCtx, error: String(e) })
