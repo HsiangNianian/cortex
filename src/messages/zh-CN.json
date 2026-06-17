@@ -6,7 +6,8 @@
     "description": "{count} 道题给你的认知能力拍一张快照。定期测量，看清趋势——认知能力就像肌肉，用进废退。"
   },
   "nav": {
-    "search": "搜题"
+    "search": "搜题",
+    "status": "状态"
   },
   "error": {
     "heading": "出了点问题",

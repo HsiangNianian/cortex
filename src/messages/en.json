@@ -6,7 +6,8 @@
     "description": "{count} questions to take a snapshot of your cognitive abilities. Measure regularly to see the trend—cognitive ability is like a muscle, use it or lose it."
   },
   "nav": {
-    "search": "Search"
+    "search": "Search",
+    "status": "Status"
   },
   "error": {
     "heading": "Something went wrong",
