@@ -249,17 +249,6 @@ export default function StatusClient() {
               </Card>
             </div>
 
-            {/* D1 detail */}
-            <Card className="mb-6">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-1"><Database className="size-4" />{t("d1Detail")}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-muted-foreground">{t("rowsRead")}: </span><strong className="tabular-nums">{formatNumber(data.d1.rowsRead)}</strong></div>
-                <div><span className="text-muted-foreground">{t("rowsWritten")}: </span><strong className="tabular-nums">{formatNumber(data.d1.rowsWritten)}</strong></div>
-              </CardContent>
-            </Card>
-
             <Separator className="my-6" />
 
             {/* AI section */}
@@ -284,17 +273,6 @@ export default function StatusClient() {
                 </CardContent>
               </Card>
             </div>
-
-            {/* AI detail */}
-            <Card className="mb-6">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-1"><Brain className="size-4" />{t("aiDetail")}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-muted-foreground">{t("inputTokens")}: </span><strong className="tabular-nums">{formatNumber(data.ai.totalInputTokens)}</strong></div>
-                <div><span className="text-muted-foreground">{t("outputTokens")}: </span><strong className="tabular-nums">{formatNumber(data.ai.totalOutputTokens)}</strong></div>
-              </CardContent>
-            </Card>
 
             <Separator className="my-6" />
 
