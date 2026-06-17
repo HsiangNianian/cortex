@@ -134,7 +134,14 @@ export async function POST(request: Request) {
             if (data === "[DONE]") { sseBuf = ""; break }
             try {
               const parsed = JSON.parse(data)
-              if (parsed.response) fullText += parsed.response
+              // DeepSeek format: choices[0].delta.content
+              if (parsed.choices?.[0]?.delta?.content) {
+                fullText += parsed.choices[0].delta.content
+              }
+              // CF Workers AI format: response
+              else if (parsed.response) {
+                fullText += parsed.response
+              }
             } catch { /* ignore */ }
           }
         }
@@ -144,7 +151,8 @@ export async function POST(request: Request) {
       if (sseBuf.startsWith("data: ") && sseBuf.slice(6) !== "[DONE]") {
         try {
           const parsed = JSON.parse(sseBuf.slice(6))
-          if (parsed.response) fullText += parsed.response
+          if (parsed.choices?.[0]?.delta?.content) fullText += parsed.choices[0].delta.content
+          else if (parsed.response) fullText += parsed.response
         } catch { /* ignore */ }
       }
 
@@ -192,7 +200,35 @@ export async function POST(request: Request) {
 // ─── Streaming AI call ─────────────────────────────────────────────────────
 
 async function callAIStream(sysPrompt: string, userPrompt: string): Promise<ReadableStream> {
-  // 1) Try env.AI binding with streaming
+  // 1) DeepSeek streaming (primary)
+  const deepseekKey = process.env.DEEPSEEK_API_KEY
+  if (deepseekKey) {
+    try {
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${deepseekKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "deepseek-v4-flash",
+          messages: [
+            { role: "system", content: sysPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          max_tokens: 512,
+          temperature: 0.4,
+          stream: true,
+        }),
+      })
+      if (res.ok && res.body) return res.body
+      console.warn("[ai/interpret] DeepSeek streaming api_error", { status: res.status })
+    } catch (e) {
+      console.warn("[ai/interpret] DeepSeek streaming failed:", String(e))
+    }
+  }
+
+  // 2) CF Workers AI binding (fallback)
   try {
     const { env } = await import("@opennextjs/cloudflare").then((m) =>
       m.getCloudflareContext(),
@@ -218,51 +254,41 @@ async function callAIStream(sysPrompt: string, userPrompt: string): Promise<Read
     console.warn("[ai/interpret] env.AI streaming failed:", String(e))
   }
 
-  // 2) REST API with streaming (production + dev)
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-  if (accountId && apiToken) {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000)
-    try {
-      const res = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              { role: "system", content: sysPrompt },
-              { role: "user", content: userPrompt },
-            ],
-            max_tokens: 512,
-            temperature: 0.5,
-            stream: true,
-          }),
-          signal: controller.signal,
-        },
-      )
-      clearTimeout(timeoutId)
-      if (res.ok && res.body) {
-        return res.body
-      }
-      console.warn("[ai/interpret] REST streaming api_error", { status: res.status })
-    } catch (e) {
-      clearTimeout(timeoutId)
-      console.warn("[ai/interpret] REST streaming failed:", String(e))
-    }
-  }
-
   throw new Error("streaming_unavailable")
 }
 
 // ─── Non-streaming AI call (fallback) ──────────────────────────────────────
 
 async function callAI(sysPrompt: string, userPrompt: string): Promise<string> {
-  // 1) Try env.AI binding
+  // 1) DeepSeek (primary)
+  const deepseekKey = process.env.DEEPSEEK_API_KEY
+  if (deepseekKey) {
+    try {
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${deepseekKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "deepseek-v4-flash",
+          messages: [
+            { role: "system", content: sysPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          max_tokens: 512,
+          temperature: 0.4,
+        }),
+      })
+      const data = await res.json()
+      if (data.choices?.[0]?.message?.content) return data.choices[0].message.content
+      console.warn("[ai/interpret] DeepSeek non-streaming api_error", { status: res.status })
+    } catch (e) {
+      console.warn("[ai/interpret] DeepSeek non-streaming failed:", String(e))
+    }
+  }
+
+  // 2) CF Workers AI binding (fallback)
   try {
     const { env } = await import("@opennextjs/cloudflare").then((m) =>
       m.getCloudflareContext(),
@@ -285,39 +311,6 @@ async function callAI(sysPrompt: string, userPrompt: string): Promise<string> {
     }
   } catch (e) {
     console.warn("[ai/interpret] env.AI failed:", String(e))
-  }
-
-  // 2) REST API fallback (production + dev, not dev-only anymore)
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-  if (accountId && apiToken) {
-    try {
-      const res = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/qwen/qwen3-30b-a3b-fp8`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              { role: "system", content: sysPrompt },
-              { role: "user", content: userPrompt },
-            ],
-            max_tokens: 512,
-            temperature: 0.5,
-          }),
-        },
-      )
-      const data = await res.json()
-      if (data.success && data.result?.response) {
-        return data.result.response
-      }
-      console.warn("[ai/interpret] REST api_error", { status: res.status, apiResult: data })
-    } catch (e) {
-      console.warn("[ai/interpret] REST failed:", String(e))
-    }
   }
 
   throw new Error("ai_unavailable")
