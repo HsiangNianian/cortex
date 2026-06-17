@@ -215,7 +215,7 @@ async function fetchInternalMetrics(): Promise<InternalMetrics> {
       "SELECT DATE(created_at) AS date, ROUND(AVG(degradation_index), 1) AS avg_degradation FROM test_results GROUP BY DATE(created_at) ORDER BY date ASC LIMIT 60"
     ).all<{ date: string; avg_degradation: number }>()
     if (rows.results) {
-      degradationTrend = rows.results.map((r) => [r.date, r.avg_degradation])
+      degradationTrend = rows.results.map((r: { date: string; avg_degradation: number }) => [r.date, r.avg_degradation])
     }
   } catch { /* ignore */ }
 
