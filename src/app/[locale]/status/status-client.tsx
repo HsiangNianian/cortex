@@ -3,11 +3,12 @@
 import { useState, useEffect, useCallback } from "react"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
-import { ArrowLeft, RefreshCw, BarChart3, Database, FileJson, Brain, Users, Zap, HardDrive, TrendingUp, Clock } from "lucide-react"
+import { ArrowLeft, RefreshCw, BarChart3, Database, FileJson, Brain, Users, Zap, HardDrive, Clock, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { SiteFooter } from "@/components/site-footer"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 interface StatusData {
   cached: boolean
@@ -58,67 +59,48 @@ function formatNumber(n: number): string {
 
 function HourlyChart({ data }: { data: [number, number][] }) {
   if (data.length === 0) return null
-  const maxVal = Math.max(...data.map(([, v]) => v), 1)
-
-  // Round up to a nice number
-  const yMax = maxVal < 10 ? 10 : Math.ceil(maxVal / (10 ** Math.floor(Math.log10(maxVal)) / 2)) * (10 ** Math.floor(Math.log10(maxVal)) / 2)
-  const steps = 4
-
-  // Layout
-  const padLeft = 40, padRight = 8, padTop = 8, padBottom = 22
-  const w = 600, h = 160
-  const chartW = w - padLeft - padRight
-  const chartH = h - padTop - padBottom
-  const barW = Math.max(2, chartW / data.length - 2)
+  const chartData = data.map(([hour, requests]) => ({
+    hour: String(hour).padStart(2, "0") + ":00",
+    requests,
+  }))
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Hourly traffic chart">
-      {/* Grid lines + Y labels */}
-      {Array.from({ length: steps + 1 }, (_, i) => {
-        const y = padTop + (chartH * i / steps)
-        const val = yMax * (1 - i / steps)
-        const label = val >= 1000 ? (val / 1000).toFixed(0) + "K" : String(Math.round(val))
-        return (
-          <g key={i}>
-            <line x1={padLeft} y1={y} x2={w - padRight} y2={y} stroke="var(--border)" strokeWidth="0.5" />
-            <text x={padLeft - 4} y={y + 4} textAnchor="end" fontSize="10" fill="var(--muted-foreground)">{label}</text>
-          </g>
-        )
-      })}
-
-      {/* Bars */}
-      {data.map(([hour, val]) => {
-        const x = padLeft + (hour / 23) * chartW
-        const barH = Math.max(1, (val / yMax) * chartH)
-        const y = padTop + chartH - barH
-        const isPeak = val === maxVal && val > 0
-        return (
-          <g key={hour}>
-            <rect
-              x={x}
-              y={y}
-              width={barW}
-              height={barH}
-              rx={barW / 2}
-              fill={isPeak ? "var(--primary)" : "var(--primary)"}
-              opacity={val > 0 ? (isPeak ? 1 : 0.55) : 0.12}
-            >
-              <title>{String(hour).padStart(2, "0")}:00 — {val.toLocaleString()} requests</title>
-            </rect>
-          </g>
-        )
-      })}
-
-      {/* X axis labels */}
-      {[0, 6, 12, 18, 23].map((hour) => {
-        const x = padLeft + (hour / 23) * chartW
-        return (
-          <text key={hour} x={x} y={h - 4} textAnchor="middle" fontSize="10" fill="var(--muted-foreground)">
-            {String(hour).padStart(2, "0")}:00
-          </text>
-        )
-      })}
-    </svg>
+    <ResponsiveContainer width="100%" height={180}>
+      <BarChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: -16 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+        <XAxis
+          dataKey="hour"
+          tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
+          tickLine={false}
+          axisLine={false}
+          interval={5}
+        />
+        <YAxis
+          tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
+          tickLine={false}
+          axisLine={false}
+          tickFormatter={(v: number) => v >= 1000 ? (v / 1000).toFixed(0) + "K" : String(v)}
+          width={40}
+        />
+        <Tooltip
+          contentStyle={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            fontSize: "12px",
+            padding: "6px 10px",
+          }}
+          labelStyle={{ color: "var(--muted-foreground)" }}
+          formatter={(value) => [Number(value).toLocaleString() + " requests", ""]}
+        />
+        <Bar
+          dataKey="requests"
+          fill="var(--primary)"
+          radius={[3, 3, 0, 0]}
+          maxBarSize={16}
+        />
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
 
@@ -212,7 +194,7 @@ export default function StatusClient() {
         {data && (
           <>
             {/* Top stat cards — Traffic */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               <Card>
                 <CardContent className="p-4">
                   <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><BarChart3 className="size-3" />{t("requestsMonth")}</div>
@@ -235,12 +217,6 @@ export default function StatusClient() {
                 <CardContent className="p-4">
                   <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Zap className="size-3" />{t("cpuP99")}</div>
                   <div className="text-2xl font-bold tabular-nums">{data.traffic.cpuP99}<span className="text-sm font-normal text-muted-foreground">ms</span></div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><TrendingUp className="size-3" />{t("errors")}</div>
-                  <div className={`text-2xl font-bold tabular-nums ${data.traffic.errors > 0 ? "text-destructive" : ""}`}>{data.traffic.errors}</div>
                 </CardContent>
               </Card>
             </div>
@@ -301,14 +277,7 @@ export default function StatusClient() {
             <Separator className="my-6" />
 
             {/* AI section */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Brain className="size-3" />{t("neuronsUsed")}</div>
-                  <div className="text-2xl font-bold tabular-nums">{formatNumber(data.ai.neuronsUsed)}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{t("ofLimit", { limit: formatNumber(data.ai.neuronsLimit) })}</div>
-                </CardContent>
-              </Card>
+            <div className="grid grid-cols-2 gap-3 mb-6">
               <Card>
                 <CardContent className="p-4">
                   <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Brain className="size-3" />{t("neuronsRemaining")}</div>
@@ -326,13 +295,6 @@ export default function StatusClient() {
                   <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><HardDrive className="size-3" />{t("poolSize")}</div>
                   <div className="text-2xl font-bold tabular-nums">{data.ai.questionsInPool}</div>
                   <div className="text-xs text-muted-foreground mt-1">{t("generatedToday", { count: data.ai.questionsGeneratedToday })}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Brain className="size-3" />{t("avgNeuronCost")}</div>
-                  <div className="text-2xl font-bold tabular-nums">{data.ai.avgNeuronCost}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{t("perQuestion")}</div>
                 </CardContent>
               </Card>
             </div>
