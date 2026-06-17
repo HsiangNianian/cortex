@@ -309,25 +309,34 @@ export async function POST(request: Request) {
       source: "llm" as const,
     }
 
-    // Step 5: Store in D1 pool (fire-and-forget)
-    saveAiQuestion({
-      locale,
-      type,
-      question: parsed.question,
-      options: parsed.options,
-      answer: parsed.answer,
-      explanation: parsed.explanation,
-      difficulty: theta,
-      discrimination: 1.0,
-      guessing: 0.25,
-      inputTokens,
-      outputTokens,
-      neuronCost: actualNeuronCost,
-      createdForLicense: isPremium ? licenseKey ?? undefined : undefined,
-    }).catch(() => {})
-
-    // Step 6: Track neuron usage
-    recordNeuronUsage(actualNeuronCost).catch(() => {})
+    // Step 5: Store accounting data before returning, so status/quota cannot drift.
+    try {
+      await saveAiQuestion({
+        locale,
+        type,
+        question: parsed.question,
+        options: parsed.options,
+        answer: parsed.answer,
+        explanation: parsed.explanation,
+        difficulty: theta,
+        discrimination: 1.0,
+        guessing: 0.25,
+        inputTokens,
+        outputTokens,
+        neuronCost: actualNeuronCost,
+        createdForLicense: isPremium ? licenseKey ?? undefined : undefined,
+      })
+      await recordNeuronUsage(actualNeuronCost)
+    } catch (e) {
+      console.error("[ai/generate-question] accounting failed:", e)
+      return NextResponse.json({
+        question: null,
+        sourceType: null,
+        neuronCost: 0,
+        isPremium,
+        reason: "accounting_failed",
+      }, { status: 500 })
+    }
 
     return NextResponse.json({
       question: aiQuestion,
@@ -437,9 +446,14 @@ async function callAI(
     const { env } = await import("@opennextjs/cloudflare").then((m) =>
       m.getCloudflareContext(),
     )
-    if ((env as any).AI) {
+    const ai = (env as CloudflareEnv & {
+      AI?: {
+        run: (model: string, input: unknown) => Promise<unknown>
+      }
+    }).AI
+    if (ai) {
       const result = await Promise.race([
-        (env as any).AI.run("@cf/qwen/qwen3-30b-a3b-fp8", {
+        ai.run("@cf/qwen/qwen3-30b-a3b-fp8", {
           messages: [
             { role: "system", content: sysPrompt },
             { role: "user", content: userPrompt },
@@ -468,6 +482,25 @@ async function callAI(
 
 // ─── JSON Parser ──────────────────────────────────────────────────────────
 
+interface ParsedAiQuestion {
+  question: string
+  options: string[]
+  answer: number
+  explanation: string
+}
+
+function isParsedAiQuestion(value: unknown): value is ParsedAiQuestion {
+  if (!value || typeof value !== "object") return false
+  const candidate = value as Partial<ParsedAiQuestion>
+  return (
+    typeof candidate.question === "string" &&
+    Array.isArray(candidate.options) &&
+    candidate.options.every((option) => typeof option === "string") &&
+    typeof candidate.answer === "number" &&
+    typeof candidate.explanation === "string"
+  )
+}
+
 function parseJsonResponse(text: unknown): {
   question: string
   options: string[]
@@ -478,18 +511,18 @@ function parseJsonResponse(text: unknown): {
   try {
     // Try direct parse first
     const trimmed = text.trim()
-    const parsed = JSON.parse(trimmed)
-    if (parsed.question && Array.isArray(parsed.options) && typeof parsed.answer === "number") {
-      return parsed as any
+    const parsed: unknown = JSON.parse(trimmed)
+    if (isParsedAiQuestion(parsed)) {
+      return parsed
     }
   } catch {
     // Try extracting JSON from markdown code block
     const match = text.match(/```(?:json)?\s*([\s\S]*?)```/)
     if (match) {
       try {
-        const parsed = JSON.parse(match[1].trim())
-        if (parsed.question && Array.isArray(parsed.options) && typeof parsed.answer === "number") {
-          return parsed as any
+        const parsed: unknown = JSON.parse(match[1].trim())
+        if (isParsedAiQuestion(parsed)) {
+          return parsed
         }
       } catch { /* ignore */ }
     }
