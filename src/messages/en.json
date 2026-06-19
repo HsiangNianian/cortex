@@ -563,5 +563,9 @@
     "degradationTrend": "Degradation Trend",
     "autoRefresh": "Auto-refreshes every 5 min · Data from Cloudflare API",
     "requestsMonth": "30-Day Requests"
+  },
+  "festival": {
+    "dragonboat": "Dragon Boat Fest",
+    "none": "No theme"
   }
 }

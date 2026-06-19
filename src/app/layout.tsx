@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Script from "next/script"
 import "./globals.css"
+import "./festival/dragonboat.css"
 import { cookies } from "next/headers"
 
 export const metadata: Metadata = {

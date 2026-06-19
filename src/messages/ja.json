@@ -558,5 +558,9 @@
 		"degradationTrend": "劣化指数トレンド",
 		"autoRefresh": "5分ごとに自動更新 · Cloudflare APIデータ",
 		"requestsMonth": "30日リクエスト"
+	},
+	"festival": {
+		"dragonboat": "端午節",
+		"none": "テーマなし"
 	}
 }

@@ -132,7 +132,7 @@ export function LandingPhase({
               className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/5"
             >
               <span className="question-mark text-2xl font-bold text-primary">
-                ?
+                🎋
               </span>
             </div>
             <CardTitle className="text-2xl tracking-tight">

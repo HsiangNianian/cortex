@@ -3,6 +3,7 @@ import Script from "next/script"
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
+import { FestivalWrapper } from "@/components/festival/FestivalWrapper"
 import { ServiceWorkerRegister } from "@/components/service-worker-register"
 import { PremiumWrapper } from "@/components/premium/PremiumWrapper"
 import { IntlErrorBoundary } from "@/components/IntlErrorBoundary"
@@ -117,7 +118,9 @@ export default async function LocaleLayout({
         </div>
       </div>
       <ServiceWorkerRegister />
-      <PremiumWrapper>{children}</PremiumWrapper>
+      <FestivalWrapper>
+        <PremiumWrapper>{children}</PremiumWrapper>
+      </FestivalWrapper>
     </IntlErrorBoundary>
   )
 }

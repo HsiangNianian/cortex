@@ -558,5 +558,9 @@
 		"degradationTrend": "退化指数趋势",
 		"autoRefresh": "每 5 分钟自动刷新 · 数据来自 Cloudflare API",
 		"requestsMonth": "30 日请求"
+	},
+	"festival": {
+		"dragonboat": "端午节",
+		"none": "不使用模板"
 	}
 }
