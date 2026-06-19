@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation"
 import { AutoRedirect } from "@/components/share-redirect"
 import { getTierByIndex, getChallengeCopy } from "@/lib/scoring"
 import { buildOgImageUrl, buildShareMetadataText } from "@/lib/metadata-utils"
+import { parseRefParam } from "@/lib/url-utils"
 
 export async function generateMetadata({
   searchParams,
@@ -14,8 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const sp = await searchParams
-  const ref = sp.ref
-  const index = ref ? Math.min(100, Math.max(0, Number(ref) || 50)) : 50
+  const index = parseRefParam(sp.ref) ?? 50
   const tier = getTierByIndex(index)
   const challengeCopy = getChallengeCopy(tier.tierKey, index)
   const t = await getTranslations({ locale, namespace: "site" })
@@ -59,22 +59,25 @@ export default async function SharePage({
 }) {
   const t = await getTranslations("share")
   const params = await searchParams
-  const ref = params.ref ?? ""
+  const ref = parseRefParam(params.ref)
+  const refStr = ref !== null ? String(ref) : ""
 
   return (
     <>
-      <AutoRedirect queryRef={ref} />
+      <AutoRedirect queryRef={refStr} />
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 p-4 text-center">
         <div className="mx-auto flex h-16 w-16 animate-pulse items-center justify-center rounded-full bg-primary/5">
           <span className="text-2xl font-bold text-primary">?</span>
         </div>
         <p className="text-sm text-muted-foreground">{t("loading")}</p>
-        <Link
-          href={"/?ref=" + ref}
-          className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-        >
-          {t("clickHere")}
-        </Link>
+        {ref !== null && (
+          <Link
+            href={"/?ref=" + ref}
+            className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+          >
+            {t("clickHere")}
+          </Link>
+        )}
       </div>
     </>
   )
