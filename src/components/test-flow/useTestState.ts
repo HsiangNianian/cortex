@@ -662,7 +662,7 @@ export function useTestState() {
       const ref = params.get("ref");
       if (ref !== null) {
         const n_ = parseInt(ref, 10);
-        if (!isNaN(n_)) setChallengeRef(n_);
+        if (!isNaN(n_) && n_ >= 0 && n_ <= 100) setChallengeRef(n_);
         window.history.replaceState({}, "", window.location.pathname);
       }
 
