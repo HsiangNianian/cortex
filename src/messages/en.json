@@ -64,8 +64,12 @@
       "< 30 min",
       "30 min - 2 hr",
       "2 - 5 hr",
-      "> 5 hr"
+      "> 5 hr",
+      "I rarely use AI"
     ],
+    "aiExitTitle": "Hold on, brave one",
+    "aiExitMessage": "This test measures your cognitive ability with AI assistance. If you rarely use AI, what we'd be measuring isn't cognitive rust — it's your raw IQ.\n\nAre you sure you want to bear that consequence?",
+    "aiExitBack": "Let me reconsider",
     "pledge": "I pledge not to use any AI assistance during this test",
     "startButton": "Start Quiz",
     "selectAiFirst": "Please select your AI usage first",

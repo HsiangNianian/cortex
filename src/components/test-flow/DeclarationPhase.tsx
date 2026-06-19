@@ -32,6 +32,44 @@ export function DeclarationPhase({
   handleRestart,
 }: DeclarationPhaseProps) {
   const n = useTranslations();
+  const aiLevels = n.raw("declaration.aiLevels") as string[];
+  const isAiExit = aiUsage !== null && aiUsage === aiLevels.length - 1;
+
+  if (isAiExit) {
+    return (
+      <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">{n("declaration.aiExitTitle")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-lg bg-muted/50 p-6 text-center">
+            {n("declaration.aiExitMessage").split("\n").map((line, i) => (
+              <p key={i} className="text-sm leading-relaxed text-muted-foreground [&:not(:first-child)]:mt-4">
+                {line}
+              </p>
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button
+            size="lg"
+            className="w-full text-base"
+            onClick={() => setAiUsage(null)}
+          >
+            {n("declaration.aiExitBack")}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground"
+            onClick={handleRestart}
+          >
+            {n("declaration.backButton")}
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -68,7 +106,7 @@ export function DeclarationPhase({
             {n("declaration.aiUsageHint")}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {(n.raw("declaration.aiLevels") as string[]).map(
+            {aiLevels.map(
               (opt: string, i: number) => (
                 <button
                   key={i}
