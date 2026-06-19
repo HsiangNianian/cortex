@@ -105,6 +105,9 @@
       "vocab": "Read 10 minutes of a physical book or long-form article daily, paying attention to word choices and expressions.",
       "event": "Read long-form journalism or in-depth articles, paying attention to causal chains and logical connections between events."
     },
+    "firstTestTitle": "Baseline Established",
+    "firstTestDesc": "Your first test establishes a personal cognitive baseline. A single score does not carry standalone reference value. Complete a second test to see your trend and improvement analysis.",
+    "firstTestCta": "Take the Second Test",
     "retestPrompt": "Retest in 7 days to track your changes",
     "retestDesc": "Cognitive ability is like a muscle—measure regularly to see the trend. Your history is saved locally.",
     "flaggedCount": "Flagged {count} possible issues. Thanks for the feedback!",

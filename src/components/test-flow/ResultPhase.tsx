@@ -111,6 +111,7 @@ export function ResultPhase({
       return 1
     }
   })()
+  const isFirstTest = testCount === 1
 
   async function handleAiInterpret() {
     if (!isPremium) {
@@ -230,9 +231,19 @@ export function ResultPhase({
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
       <CardHeader className="pb-2 text-center">
         <CardTitle className="text-2xl tracking-tight">
-          {n("result.title")}
+          {isFirstTest ? n("result.firstTestTitle") : n("result.title")}
         </CardTitle>
-        <CardDescription>{n("result.subtitle")}</CardDescription>
+        <CardDescription className="text-balance">
+          {isFirstTest ? (
+            <>
+              首次测试用于建立个人认知基线，<br />
+              单次分数暂不具有独立参考意义。<br />
+              完成第二次测试后，你将看到变化趋势与改善分析。
+            </>
+          ) : (
+            n("result.subtitle")
+          )}
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -244,35 +255,37 @@ export function ResultPhase({
           </div>
         )}
 
-        {/* Gauge + Tier */}
-        <div className="text-center">
-          <DegradationGauge
-            index={result.degradationIndex}
-            ringColor={result.tier.ringColor}
-          />
-          <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
-            <Badge
-              className="px-3 py-1 text-sm"
-              style={{
-                backgroundColor: result.tier.ringColor,
-                color: "#fff",
-              }}
-            >
-              {n("tier." + result.tier.tierKey)}
-            </Badge>
-            {result.estimationMethod === "irt" && (
-              <Link
-                href="/about#irt-scoring"
-                className="rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground decoration-dotted underline underline-offset-2 hover:text-foreground transition-colors"
+        {/* Gauge + Tier — hidden on first test */}
+        {!isFirstTest && (
+          <div className="text-center">
+            <DegradationGauge
+              index={result.degradationIndex}
+              ringColor={result.tier.ringColor}
+            />
+            <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
+              <Badge
+                className="px-3 py-1 text-sm"
+                style={{
+                  backgroundColor: result.tier.ringColor,
+                  color: "#fff",
+                }}
               >
-                IRT
-              </Link>
-            )}
+                {n("tier." + result.tier.tierKey)}
+              </Badge>
+              {result.estimationMethod === "irt" && (
+                <Link
+                  href="/about#irt-scoring"
+                  className="rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground decoration-dotted underline underline-offset-2 hover:text-foreground transition-colors"
+                >
+                  IRT
+                </Link>
+              )}
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              {n("tier." + result.tier.tierKey + "Desc")}
+            </p>
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            {n("tier." + result.tier.tierKey + "Desc")}
-          </p>
-        </div>
+        )}
 
         {/* AI Usage context */}
         {aiUsage !== null && (
@@ -291,8 +304,8 @@ export function ResultPhase({
           </div>
         )}
 
-        {/* Scoring method explanation */}
-        <div className="rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30 p-4">
+        {/* Scoring method explanation — hidden on first test */}
+        {!isFirstTest && <div className="rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30 p-4">
           <button
             onClick={() => setShowScoringInfo(!showScoringInfo)}
             className="flex w-full items-center justify-between text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -302,6 +315,9 @@ export function ResultPhase({
               {showScoringInfo ? "▲" : "▼"}
             </span>
           </button>
+          <p className="mt-1.5 text-[10px] leading-tight text-muted-foreground/50">
+            评分仅供参考，不代表任何认知能力评估结论
+          </p>
           {showScoringInfo && (
             <div className="mt-3 space-y-2">
               {result.estimationMethod === "irt" ? (
@@ -426,7 +442,7 @@ export function ResultPhase({
               )}
             </div>
           )}
-        </div>
+		</div>}
 
         <Separator />
 
@@ -477,102 +493,104 @@ export function ResultPhase({
               })}
             </div>
           </div>
-        </div>
+		</div>
 
         <Separator />
 
-        {/* Personalized advice */}
-        {(() => {
-          const allDims: { key: string; label: string; score: number | null }[] = [
-            { key: "logic", label: n("radar.logic"), score: result.dimensionScores.logic },
-            { key: "math", label: n("radar.math"), score: result.dimensionScores.math },
-            { key: "vocab", label: n("radar.vocab"), score: result.dimensionScores.vocab },
-            { key: "event", label: n("radar.event"), score: result.dimensionScores.event },
-          ];
-          const dims = allDims.filter(
-            (d): d is { key: string; label: string; score: number } =>
-              d.score !== null,
-          );
-          dims.sort((a, b) => a.score - b.score);
+        {!isFirstTest && (<>
+          {/* Personalized advice */}
+          {(() => {
+            const allDims: { key: string; label: string; score: number | null }[] = [
+              { key: "logic", label: n("radar.logic"), score: result.dimensionScores.logic },
+              { key: "math", label: n("radar.math"), score: result.dimensionScores.math },
+              { key: "vocab", label: n("radar.vocab"), score: result.dimensionScores.vocab },
+              { key: "event", label: n("radar.event"), score: result.dimensionScores.event },
+            ];
+            const dims = allDims.filter(
+              (d): d is { key: string; label: string; score: number } =>
+                d.score !== null,
+            );
+            dims.sort((a, b) => a.score - b.score);
 
-          if (dims.length > 0 && dims[0].score < 60) {
-            const weakest = dims[0];
+            if (dims.length > 0 && dims[0].score < 60) {
+              const weakest = dims[0];
+              return (
+                <div className="rounded-lg bg-muted/50 p-4">
+                  <p className="text-sm font-medium">
+                    {n("result.adviceTitle")}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {n("result.adviceWeakest", { dimension: weakest.label })}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {n.raw("result.adviceTips")[weakest.key] ??
+                      n("result.adviceDefault")}
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          })()}
+
+          {/* Game suggestion for low logic / event scores */}
+          {(() => {
+            const logicLow = result.dimensionScores.logic !== null && result.dimensionScores.logic < 60
+            const eventLow = result.dimensionScores.event !== null && result.dimensionScores.event < 60
+            if (!logicLow && !eventLow) return null
+
+            const title = logicLow && eventLow
+              ? n("result.logicEventGameTitle")
+              : logicLow
+                ? n("result.logicGameTitle")
+                : n("result.eventGameTitle")
+
             return (
-              <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-sm font-medium">
-                  {n("result.adviceTitle")}
+              <div className="rounded-lg border border-dashed border-blue-300/30 bg-blue-50/50 p-4 text-center dark:bg-blue-950/10">
+                <p className="text-sm font-medium text-foreground">
+                  {title}
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  {n("result.adviceWeakest", { dimension: weakest.label })}
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  {n.raw("result.adviceTips")[weakest.key] ??
-                    n("result.adviceDefault")}
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {n.rich("result.logicGameDesc", {
+                    game: (chunks) => (
+                      <a
+                        href="https://deadpan.hydroroll.team"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-600 underline-offset-2 hover:underline"
+                      >
+                        {chunks}
+                      </a>
+                    ),
+                  })}
                 </p>
               </div>
-            );
-          }
-          return null;
-        })()}
+            )
+          })()}
 
-        {/* Game suggestion for low logic / event scores */}
-        {(() => {
-          const logicLow = result.dimensionScores.logic !== null && result.dimensionScores.logic < 60
-          const eventLow = result.dimensionScores.event !== null && result.dimensionScores.event < 60
-          if (!logicLow && !eventLow) return null
-
-          const title = logicLow && eventLow
-            ? n("result.logicEventGameTitle")
-            : logicLow
-              ? n("result.logicGameTitle")
-              : n("result.eventGameTitle")
-
-          return (
-            <div className="rounded-lg border border-dashed border-blue-300/30 bg-blue-50/50 p-4 text-center dark:bg-blue-950/10">
-              <p className="text-sm font-medium text-foreground">
-                {title}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {n.rich("result.logicGameDesc", {
-                  game: (chunks) => (
-                    <a
-                      href="https://deadpan.hydroroll.team"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-blue-600 underline-offset-2 hover:underline"
-                    >
-                      {chunks}
-                    </a>
-                  ),
-                })}
-              </p>
-            </div>
-          )
-        })()}
-
-        {/* LCTI suggestion for good logic scores */}
-        {result.dimensionScores.logic !== null &&
-          result.dimensionScores.logic >= 60 && (
-            <div className="rounded-lg border border-dashed border-green-300/30 bg-green-50/50 p-4 text-center dark:bg-green-950/10">
-              <p className="text-sm font-medium text-foreground">
-                {n("result.logicGoodTitle")}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {n.rich("result.logicGoodDesc", {
-                  lcti: (chunks) => (
-                    <a
-                      href="https://lcti.hydroroll.team"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-green-600 underline-offset-2 hover:underline"
-                    >
-                      {chunks}
-                    </a>
-                  ),
-                })}
-              </p>
-            </div>
-          )}
+          {/* LCTI suggestion for good logic scores */}
+          {result.dimensionScores.logic !== null &&
+            result.dimensionScores.logic >= 60 && (
+              <div className="rounded-lg border border-dashed border-green-300/30 bg-green-50/50 p-4 text-center dark:bg-green-950/10">
+                <p className="text-sm font-medium text-foreground">
+                  {n("result.logicGoodTitle")}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {n.rich("result.logicGoodDesc", {
+                    lcti: (chunks) => (
+                      <a
+                        href="https://lcti.hydroroll.team"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-green-600 underline-offset-2 hover:underline"
+                      >
+                        {chunks}
+                      </a>
+                    ),
+                  })}
+                </p>
+              </div>
+            )}
+        </>)}
 
         {/* 7-day retest reminder */}
         <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 text-center">
@@ -582,7 +600,7 @@ export function ResultPhase({
           <p className="mt-1 text-xs text-muted-foreground">
             {n("result.retestDesc")}
           </p>
-        </div>
+		</div>
 
         {/* Previous vs current comparison */}
         {prevResult && (
@@ -723,7 +741,8 @@ export function ResultPhase({
           </div>
         )}
 
-        {/* AI Interpretation */}
+        {!isFirstTest && (
+        /* AI Interpretation */
           <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 dark:border-violet-800 dark:bg-violet-950/20">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-semibold text-foreground">
@@ -771,8 +790,9 @@ export function ResultPhase({
                 {aiAnalysis}
               </div>
             )}
-          </div>
+          </div>)
 
+        }
         {/* Score breakdown */}
         <div>
           <button
@@ -883,7 +903,7 @@ export function ResultPhase({
               })}
             </div>
           )}
-        </div>
+		</div>
       </CardContent>
 
       <CardFooter className="flex-col gap-2">
@@ -892,16 +912,20 @@ export function ResultPhase({
             {n("result.shareButton")}
           </Button>
           <Button
-            variant="outline"
+            variant={isFirstTest ? "default" : "outline"}
             className="flex-1"
             onClick={handleSetReminder}
           >
             {n("result.remindButton")}
           </Button>
-          <Button className="flex-1" onClick={handleRestart}>
+          <Button
+            variant={isFirstTest ? "outline" : "default"}
+            className="flex-1"
+            onClick={handleRestart}
+          >
             {n("result.retestButton")}
           </Button>
-        </div>
+		</div>
         <div className="flex w-full items-center justify-center gap-3">
           <Link
             href={`/stats?latest=${result.degradationIndex}`}
@@ -928,7 +952,7 @@ export function ResultPhase({
               </button>
             </>
           )}
-        </div>
+		</div>
         <p className="mt-2 text-center text-xs text-muted-foreground">
           {n("result.disclaimer")}
         </p>
