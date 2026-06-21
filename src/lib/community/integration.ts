@@ -7,6 +7,7 @@ interface CommunityAPIQuestion {
   options: string  // JSON string
   correct_answer: number
   explanation: string
+  submitter_name: string
 }
 
 /**
@@ -32,6 +33,7 @@ export async function fetchCommunityQuestions(locale: string): Promise<Question[
       explanation: q.explanation || "",
       difficulty: 0,
       source: "community" as const,
+      submitterName: q.submitter_name || "匿名",
     }))
   } catch {
     return []

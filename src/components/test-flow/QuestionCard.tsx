@@ -71,6 +71,11 @@ export function QuestionCard({
   const isAiQuestion = questionSource === "llm" || questionSource === "llm-pool";
   const aiBadgeLabel = questionSource === "llm-pool" ? n("testing.aiPoolBadge") : n("testing.aiGeneratedBadge");
   const isMulti = Array.isArray(question.answer);
+  const authorLabel = isAiQuestion
+    ? "出题人: AI"
+    : questionSource === "community"
+      ? "出题人: " + ((question as any).submitterName || "匿名")
+      : null;
 
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -94,6 +99,11 @@ export function QuestionCard({
             <Badge variant="outline" className="text-xs">
               {n("question.category." + question.category)}
             </Badge>
+            {authorLabel && (
+              <Badge variant="secondary" className="text-xs text-muted-foreground">
+                {authorLabel}
+              </Badge>
+            )}
             {isMulti && (
               <Badge className="bg-amber-100 text-amber-800 text-xs dark:bg-amber-900/30 dark:text-amber-400">
                 {n("question.multiSelect")}
