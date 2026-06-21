@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { saveResult } from "@/lib/storage"
 import { getDB } from "@/lib/auth/d1-client"
+import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { TIER_KEYS } from "@/lib/scoring"
 import { AI_CANONICAL_LEVELS } from "@/lib/constants"
 
@@ -11,8 +12,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 })
     }
 
+    // ---- Rate limiting (IP + rolling 7-day window via KV) ----
+    const ip = request.headers.get("cf-connecting-ip")
+      ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+      ?? "unknown"
+    const rateLimitKey = `rl7:${ip}`
+    const SEVEN_DAYS_SEC = 604_800
+
+    try {
+      const { env } = await getCloudflareContext()
+      const current = await env.CORTEX_KV.get(rateLimitKey)
+      const count = current ? parseInt(current, 10) : 0
+      if (count >= 7) {
+        return NextResponse.json({
+          error: "too_many_requests",
+          message: "每 7 天最多提交 7 次测试结果，请稍后再试",
+        }, { status: 429 })
+      }
+      await env.CORTEX_KV.put(rateLimitKey, String(count + 1), { expirationTtl: SEVEN_DAYS_SEC })
+    } catch {
+      // Fail open: rate limiting unavailable, allow request
+    }
+
     const body = await request.json()
-    const { degradationIndex, tierLabel, aiUsageLevel, estimationMethod, elapsedMs } = body
+    const { degradationIndex, tierLabel, correctCount, totalQuestions, aiUsageLevel, estimationMethod, elapsedMs } = body
 
     if (
       typeof degradationIndex !== "number" ||
@@ -20,6 +43,13 @@ export async function POST(request: Request) {
       degradationIndex < 0 ||
       degradationIndex > 100 ||
       !(TIER_KEYS as readonly string[]).includes(tierLabel) ||
+      typeof correctCount !== "number" ||
+      !Number.isInteger(correctCount) ||
+      correctCount < 0 ||
+      typeof totalQuestions !== "number" ||
+      !Number.isInteger(totalQuestions) ||
+      totalQuestions < 1 ||
+      correctCount > totalQuestions ||
       (aiUsageLevel !== null &&
         aiUsageLevel !== undefined &&
         !(AI_CANONICAL_LEVELS as readonly string[]).includes(aiUsageLevel)) ||
@@ -29,6 +59,20 @@ export async function POST(request: Request) {
       (elapsedMs !== undefined && elapsedMs !== null && typeof elapsedMs !== "number")
     ) {
       return NextResponse.json({ error: "invalid payload" }, { status: 400 })
+    }
+
+    // ---- Verify result consistency against raw responses ----
+    if (body.responses && Array.isArray(body.responses) && body.responses.length > 0) {
+      const responseCount = body.responses.length
+      const responseCorrect = body.responses.filter((r: { correct?: number }) => r.correct === 1).length
+      // responses length must match totalQuestions
+      if (responseCount !== totalQuestions) {
+        return NextResponse.json({ error: "response_count_mismatch" }, { status: 400 })
+      }
+      // correctCount must match the number of correct responses
+      if (responseCorrect !== correctCount) {
+        return NextResponse.json({ error: "score_mismatch" }, { status: 400 })
+      }
     }
 
     // Note: minimum duration check intentionally removed — it was
