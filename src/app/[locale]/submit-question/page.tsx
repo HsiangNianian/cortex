@@ -225,7 +225,7 @@ export default function SubmitQuestionPage() {
         {/* Explanation */}
         <div>
           <label className="mb-1 block text-sm font-medium">
-            {t("explanationLabel")} <span className="text-muted-foreground">（{t("nameHint")}）</span>
+            {t("explanationLabel")} <span className="text-muted-foreground">（{t("explanationHint")}）</span>
           </label>
           <textarea
             value={explanation}

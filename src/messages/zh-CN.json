@@ -587,6 +587,7 @@
 		"questionLabel": "题干",
 		"optionsLabel": "选项",
 		"explanationLabel": "解析",
+		"explanationHint": "不填则只显示答案本身",
 		"emailLabel": "邮箱",
 		"emailHint": "仅支持 QQ 邮箱或 Gmail，用于联系出题人",
 		"nameLabel": "出题人姓名",

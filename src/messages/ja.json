@@ -587,6 +587,7 @@
 		"questionLabel": "問題文",
 		"optionsLabel": "選択肢",
 		"explanationLabel": "解説",
+		"explanationHint": "空欄の場合は答えのみ表示",
 		"emailLabel": "メール",
 		"emailHint": "連絡用にQQメールまたはGmailのみ対応しています",
 		"nameLabel": "名前",

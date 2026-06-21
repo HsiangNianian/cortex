@@ -587,6 +587,7 @@
     "questionLabel": "Question",
     "optionsLabel": "Options",
     "explanationLabel": "Explanation",
+    "explanationHint": "Leave blank to show the answer only",
     "emailLabel": "Email",
     "emailHint": "Only QQ email or Gmail is supported for contact",
     "nameLabel": "Name",
