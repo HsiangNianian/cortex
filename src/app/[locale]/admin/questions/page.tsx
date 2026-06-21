@@ -87,7 +87,7 @@ export default function AdminQuestionsPage() {
         <h1 className="mt-2 text-xl font-bold">审题</h1>
       </div>
 
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         {["", "pending", "approved", "rejected"].map((s) => (
           <Link
             key={s}

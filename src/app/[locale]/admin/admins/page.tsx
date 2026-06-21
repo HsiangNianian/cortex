@@ -111,25 +111,25 @@ export default function AdminAdminsPage() {
           </div>
         )}
         <form onSubmit={handleCreate} className="space-y-3">
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <input
               type="text"
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
               placeholder="用户名"
-              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm sm:flex-1"
             />
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="密码"
-              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm sm:flex-1"
             />
             <select
               value={newRole}
               onChange={(e) => setNewRole(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm sm:w-auto"
             >
               <option value="reviewer">审题员</option>
               <option value="super_admin">超级管理员</option>
