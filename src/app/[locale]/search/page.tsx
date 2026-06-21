@@ -39,16 +39,14 @@ export default function SearchPage() {
   const [toast, setToast] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Check if user has flagged before + hide top nav
+  // Check if user has flagged before
   useEffect(() => {
-    document.body.classList.add("hide-top-nav")
     try {
       const hist = localStorage.getItem("cognitive-rust-history")
       if (hist && JSON.parse(hist).some((h: any) => h.flaggedIds?.length > 0)) {
         setHasFlaggedBefore(true)
       }
     } catch {}
-    return () => document.body.classList.remove("hide-top-nav")
   }, [])
 
   function toggleFlag(qId: number) {

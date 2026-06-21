@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 import { search } from "@/lib/search"
+import { d1Query } from "@/lib/auth/d1-client"
+import type { Question } from "@/lib/question-bank/types"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -25,8 +27,75 @@ export async function GET(request: Request) {
     } catch {}
 
     const results = search(q, locale, limit)
+
+    // Also search D1: AI-generated questions + approved community questions
+    const likePattern = `%${q}%`
+    let d1Results: typeof results = []
+    try {
+      const [aiRows, communityRows] = await Promise.all([
+        d1Query<{
+          id: number; type: string; question: string; options: string
+          answer: number; explanation: string; difficulty: number
+        }>(
+          "SELECT id, type, question, options, answer, explanation, difficulty FROM ai_generated_questions WHERE locale = ? AND question LIKE ? ORDER BY times_used DESC LIMIT ?",
+          [locale === "zh-CN" ? "zh-CN" : locale, likePattern, limit]
+        ),
+        d1Query<{
+          id: number; type: string; question: string; options: string
+          correct_answer: number; explanation: string
+        }>(
+          "SELECT id, type, question, options, correct_answer, explanation FROM community_questions WHERE status = 'approved' AND question LIKE ? ORDER BY id DESC LIMIT ?",
+          [likePattern, limit]
+        ),
+      ])
+
+      for (const row of aiRows) {
+        d1Results.push({
+          question: {
+            id: 100000 + row.id,
+            type: row.type as Question["type"],
+            category: row.type,
+            question: row.question,
+            options: parseJSON<string[]>(row.options, []),
+            answer: row.answer,
+            explanation: row.explanation,
+            difficulty: row.difficulty,
+            source: "llm",
+          },
+          score: 1,
+        })
+      }
+      for (const row of communityRows) {
+        d1Results.push({
+          question: {
+            id: 200000 + row.id,
+            type: row.type as Question["type"],
+            category: row.type,
+            question: row.question,
+            options: parseJSON<string[]>(row.options, []),
+            answer: row.correct_answer,
+            explanation: row.explanation,
+            difficulty: 0,
+            source: "community",
+          },
+          score: 1,
+        })
+      }
+    } catch {
+      // D1 search is best-effort
+    }
+
+    // Merge static + D1 results, deduplicate by question text, limit
+    const seen = new Set<string>()
+    const merged = [...results, ...d1Results].filter((r) => {
+      const key = r.question.question.slice(0, 50)
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    }).slice(0, limit)
+
     return NextResponse.json({
-      results: results.map((r) => ({
+      results: merged.map((r) => ({
         id: r.question.id,
         type: r.question.type,
         category: r.question.category,
@@ -39,10 +108,14 @@ export async function GET(request: Request) {
         score: r.score,
       })),
       query: q,
-      total: results.length,
+      total: merged.length,
     })
   } catch (err) {
     console.error("[search] Error:", err)
     return NextResponse.json({ error: "search failed" }, { status: 500 })
   }
+}
+
+function parseJSON<T>(str: string, fallback: T): T {
+  try { return JSON.parse(str) as T } catch { return fallback }
 }

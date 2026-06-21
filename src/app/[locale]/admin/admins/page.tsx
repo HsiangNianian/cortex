@@ -1,0 +1,175 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "@/i18n/navigation"
+import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
+import { Link } from "@/i18n/navigation"
+
+interface AdminUser {
+  id: number
+  username: string
+  role: string
+  created_at: string
+}
+
+export default function AdminAdminsPage() {
+  const router = useRouter()
+  const [admin, setAdmin] = useState<{ id: number; username: string; role: string } | null>(null)
+  const [admins, setAdmins] = useState<AdminUser[]>([])
+  const [loading, setLoading] = useState(true)
+  const [newUsername, setNewUsername] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [newRole, setNewRole] = useState("reviewer")
+  const [creating, setCreating] = useState(false)
+  const [error, setError] = useState("")
+
+  const fetchAdmins = async () => {
+    const res = await fetch("/api/admin/admins")
+    const data = await res.json()
+    if (data.admins) setAdmins(data.admins)
+  }
+
+  useEffect(() => {
+    fetch("/api/admin/check")
+      .then((r) => r.json())
+      .then((auth) => {
+        if (!auth.authenticated || auth.admin.role !== "super_admin") {
+          router.push("/admin/login")
+          return
+        }
+        setAdmin(auth.admin)
+        return fetchAdmins()
+      })
+      .then(() => setLoading(false))
+      .catch(() => router.push("/admin/login"))
+  }, [router])
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    if (!newUsername.trim() || !newPassword.trim()) {
+      setError("用户名和密码不能为空")
+      return
+    }
+    setCreating(true)
+    try {
+      const res = await fetch("/api/admin/admins", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: newUsername.trim(),
+          password: newPassword,
+          role: newRole,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error === "username already exists" ? "用户名已存在" : data.error || "创建失败")
+        return
+      }
+      setNewUsername("")
+      setNewPassword("")
+      setNewRole("reviewer")
+      await fetchAdmins()
+    } catch {
+      setError("网络错误")
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const handleDelete = async (id: number, username: string) => {
+    if (!confirm(`确定删除管理员「${username}」？此操作不可撤销。`)) return
+    const res = await fetch(`/api/admin/admins/${id}`, { method: "DELETE" })
+    if (res.ok) await fetchAdmins()
+  }
+
+  const roleLabel = (role: string) => role === "super_admin" ? "超级管理员" : "审题员"
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-8">
+      <Link href="/admin" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" />
+        返回后台
+      </Link>
+      <h1 className="mt-2 text-xl font-bold">管理员管理</h1>
+
+      {/* Create form */}
+      <div className="mt-6 rounded-lg border border-input p-4">
+        <h2 className="mb-3 text-sm font-medium">创建新的审题员</h2>
+        {error && (
+          <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-800/30 dark:bg-red-950/30 dark:text-red-300">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleCreate} className="space-y-3">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              placeholder="用户名"
+              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="密码"
+              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <select
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value)}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="reviewer">审题员</option>
+              <option value="super_admin">超级管理员</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            disabled={creating}
+            className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+          >
+            {creating ? "创建中..." : "创建"}
+          </button>
+        </form>
+      </div>
+
+      {/* Admin list */}
+      <div className="mt-6 space-y-2">
+        {admins.map((a) => (
+          <div
+            key={a.id}
+            className="flex items-center justify-between rounded-lg border border-input p-3"
+          >
+            <div>
+              <p className="text-sm font-medium">{a.username}</p>
+              <p className="text-xs text-muted-foreground">
+                {roleLabel(a.role)} · 创建于 {a.created_at?.slice(0, 10)}
+              </p>
+            </div>
+            {admin?.id !== a.id && (
+              <button
+                onClick={() => handleDelete(a.id, a.username)}
+                className="text-sm text-red-500 hover:text-red-700"
+                title="删除"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

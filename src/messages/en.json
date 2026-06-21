@@ -7,7 +7,8 @@
   },
   "nav": {
     "search": "Search",
-    "status": "Status"
+    "status": "Status",
+    "submit": "Submit"
   },
   "error": {
     "heading": "Something went wrong",
@@ -576,5 +577,62 @@
   "festival": {
     "dragonboat": "Dragon Boat Fest",
     "none": "No theme"
+  },
+  "submitQuestion": {
+    "title": "Submit a Question",
+    "subtitle": "Submit a cognitive test question. After admin review, it will appear in the test pool.",
+    "success": "Submitted successfully! Your question is in the review queue.",
+    "typeLabel": "Type",
+    "questionLabel": "Question",
+    "optionsLabel": "Options",
+    "explanationLabel": "Explanation",
+    "emailLabel": "Email",
+    "emailHint": "Only QQ email or Gmail is supported for contact",
+    "nameLabel": "Name",
+    "nameHint": "Leave blank to show as anonymous",
+    "anonymous": "Anonymous",
+    "submit": "Submit for Review",
+    "submitting": "Submitting...",
+    "addOption": "+ Add Option",
+    "removeOption": "Remove",
+    "markCorrect": "Mark as correct",
+    "backToHome": "Back to Home",
+    "submitAnother": "Submit Another",
+    "errorType": "Please select a valid question type",
+    "errorQuestion": "Please enter the question text",
+    "errorOptions": "At least 2 options are required",
+    "errorAnswer": "Please select the correct answer",
+    "errorEmail": "Please use a valid QQ email or Gmail address",
+    "errorNetwork": "Network error, please try again later"
+  },
+  "admin": {
+    "login": "Admin Login",
+    "dashboard": "Admin Dashboard",
+    "logout": "Logout",
+    "superAdmin": "Super Admin",
+    "reviewer": "Reviewer",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "all": "All",
+    "reviewList": "Review Questions",
+    "reviewListDesc": "View all submitted questions and review them",
+    "adminManagement": "Admin Management",
+    "adminManagementDesc": "Create or delete reviewer accounts",
+    "backToHome": "Back to Home",
+    "createReviewer": "Create New Reviewer",
+    "username": "Username",
+    "password": "Password",
+    "role": "Role",
+    "create": "Create",
+    "creating": "Creating...",
+    "deleteConfirm": "Are you sure you want to delete admin \"{name}\"? This cannot be undone.",
+    "noQuestions": "No questions yet",
+    "notFound": "Question not found",
+    "reviewNotes": "Review Notes",
+    "reviewNotesPlaceholder": "Review notes (optional)",
+    "approve": "Approve",
+    "reject": "Reject",
+    "verifyingSession": "Verifying session..."
   }
 }
