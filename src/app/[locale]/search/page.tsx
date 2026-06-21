@@ -18,12 +18,20 @@ interface SearchResult {
   difficulty: number
   calibratedDifficulty?: number | null
   score: number
+  source?: string
+  submitterName?: string
 }
 
 function diffLabel(d: number, t: (key: string) => string): string {
   if (d < -0.5) return t("search.diffEasy")
   if (d < 0.5) return t("search.diffMedium")
   return t("search.diffHard")
+}
+
+function sourceLabel(r: SearchResult, n: (key: string) => string): string {
+  if (r.source === "llm") return "AI"
+  if (r.source === "community") return r.submitterName || n("submitQuestion.anonymous")
+  return n("search.fromBank")
 }
 
 export default function SearchPage() {
@@ -173,6 +181,9 @@ export default function SearchPage() {
                       <div className="flex flex-wrap items-center gap-1.5">
                         <Badge variant="secondary" className="text-[10px]">
                           {n("question.category." + r.category)}
+                        </Badge>
+                        <Badge variant="secondary" className="text-[10px] text-muted-foreground">
+                          {sourceLabel(r, n)}
                         </Badge>
                         <Badge variant="outline" className="text-[10px]">
                           {diffLabel(r.difficulty, n)} · {n("search.thetaLabel", { theta: r.difficulty.toFixed(1) })}

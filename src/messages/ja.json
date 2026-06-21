@@ -255,7 +255,8 @@
 		"diffMedium": "普通",
 		"diffHard": "難しい",
 		"thetaLabel": "θ={theta}",
-		"scoreLabel": "score: {score}"
+		"scoreLabel": "score: {score}",
+		"fromBank": "問題集"
 	},
 	"sponsors": {
 		"backToTest": "テストに戻る",

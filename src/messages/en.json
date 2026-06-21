@@ -255,7 +255,8 @@
     "diffMedium": "Medium",
     "diffHard": "Hard",
     "thetaLabel": "θ={theta}",
-    "scoreLabel": "score: {score}"
+    "scoreLabel": "score: {score}",
+    "fromBank": "Bank"
   },
   "sponsors": {
     "backToTest": "Back to Test",

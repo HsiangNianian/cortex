@@ -42,9 +42,9 @@ export async function GET(request: Request) {
         ),
         d1Query<{
           id: number; type: string; question: string; options: string
-          correct_answer: number; explanation: string
+          correct_answer: number; explanation: string; submitter_name: string
         }>(
-          "SELECT id, type, question, options, correct_answer, explanation FROM community_questions WHERE status = 'approved' AND question LIKE ? ORDER BY id DESC LIMIT ?",
+          "SELECT id, type, question, options, correct_answer, explanation, submitter_name FROM community_questions WHERE status = 'approved' AND question LIKE ? ORDER BY id DESC LIMIT ?",
           [likePattern, limit]
         ),
       ])
@@ -77,7 +77,8 @@ export async function GET(request: Request) {
             explanation: row.explanation,
             difficulty: 0,
             source: "community",
-          },
+            submitterName: row.submitter_name || "匿名",
+          } as Question & { submitterName: string },
           score: 1,
         })
       }
@@ -95,18 +96,25 @@ export async function GET(request: Request) {
     }).slice(0, limit)
 
     return NextResponse.json({
-      results: merged.map((r) => ({
-        id: r.question.id,
-        type: r.question.type,
-        category: r.question.category,
-        question: r.question.question,
-        options: r.question.options,
-        answer: r.question.answer,
-        explanation: r.question.explanation,
-        difficulty: r.question.difficulty,
-        calibratedDifficulty: calibratedParams[r.question.id]?.b ?? null,
-        score: r.score,
-      })),
+      results: merged.map((r) => {
+        const src = r.question.source ?? "static"
+        return {
+          id: r.question.id,
+          type: r.question.type,
+          category: r.question.category,
+          question: r.question.question,
+          options: r.question.options,
+          answer: r.question.answer,
+          explanation: r.question.explanation,
+          difficulty: r.question.difficulty,
+          calibratedDifficulty: calibratedParams[r.question.id]?.b ?? null,
+          score: r.score,
+          source: src,
+          submitterName: src === "community"
+            ? (r.question as any).submitterName
+            : undefined,
+        }
+      }),
       query: q,
       total: merged.length,
     })

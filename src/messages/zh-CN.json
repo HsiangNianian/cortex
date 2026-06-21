@@ -255,7 +255,8 @@
 		"diffMedium": "中等",
 		"diffHard": "困难",
 		"thetaLabel": "θ={theta}",
-		"scoreLabel": "score: {score}"
+		"scoreLabel": "score: {score}",
+		"fromBank": "题库"
 	},
 	"sponsors": {
 		"backToTest": "回到测试",
