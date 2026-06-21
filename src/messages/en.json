@@ -636,5 +636,16 @@
     "approve": "Approve",
     "reject": "Reject",
     "verifyingSession": "Verifying session..."
+  },
+  "submitConfirm": {
+    "title": "Submission Confirmation",
+    "intro": "Please confirm the following before submitting:",
+    "original": "The question is original, or AI-assisted but manually verified. The answer is unique and provably correct.",
+    "compliant": "Content does not violate laws, contain political sensitivity, or include discriminatory material.",
+    "name": "Your name will be publicly displayed next to the question. Anonymous submissions will show as \"Anonymous\".",
+    "review": "Submissions require admin approval. Approval is not guaranteed. Once approved, the question appears in the test pool and cannot be withdrawn.",
+    "quota": "Maximum 7 submissions per 7 days per person.",
+    "confirm": "Confirm & Submit",
+    "cancel": "Cancel"
   }
 }

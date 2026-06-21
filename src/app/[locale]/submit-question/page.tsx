@@ -10,6 +10,7 @@ const QUESTION_TYPES = ["logic", "math", "vocab", "event", "event-cause", "event
 export default function SubmitQuestionPage() {
   const t = useTranslations("submitQuestion")
   const tc = useTranslations("question")
+  const tc2 = useTranslations("submitConfirm")
 
   const [type, setType] = useState<string>("logic")
   const [question, setQuestion] = useState("")
@@ -21,6 +22,7 @@ export default function SubmitQuestionPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleOptionChange = (index: number, value: string) => {
@@ -40,7 +42,7 @@ export default function SubmitQuestionPage() {
     if (correctAnswer >= next.length) setCorrectAnswer(next.length - 1)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setSuccess(false)
@@ -69,7 +71,14 @@ export default function SubmitQuestionPage() {
       return
     }
 
+    // Show confirmation dialog
+    setShowConfirm(true)
+  }
+
+  const confirmSubmit = async () => {
+    setShowConfirm(false)
     setSubmitting(true)
+    setError("")
     try {
       const res = await fetch("/api/questions/submit", {
         method: "POST",
@@ -77,7 +86,7 @@ export default function SubmitQuestionPage() {
         body: JSON.stringify({
           type,
           question: question.trim(),
-          options: validOptions,
+          options: options.filter((o) => o.trim()),
           correctAnswer,
           explanation: explanation.trim(),
           submitterEmail: email.trim(),
@@ -274,6 +283,54 @@ export default function SubmitQuestionPage() {
           {submitting ? t("submitting") : t("submit")}
         </button>
       </form>
+
+      {/* Confirmation dialog */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-card p-6 shadow-xl">
+            <h2 className="text-lg font-semibold">{tc2("title")}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{tc2("intro")}</p>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-0.5 shrink-0 text-foreground/40">•</span>
+                <span>{tc2("original")}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-0.5 shrink-0 text-foreground/40">•</span>
+                <span>{tc2("compliant")}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-0.5 shrink-0 text-foreground/40">•</span>
+                <span>{tc2("name")}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-0.5 shrink-0 text-foreground/40">•</span>
+                <span>{tc2("review")}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-0.5 shrink-0 text-foreground/40">•</span>
+                <span>{tc2("quota")}</span>
+              </li>
+            </ul>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={confirmSubmit}
+                disabled={submitting}
+                className="flex-1 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+              >
+                {submitting ? t("submitting") : tc2("confirm")}
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                disabled={submitting}
+                className="flex-1 rounded-md border border-input px-4 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
+              >
+                {tc2("cancel")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
