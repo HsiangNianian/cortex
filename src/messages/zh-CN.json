@@ -8,7 +8,8 @@
 	"nav": {
 		"search": "搜题",
 		"status": "状态",
-		"submit": "出题"
+		"submit": "出题",
+		"marketplace": "题库市集"
 	},
 	"error": {
 		"heading": "出了点问题",
@@ -66,11 +67,12 @@
 			"30 分钟 - 2 小时",
 			"2 - 5 小时",
 			"> 5 小时",
-			"我平常不怎么用到 AI"
+			"我不用AI"
 		],
 		"aiExitTitle": "且慢，壮士",
 		"aiExitMessage": "这个测试衡量的是你在 AI 辅助下的认知能力。如果你平常不怎么用 AI，那测出来的可不是认知退化——而是你的原始智力。\n\n你确定要承担这份因果吗？",
 		"aiExitBack": "我再想想",
+		"aiExitQuit": "退出测试",
 		"pledge": "我承诺在本次测试中不使用任何 AI 辅助工具",
 		"startButton": "开始答题",
 		"selectAiFirst": "请先选择 AI 使用量",
@@ -588,6 +590,7 @@
 		"optionsLabel": "选项",
 		"explanationLabel": "解析",
 		"explanationHint": "不填则只显示答案本身",
+		"explanationPlaceholder": "不要硬编码答案选项，因为实际做题时选项是打乱的",
 		"emailLabel": "邮箱",
 		"emailHint": "仅支持 QQ 邮箱或 Gmail，用于联系出题人",
 		"nameLabel": "出题人姓名",
@@ -606,12 +609,12 @@
 		"errorAnswer": "请选择正确的答案",
 		"errorEmail": "请使用有效的 QQ 邮箱或 Gmail",
 		"errorNetwork": "网络错误，请稍后重试",
-		"questionHint_logic": "描述一个需要逻辑推理的场景，如断案、证词矛盾、排班冲突等。\n关键：答案必须唯一且可严格证明，干扰项需有迷惑性。\n例：甲说"不是我干的"，乙说"是丙干的"，丙说"不是我干的"，已知只有一人说真话，谁是凶手？",
+		"questionHint_logic": "描述一个需要逻辑推理的场景，如断案、证词矛盾、排班冲突等。\n关键：答案必须唯一且可严格证明，干扰项需有迷惑性。\n例：甲说'不是我干的'，乙说'是丙干的'，丙说'不是我干的'，已知只有一人说真话，谁是凶手？",
 		"questionHint_math": "出一道日常生活中的计算题，30秒内可心算完成。\n优先：折扣分摊、时间估算、比例推理、数量级比较。\n避免：需要列方程组的复杂计算。\n例：一件商品原价120元，打8折后再减10元，实际付多少钱？",
 		"questionHint_vocab": "给出一句话，其中挖空一个词语/成语，让选择最恰当的填入。\n考察：易混淆词、成语适用语境、用词准确性。\n例：他做事总是______，从不考虑后果。（A.深思熟虑 B.瞻前顾后 C.鲁莽行事 D.谨小慎微）",
 		"questionHint_event": "给出多个事件或句子，要求判断正确的时间顺序。\n关键：干扰项需看似合理，需仔细分析才能区分。\n例：①他打开冰箱 ②他去了超市 ③他把牛奶放进冰箱 ④他喝完牛奶，正确的顺序是？",
 		"questionHint_event-cause": "描述一个因果关系场景，要求判断因果链条的正确性。\n关键：区分相关性和因果性，排除他因干扰。\n例：某城市冰淇淋销量越高，溺水人数越多。以下哪项最能解释这一现象？",
-		"questionHint_event-argument": "给出一段论证，要求分析论证结构或找出逻辑漏洞。\n关键：考察论证有效性分析，而非个人观点。\n例："所有天鹅都是白的，因为我见过的天鹅都是白的。"这段论证存在什么逻辑问题？"
+		"questionHint_event-argument": "给出一段论证，要求分析论证结构或找出逻辑漏洞。\n关键：考察论证有效性分析，而非个人观点。\n例：「所有天鹅都是白的，因为我见过的天鹅都是白的。」这段论证存在什么逻辑问题？"
 	},
 	"admin": {
 		"login": "管理员登录",
@@ -653,5 +656,39 @@
 		"quota": "每人每 7 天最多提交 7 次，请谨慎出题。",
 		"confirm": "确认提交",
 		"cancel": "我再想想"
+	},
+	"marketplace": {
+		"title": "题库市集",
+		"subtitle": "浏览社区提交的所有题目",
+		"loading": "加载中...",
+		"error": "加载失败，请刷新页面重试",
+		"empty": "还没有题目",
+		"status_pending": "待审核",
+		"status_approved": "已通过",
+		"status_rejected": "已拒绝",
+		"reviewInfo": "审核信息",
+		"reviewedBy": "审核人：{name}",
+		"reviewedAt": "审核时间：{date}",
+		"adminNotes": "审核备注：{notes}",
+		"upvote": "点赞",
+		"downvote": "点踩",
+		"submitter": "出题人",
+		"expandDetail": "展开详情",
+		"collapseDetail": "收起详情",
+		"answer": "正确答案",
+		"explanation": "解析",
+		"options": "选项",
+		"backToHome": "返回首页",
+		"all": "全部",
+		"anonymous": "匿名"
+	},
+	"bulletin": {
+		"title": "社区公告",
+		"p1": "我们现已支持社区出题和审题制度！任何人都可以出题，点击顶部导航栏的「铅笔图标」出题按钮即可提交题目。",
+		"p2": "提交的题目将由审题团队审核，通过后将出现在测试中。你可以在「题库市集」中浏览所有已提交的题目并参与投票。",
+		"p3": "如果你对审题工作感兴趣，欢迎加入我们！",
+		"reviewerTitle": "申请成为审题人",
+		"reviewerDesc": "请发送测试次数不少于 <strong>10 次</strong>且最低分数不超过 <strong>30</strong> 的截图至 <email>i@jyunko.cn</email>，邮件中附上你希望使用的用户名。",
+		"gotIt": "知道了"
 	}
 }

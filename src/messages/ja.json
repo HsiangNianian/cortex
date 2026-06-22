@@ -8,7 +8,8 @@
 	"nav": {
 		"search": "検索",
 		"status": "状態",
-		"submit": "出題"
+		"submit": "出題",
+		"marketplace": "問題マーケット"
 	},
 	"error": {
 		"heading": "問題が発生しました",
@@ -66,11 +67,12 @@
 			"30分〜2時間",
 			"2〜5時間",
 			"5時間以上",
-			"普段はあまりAIを使わない"
+			"AIは使わない"
 		],
 		"aiExitTitle": "待った、勇者よ",
 		"aiExitMessage": "このテストはAI活用時の認知能力を測定します。普段AIを使わない場合、測定されるのは認知の衰えではなく——あなたの地頭の良さです。\n\nその因果、受け止める覚悟はありますか？",
 		"aiExitBack": "考え直す",
+		"aiExitQuit": "テストを終了する",
 		"pledge": "本テストでは一切のAI補助ツールを使用しないことを誓います",
 		"startButton": "回答を開始",
 		"selectAiFirst": "AI使用量を選択してください",
@@ -653,5 +655,39 @@
 		"quota": "7日間で最大7回の提出が可能です。",
 		"confirm": "提出する",
 		"cancel": "やめておく"
+	},
+	"marketplace": {
+		"title": "問題マーケット",
+		"subtitle": "コミュニティから投稿された全問題を閲覧できます",
+		"loading": "読み込み中...",
+		"error": "読み込みに失敗しました。ページを更新してください。",
+		"empty": "まだ問題がありません",
+		"status_pending": "審査待ち",
+		"status_approved": "承認済み",
+		"status_rejected": "却下済み",
+		"reviewInfo": "審査情報",
+		"reviewedBy": "審査者: {name}",
+		"reviewedAt": "審査日時: {date}",
+		"adminNotes": "審査メモ: {notes}",
+		"upvote": "いいね",
+		"downvote": "よくないね",
+		"submitter": "投稿者",
+		"expandDetail": "詳細を表示",
+		"collapseDetail": "詳細を隠す",
+		"answer": "正解",
+		"explanation": "解説",
+		"options": "選択肢",
+		"backToHome": "トップに戻る",
+		"all": "すべて",
+		"anonymous": "匿名"
+	},
+	"bulletin": {
+		"title": "コミュニティお知らせ",
+		"p1": "コミュニティ出題・審査制度を導入しました！上部ナビの「鉛筆アイコン」出題ボタンから問題を投稿できます。",
+		"p2": "投稿された問題は審査チームが審査し、承認された問題はテストに表示されます。「問題マーケット」ですべての投稿を閲覧・投票できます。",
+		"p3": "審査員に興味がありますか？お気軽にお問い合わせください！",
+		"reviewerTitle": "審査員に応募する",
+		"reviewerDesc": " <strong>10 回以上</strong>のテスト受験と最低スコア <strong>30 以下</strong>のスクリーンショットを <email>i@jyunko.cn</email> まで送信してください。希望するユーザー名も明記してください。",
+		"gotIt": "わかりました"
 	}
 }

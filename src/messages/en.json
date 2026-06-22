@@ -8,7 +8,8 @@
   "nav": {
     "search": "Search",
     "status": "Status",
-    "submit": "Submit"
+    "submit": "Submit",
+    "marketplace": "Question Market"
   },
   "error": {
     "heading": "Something went wrong",
@@ -66,11 +67,12 @@
       "30 min - 2 hr",
       "2 - 5 hr",
       "> 5 hr",
-      "I rarely use AI"
+      "I don't use AI"
     ],
     "aiExitTitle": "Hold on, brave one",
     "aiExitMessage": "This test measures your cognitive ability with AI assistance. If you rarely use AI, what we'd be measuring isn't cognitive rust — it's your raw IQ.\n\nAre you sure you want to bear that consequence?",
     "aiExitBack": "Let me reconsider",
+    "aiExitQuit": "Exit Test",
     "pledge": "I pledge not to use any AI assistance during this test",
     "startButton": "Start Quiz",
     "selectAiFirst": "Please select your AI usage first",
@@ -653,5 +655,39 @@
     "quota": "Maximum 7 submissions per 7 days per person.",
     "confirm": "Confirm & Submit",
     "cancel": "Cancel"
+  },
+  "marketplace": {
+    "title": "Question Market",
+    "subtitle": "Browse all community-submitted questions",
+    "loading": "Loading...",
+    "error": "Failed to load. Please refresh.",
+    "empty": "No questions yet",
+    "status_pending": "Pending",
+    "status_approved": "Approved",
+    "status_rejected": "Rejected",
+    "reviewInfo": "Review Info",
+    "reviewedBy": "Reviewer: {name}",
+    "reviewedAt": "Reviewed: {date}",
+    "adminNotes": "Notes: {notes}",
+    "upvote": "Upvote",
+    "downvote": "Downvote",
+    "submitter": "Submitted by",
+    "expandDetail": "Show details",
+    "collapseDetail": "Hide details",
+    "answer": "Correct Answer",
+    "explanation": "Explanation",
+    "options": "Options",
+    "backToHome": "Back to Home",
+    "all": "All",
+    "anonymous": "Anonymous"
+  },
+  "bulletin": {
+    "title": "Community Bulletin",
+    "p1": "Community question submission is now live! Click the pencil icon (Submit) in the top nav to create your own questions.",
+    "p2": "Submitted questions are reviewed by the admin team. Approved questions appear in the test pool. Browse all submissions in the Question Market and vote.",
+    "p3": "Interested in becoming a reviewer? Reach out to us!",
+    "reviewerTitle": "Apply to Become a Reviewer",
+    "reviewerDesc": "Send a screenshot showing at least <strong>10 tests taken</strong> with a minimum score no higher than <strong>30</strong> to <email>i@jyunko.cn</email>, along with your desired username.",
+    "gotIt": "Got it"
   }
 }

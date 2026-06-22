@@ -64,7 +64,7 @@ export function DeclarationPhase({
             className="text-muted-foreground"
             onClick={handleRestart}
           >
-            {n("declaration.backButton")}
+            {n("declaration.aiExitQuit")}
           </Button>
         </CardFooter>
       </Card>
