@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Card,
@@ -33,7 +34,8 @@ export function DeclarationPhase({
 }: DeclarationPhaseProps) {
   const n = useTranslations();
   const aiLevels = n.raw("declaration.aiLevels") as string[];
-  const isAiExit = aiUsage !== null && aiUsage === aiLevels.length - 1;
+  const [exitConfirmed, setExitConfirmed] = useState(false);
+  const isAiExit = aiUsage !== null && aiUsage === aiLevels.length - 1 && !exitConfirmed;
 
   if (isAiExit) {
     return (
@@ -51,13 +53,22 @@ export function DeclarationPhase({
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button
-            size="lg"
-            className="w-full text-base"
-            onClick={() => setAiUsage(null)}
-          >
-            {n("declaration.aiExitBack")}
-          </Button>
+          <div className="flex w-full gap-2">
+            <Button
+              size="lg"
+              className="flex-1 text-base"
+              onClick={() => { setAiUsage(null); setExitConfirmed(false); }}
+            >
+              {n("declaration.aiExitBack")}
+            </Button>
+            <Button
+              size="lg"
+              className="flex-1 text-base"
+              onClick={() => setExitConfirmed(true)}
+            >
+              {n("declaration.aiExitContinue")}
+            </Button>
+          </div>
           <Button
             variant="ghost"
             size="sm"

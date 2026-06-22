@@ -73,6 +73,7 @@
 		"aiExitMessage": "这个测试衡量的是你在 AI 辅助下的认知能力。如果你平常不怎么用 AI，那测出来的可不是认知退化——而是你的原始智力。\n\n你确定要承担这份因果吗？",
 		"aiExitBack": "我再想想",
 		"aiExitQuit": "退出测试",
+		"aiExitContinue": "仍要测试",
 		"pledge": "我承诺在本次测试中不使用任何 AI 辅助工具",
 		"startButton": "开始答题",
 		"selectAiFirst": "请先选择 AI 使用量",
