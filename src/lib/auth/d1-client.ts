@@ -1,6 +1,16 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { createRequire } from "node:module";
 
+// Minimal types for D1 (no @cloudflare/workers-types dependency)
+interface D1PreparedStatement {
+  all<T = unknown>(): Promise<{ results: T[] }>;
+  bind(...params: unknown[]): D1PreparedStatement;
+}
+interface D1Database {
+  prepare(sql: string): D1PreparedStatement;
+  batch(stmts: D1PreparedStatement[]): Promise<unknown[]>;
+}
+
 const CLOUDFLARE_CTX = Symbol.for("__cloudflare-context__");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +33,14 @@ async function getCloudflareEnv(): Promise<CloudflareEnv> {
   } catch {
     // 2nd attempt — createRequire from project root (avoids Turbopack bundling and module resolution from bundled chunks)
     const req = createRequire(process.cwd() + "/package.json");
-    const { getPlatformProxy } = req("wrangler") as typeof import("wrangler");
+    const { getPlatformProxy } = req("wrangler") as {
+      getPlatformProxy: (options: { envFiles?: string[] }) => Promise<{
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        env: Record<string, any>;
+        cf: unknown;
+        ctx: unknown;
+      }>;
+    };
     const proxy = await getPlatformProxy({ envFiles: [] });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalThis as any)[CLOUDFLARE_CTX] = proxy;
@@ -31,12 +48,12 @@ async function getCloudflareEnv(): Promise<CloudflareEnv> {
   }
 }
 
-export async function getDB() {
+export async function getDB(): Promise<D1Database> {
   const env = await getCloudflareEnv();
   if (!env.CORTEX_DB) {
     throw new Error("CORTEX_DB binding not available — is the D1 database configured?");
   }
-  return env.CORTEX_DB;
+  return env.CORTEX_DB as D1Database;
 }
 
 export async function d1Query<T>(sql: string, params?: unknown[]): Promise<T[]> {
