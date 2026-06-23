@@ -27,7 +27,7 @@ export function FestivalTemplateProvider({ children }: { children: ReactNode }) 
   const [activeTemplate, setActiveTemplateState] = useState<FestivalTemplate | null>(null)
   const [ready, setReady] = useState(false)
 
-  // Init: read localStorage -> auto-detect -> apply class
+  // Init: read localStorage (only if still in date) -> auto-detect -> apply class
   useEffect(() => {
     const stored = (() => {
       try {
@@ -40,7 +40,9 @@ export function FestivalTemplateProvider({ children }: { children: ReactNode }) 
     let resolved: FestivalTemplate | null = null
 
     if (stored) {
-      resolved = getTemplateById(stored) ?? null
+      // Only restore from localStorage if the festival is still in date
+      const active = getActiveFestivals()
+      resolved = active.find((t) => t.id === stored) ?? null
     }
 
     if (!resolved) {

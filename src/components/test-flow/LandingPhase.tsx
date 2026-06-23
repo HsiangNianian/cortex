@@ -19,6 +19,7 @@ import type { SavedProgress } from "./helpers";
 import { SiteGoal } from "@/components/site-goal";
 import { CooldownBanner } from "../premium/CooldownBanner";
 import { usePremium } from "../premium/usePremium";
+import { useFestivalTemplate } from "../festival/FestivalTemplateProvider";
 
 interface LandingPhaseProps {
   savedResult: {
@@ -58,6 +59,7 @@ export function LandingPhase({
   const n = useTranslations();
   const locale = useLocale();
   const { isPremium, licenseKey } = usePremium();
+  const { activeTemplate } = useFestivalTemplate();
   const isChallenge = challengeRef !== null;
   const isChinese = locale === "zh-CN";
   const [showCommunityBanner, setShowCommunityBanner] = useState(true);
@@ -132,7 +134,7 @@ export function LandingPhase({
               className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/5"
             >
               <span className="question-mark text-2xl font-bold text-primary">
-                🎋
+                {activeTemplate?.id === "dragonboat" ? "🎋" : "?"}
               </span>
             </div>
             <CardTitle className="text-2xl tracking-tight">
