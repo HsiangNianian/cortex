@@ -89,26 +89,16 @@ export function QuestionCard({
       </div>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="text-xs">
               {currentQ + 1}/{totalQuestions}
             </Badge>
             <Badge variant="outline" className="text-xs">
               {n("question.category." + question.category)}
             </Badge>
-            {authorLabel && (
-              <Badge variant="secondary" className="text-xs text-muted-foreground">
-                {authorLabel}
-              </Badge>
-            )}
             {isMulti && (
               <Badge className="bg-amber-100 text-amber-800 text-xs dark:bg-amber-900/30 dark:text-amber-400">
                 {n("question.multiSelect")}
-              </Badge>
-            )}
-            {isAiQuestion && (
-              <Badge variant="default" className="bg-blue-600 text-white text-xs">
-                {aiBadgeLabel}
               </Badge>
             )}
           </div>
@@ -134,6 +124,22 @@ export function QuestionCard({
             <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
           </div>
         </div>
+
+        {/* Author & AI source badges (second row) */}
+        {(authorLabel || isAiQuestion) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {authorLabel && (
+              <Badge variant="secondary" className="text-xs text-muted-foreground">
+                {authorLabel}
+              </Badge>
+            )}
+            {isAiQuestion && (
+              <Badge variant="default" className="bg-blue-600 text-white text-xs">
+                {aiBadgeLabel}
+              </Badge>
+            )}
+          </div>
+        )}
 
         {/* Progress bar */}
         <div className="mt-3 flex gap-[3px]">
