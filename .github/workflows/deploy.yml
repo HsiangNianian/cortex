@@ -21,6 +21,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm test
+        env:
+          NEXT_PUBLIC_ADAPTIVE_MODE: "true"
+          NEXT_PUBLIC_PREMIUM_MODE: "true"
+
+      - run: pnpm lint --quiet
+        continue-on-error: true
+
       - run: pnpm cf:build
         env:
           NEXT_PUBLIC_ADAPTIVE_MODE: true

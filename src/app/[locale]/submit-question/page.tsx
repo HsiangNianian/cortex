@@ -1,84 +1,91 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { useTranslations } from "next-intl"
-import { ArrowLeft } from "lucide-react"
-import { Link } from "@/i18n/navigation"
+import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
-const QUESTION_TYPES = ["logic", "math", "vocab", "event", "event-cause", "event-argument"] as const
+const QUESTION_TYPES = [
+  "logic",
+  "math",
+  "vocab",
+  "event",
+  "event-cause",
+  "event-argument",
+] as const;
 
 export default function SubmitQuestionPage() {
-  const t = useTranslations("submitQuestion")
-  const tc = useTranslations("question")
-  const tc2 = useTranslations("submitConfirm")
+  const t = useTranslations("submitQuestion");
+  const tc = useTranslations("question");
+  const tc2 = useTranslations("submitConfirm");
 
-  const [type, setType] = useState<string>("logic")
-  const [question, setQuestion] = useState("")
-  const [options, setOptions] = useState<string[]>(["", ""])
-  const [correctAnswer, setCorrectAnswer] = useState<number>(0)
-  const [explanation, setExplanation] = useState("")
-  const [email, setEmail] = useState("")
-  const [name, setName] = useState("")
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const formRef = useRef<HTMLFormElement>(null)
+  const [type, setType] = useState<string>("logic");
+  const [question, setQuestion] = useState("");
+  const [options, setOptions] = useState<string[]>(["", ""]);
+  const [correctAnswer, setCorrectAnswer] = useState<number>(0);
+  const [explanation, setExplanation] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleOptionChange = (index: number, value: string) => {
-    const next = [...options]
-    next[index] = value
-    setOptions(next)
-  }
+    const next = [...options];
+    next[index] = value;
+    setOptions(next);
+  };
 
   const addOption = () => {
-    if (options.length < 6) setOptions([...options, ""])
-  }
+    if (options.length < 6) setOptions([...options, ""]);
+  };
 
   const removeOption = (index: number) => {
-    if (options.length <= 2) return
-    const next = options.filter((_, i) => i !== index)
-    setOptions(next)
-    if (correctAnswer >= next.length) setCorrectAnswer(next.length - 1)
-  }
+    if (options.length <= 2) return;
+    const next = options.filter((_, i) => i !== index);
+    setOptions(next);
+    if (correctAnswer >= next.length) setCorrectAnswer(next.length - 1);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setSuccess(false)
+    e.preventDefault();
+    setError("");
+    setSuccess(false);
 
     // Client-side validation
-    if (!type || !QUESTION_TYPES.includes(type as typeof QUESTION_TYPES[number])) {
-      setError(t("errorType"))
-      return
+    if (!type || !QUESTION_TYPES.includes(type as (typeof QUESTION_TYPES)[number])) {
+      setError(t("errorType"));
+      return;
     }
     if (!question.trim() || question.trim().length < 2) {
-      setError(t("errorQuestion"))
-      return
+      setError(t("errorQuestion"));
+      return;
     }
-    const validOptions = options.filter((o) => o.trim())
+    const validOptions = options.filter((o) => o.trim());
     if (validOptions.length < 2) {
-      setError(t("errorOptions"))
-      return
+      setError(t("errorOptions"));
+      return;
     }
     if (correctAnswer < 0 || correctAnswer >= options.length || !options[correctAnswer]?.trim()) {
-      setError(t("errorAnswer"))
-      return
+      setError(t("errorAnswer"));
+      return;
     }
-    const emailRe = /^[a-zA-Z0-9._%+-]+@(qq\.com|gmail\.com)$/
+    const emailRe = /^[a-zA-Z0-9._%+-]+@(qq\.com|gmail\.com)$/;
     if (!emailRe.test(email.trim())) {
-      setError(t("errorEmail"))
-      return
+      setError(t("errorEmail"));
+      return;
     }
 
     // Show confirmation dialog
-    setShowConfirm(true)
-  }
+    setShowConfirm(true);
+  };
 
   const confirmSubmit = async () => {
-    setShowConfirm(false)
-    setSubmitting(true)
-    setError("")
+    setShowConfirm(false);
+    setSubmitting(true);
+    setError("");
     try {
       const res = await fetch("/api/questions/submit", {
         method: "POST",
@@ -92,35 +99,36 @@ export default function SubmitQuestionPage() {
           submitterEmail: email.trim(),
           submitterName: name.trim(),
         }),
-      })
-      const data = await res.json()
+      });
+      const data = await res.json();
       if (!res.ok) {
-        setError(data.details?.join("；") || data.error || t("errorType"))
-        return
+        setError(data.details?.join("；") || data.error || t("errorType"));
+        return;
       }
-      setSuccess(true)
-      formRef.current?.reset()
-      setType("logic")
-      setQuestion("")
-      setOptions(["", ""])
-      setCorrectAnswer(0)
-      setExplanation("")
-      setEmail("")
-      setName("")
+      setSuccess(true);
+      formRef.current?.reset();
+      setType("logic");
+      setQuestion("");
+      setOptions(["", ""]);
+      setCorrectAnswer(0);
+      setExplanation("");
+      setEmail("");
+      setName("");
     } catch {
-      setError(t("errorNetwork"))
+      setError(t("errorNetwork"));
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const typeLabel = (type: string) => {
-    const key = `category.${type}`
-    const label = tc(key)
-    return label !== key ? label : type
-  }
+    const key = `category.${type}`;
+    const label = tc(key);
+    return label !== key ? label : type;
+  };
 
-  const questionHint = t(`questionHint_${type}` as any) || t("questionLabel")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const questionHint = t(`questionHint_${type}` as any) || t("questionLabel");
 
   if (success) {
     return (
@@ -143,12 +151,15 @@ export default function SubmitQuestionPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
-      <Link href="/" className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+      <Link
+        href="/"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-4 w-4" />
         {t("backToHome")}
       </Link>
@@ -172,7 +183,9 @@ export default function SubmitQuestionPage() {
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
           >
             {QUESTION_TYPES.map((qt) => (
-              <option key={qt} value={qt}>{typeLabel(qt)}</option>
+              <option key={qt} value={qt}>
+                {typeLabel(qt)}
+              </option>
             ))}
           </select>
         </div>
@@ -236,7 +249,8 @@ export default function SubmitQuestionPage() {
         {/* Explanation */}
         <div>
           <label className="mb-1 block text-sm font-medium">
-            {t("explanationLabel")} <span className="text-muted-foreground">（{t("explanationHint")}）</span>
+            {t("explanationLabel")}{" "}
+            <span className="text-muted-foreground">（{t("explanationHint")}）</span>
           </label>
           <textarea
             value={explanation}
@@ -334,5 +348,5 @@ export default function SubmitQuestionPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

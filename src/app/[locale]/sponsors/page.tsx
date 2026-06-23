@@ -1,85 +1,98 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useMemo } from "react"
-import { useTranslations } from "next-intl"
-import { ArrowLeft, Star, Coffee, Loader2 } from "lucide-react"
-import { Link } from "@/i18n/navigation"
+import { useState, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { ArrowLeft, Star, Coffee, Loader2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 interface SponsorUser {
-  userId: string
-  name: string
-  avatar: string
+  userId: string;
+  name: string;
+  avatar: string;
 }
 
 interface SponsorEntry {
-  user: SponsorUser
-  allSumAmount: string
-  planName: string
-  planPrice: string
-  lastPayTime: number
-  planId: string
-  anonymous?: boolean
+  user: SponsorUser;
+  allSumAmount: string;
+  planName: string;
+  planPrice: string;
+  lastPayTime: number;
+  planId: string;
+  anonymous?: boolean;
 }
 
 interface SponsorsData {
-  sponsors: SponsorEntry[]
-  supportWall: SponsorEntry[]
-  sponsorWall: SponsorEntry[]
-  total: number
-  cached: boolean
+  sponsors: SponsorEntry[];
+  supportWall: SponsorEntry[];
+  sponsorWall: SponsorEntry[];
+  total: number;
+  cached: boolean;
 }
 
 /* ── Full-page Danmaku ── */
-function Danmaku({ entries }: { entries: SponsorEntry[] }) {
-  if (entries.length === 0) return null
+interface DanmakuItem {
+  entry: SponsorEntry;
+  top: number;
+  speed: number;
+  delay: number;
+  fontSize: number;
+}
 
-  // Pick a random subset to avoid too much density
-  const count = Math.min(entries.length, 12)
-  const shuffled = [...entries].sort(() => Math.random() - 0.5).slice(0, count)
+function Danmaku({ entries }: { entries: SponsorEntry[] }) {
+  const [items, setItems] = useState<DanmakuItem[]>([]);
+
+  useEffect(() => {
+    const count = Math.min(entries.length, 12);
+    const shuffled = [...entries].sort(() => Math.random() - 0.5).slice(0, count);
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setItems(
+      shuffled.map((entry, i) => ({
+        entry,
+        top: 5 + Math.random() * 80,
+        speed: 35 + Math.random() * 45,
+        delay: -(Math.random() * (35 + Math.random() * 45)),
+        fontSize: 13 + Math.random() * 3,
+      })),
+    );
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [entries]);
+
+  if (entries.length === 0 || items.length === 0) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden">
-      {shuffled.map((s, i) => {
-        const top = 5 + Math.random() * 80 // 5%–85% from top
-        const speed = 35 + Math.random() * 45 // 35s–80s
-        const delay = -(Math.random() * speed) // random start position
-        const fontSize = 13 + Math.random() * 3 // 13-16px
-
-        return (
-          <div
-            key={i}
-            className="absolute flex animate-danmaku-track whitespace-nowrap"
-            style={{
-              top: `${top}%`,
-              animationDuration: `${speed}s`,
-              animationDelay: `${delay}s`,
-              fontSize: `${fontSize}px`,
-            }}
-          >
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-background/70 px-3 py-1.5 shadow-md backdrop-blur-md border">
-              {s.user.avatar && !s.anonymous ? (
-                <img src={s.user.avatar} alt="" className="h-5 w-5 rounded-full" loading="lazy" />
-              ) : (
-                <Coffee className="h-4 w-4 text-muted-foreground/40" />
-              )}
-              <span className="font-medium">
-                {s.anonymous ? "匿名用户" : s.user.name}
-              </span>
-              <span className="text-muted-foreground">赞助了</span>
-              <span className="font-semibold text-amber-600 dark:text-amber-400 tabular-nums">
-                ¥{s.allSumAmount}
-              </span>
-            </div>
+      {items.map(({ entry: s, top, speed, delay, fontSize }) => (
+        <div
+          key={`${s.user.userId}-${top}`}
+          className="absolute flex animate-danmaku-track whitespace-nowrap"
+          style={{
+            top: `${top}%`,
+            animationDuration: `${speed}s`,
+            animationDelay: `${delay}s`,
+            fontSize: `${fontSize}px`,
+          }}
+        >
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-background/70 px-3 py-1.5 shadow-md backdrop-blur-md border">
+            {s.user.avatar && !s.anonymous ? (
+              <img src={s.user.avatar} alt="" className="h-5 w-5 rounded-full" loading="lazy" />
+            ) : (
+              <Coffee className="h-4 w-4 text-muted-foreground/40" />
+            )}
+            <span className="font-medium">{s.anonymous ? "匿名用户" : s.user.name}</span>
+            <span className="text-muted-foreground">赞助了</span>
+            <span className="font-semibold text-amber-600 dark:text-amber-400 tabular-nums">
+              ¥{s.allSumAmount}
+            </span>
           </div>
-        )
-      })}
+        </div>
+      ))}
     </div>
-  )
+  );
 }
 
 /* ── Sponsor Wall Cell ── */
 function WallCell({ entry }: { entry: SponsorEntry }) {
-  const anon = entry.anonymous === true
+  const anon = entry.anonymous === true;
 
   return (
     <div className="flex flex-col items-center gap-1">
@@ -91,46 +104,61 @@ function WallCell({ entry }: { entry: SponsorEntry }) {
           loading="lazy"
         />
       ) : (
-        <div className={`flex h-12 w-12 items-center justify-center rounded-full bg-muted ${anon ? "blur-[2px]" : ""}`}>
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-full bg-muted ${anon ? "blur-[2px]" : ""}`}
+        >
           <Coffee className="h-6 w-6 text-muted-foreground/30" />
         </div>
       )}
-      <p className={`max-w-[72px] truncate text-center text-[11px] font-medium ${anon ? "blur-[2px] select-none" : ""}`}>
+      <p
+        className={`max-w-[72px] truncate text-center text-[11px] font-medium ${anon ? "blur-[2px] select-none" : ""}`}
+      >
         {anon ? "匿名用户" : entry.user.name}
       </p>
       <p className="text-xs font-semibold tabular-nums text-amber-600 dark:text-amber-400">
         ¥{entry.allSumAmount}
       </p>
     </div>
-  )
+  );
 }
 
 export default function SponsorsPage() {
   useEffect(() => {
-    document.body.classList.add("hide-top-nav")
-    return () => document.body.classList.remove("hide-top-nav")
-  }, [])
-  const t = useTranslations("sponsors")
-  const [data, setData] = useState<SponsorsData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+    document.body.classList.add("hide-top-nav");
+    return () => document.body.classList.remove("hide-top-nav");
+  }, []);
+  const t = useTranslations("sponsors");
+  const [data, setData] = useState<SponsorsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetch("/api/sponsors")
       .then((r) => r.json())
-      .then((d) => { setData(d); setLoading(false) })
-      .catch(() => { setError(true); setLoading(false) })
-  }, [])
+      .then((d) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  }, []);
 
   const sortedSponsors = useMemo(() => {
-    if (!data?.sponsorWall) return []
-    return [...data.sponsorWall].sort((a, b) => parseFloat(b.allSumAmount) - parseFloat(a.allSumAmount))
-  }, [data])
+    if (!data?.sponsorWall) return [];
+    return [...data.sponsorWall].sort(
+      (a, b) => parseFloat(b.allSumAmount) - parseFloat(a.allSumAmount),
+    );
+  }, [data]);
 
   return (
     <div className="flex min-h-dvh flex-col px-4 py-8">
       <div className="mx-auto w-full max-w-2xl space-y-8">
-        <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
           <ArrowLeft className="h-4 w-4" />
           {t("backToTest")}
         </Link>
@@ -183,5 +211,5 @@ export default function SponsorsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,15 +1,20 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react"
-import { FESTIVAL_TEMPLATES, getActiveFestivals, getTemplateById, type FestivalTemplate } from "@/lib/festival-templates"
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
+import {
+  FESTIVAL_TEMPLATES,
+  getActiveFestivals,
+  getTemplateById,
+  type FestivalTemplate,
+} from "@/lib/festival-templates";
 
-const STORAGE_KEY = "cortex-festival-template"
+const STORAGE_KEY = "cortex-festival-template";
 
 interface FestivalTemplateContextValue {
-  activeTemplate: FestivalTemplate | null
-  availableTemplates: FestivalTemplate[]
-  setActiveTemplate: (id: string | null) => void
-  clearTemplate: () => void
+  activeTemplate: FestivalTemplate | null;
+  availableTemplates: FestivalTemplate[];
+  setActiveTemplate: (id: string | null) => void;
+  clearTemplate: () => void;
 }
 
 const FestivalTemplateContext = createContext<FestivalTemplateContextValue>({
@@ -17,90 +22,87 @@ const FestivalTemplateContext = createContext<FestivalTemplateContextValue>({
   availableTemplates: FESTIVAL_TEMPLATES,
   setActiveTemplate: () => {},
   clearTemplate: () => {},
-})
+});
 
 export function useFestivalTemplate() {
-  return useContext(FestivalTemplateContext)
+  return useContext(FestivalTemplateContext);
 }
 
 export function FestivalTemplateProvider({ children }: { children: ReactNode }) {
-  const [activeTemplate, setActiveTemplateState] = useState<FestivalTemplate | null>(null)
-  const [ready, setReady] = useState(false)
+  const [activeTemplate, setActiveTemplateState] = useState<FestivalTemplate | null>(null);
 
-  // Init: read localStorage (only if still in date) -> auto-detect -> apply class
+  // Init: read localStorage (only if still in date) -> auto-detect
   useEffect(() => {
     const stored = (() => {
       try {
-        return localStorage.getItem(STORAGE_KEY)
+        return localStorage.getItem(STORAGE_KEY);
       } catch {
-        return null
+        return null;
       }
-    })()
+    })();
 
-    let resolved: FestivalTemplate | null = null
+    let resolved: FestivalTemplate | null = null;
 
     if (stored) {
-      // Only restore from localStorage if the festival is still in date
-      const active = getActiveFestivals()
-      resolved = active.find((t) => t.id === stored) ?? null
+      const active = getActiveFestivals();
+      resolved = active.find((t) => t.id === stored) ?? null;
     }
 
     if (!resolved) {
-      const active = getActiveFestivals()
-      resolved = active.length > 0 ? active[0] : null
+      const active = getActiveFestivals();
+      resolved = active.length > 0 ? active[0] : null;
     }
 
-    setActiveTemplateState(resolved)
-    setReady(true)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActiveTemplateState(resolved);
 
-    return () => {
-      // Cleanup on unmount
-      if (resolved) {
-        document.documentElement.classList.remove(resolved.cssClass)
-      }
+    // Cleanup on unmount
+    if (resolved) {
+      return () => {
+        document.documentElement.classList.remove(resolved.cssClass);
+      };
     }
-  }, [])
+  }, []);
 
   // Sync class on <html> whenever activeTemplate changes
   useEffect(() => {
-    // Remove all festival classes
     for (const t of FESTIVAL_TEMPLATES) {
-      document.documentElement.classList.remove(t.cssClass)
+      document.documentElement.classList.remove(t.cssClass);
     }
 
     if (activeTemplate) {
-      document.documentElement.classList.add(activeTemplate.cssClass)
+      document.documentElement.classList.add(activeTemplate.cssClass);
     }
-  }, [activeTemplate])
+
+    return () => {
+      for (const t of FESTIVAL_TEMPLATES) {
+        document.documentElement.classList.remove(t.cssClass);
+      }
+    };
+  }, [activeTemplate]);
 
   const setActiveTemplate = useCallback((id: string | null) => {
-    const tpl = id ? getTemplateById(id) ?? null : null
-    setActiveTemplateState(tpl)
+    const tpl = id ? (getTemplateById(id) ?? null) : null;
+    setActiveTemplateState(tpl);
     try {
       if (tpl) {
-        localStorage.setItem(STORAGE_KEY, tpl.id)
+        localStorage.setItem(STORAGE_KEY, tpl.id);
       } else {
-        localStorage.removeItem(STORAGE_KEY)
+        localStorage.removeItem(STORAGE_KEY);
       }
     } catch {
       // localStorage unavailable
     }
-  }, [])
+  }, []);
 
   const clearTemplate = useCallback(() => {
-    setActiveTemplate(null)
+    setActiveTemplate(null);
     try {
-      localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(STORAGE_KEY);
     } catch {
       // localStorage unavailable
     }
-  }, [])
-
-  // Don't render anything different until ready
-  // so server and first client render stay in sync
-  if (!ready) {
-    return <>{children}</>
-  }
+  }, []);
 
   return (
     <FestivalTemplateContext.Provider
@@ -113,5 +115,5 @@ export function FestivalTemplateProvider({ children }: { children: ReactNode }) 
     >
       {children}
     </FestivalTemplateContext.Provider>
-  )
+  );
 }

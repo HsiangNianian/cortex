@@ -1,10 +1,10 @@
-// Seed script: generate PBKDF2 password hash for admin account creation.
+// Seed script: generate bcrypt password hash for admin account creation.
 //
 // Usage:
 //   node scripts/seed-admin.mjs
 //
 // It will prompt for username and password, then print the SQL INSERT statement.
-import * as crypto from "node:crypto"
+import bcrypt from "bcryptjs"
 import * as readline from "node:readline"
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
@@ -32,8 +32,7 @@ async function main() {
     process.exit(1)
   }
 
-  const pepper = "cortex-admin-v1"
-  const hash = crypto.createHash("sha256").update(password + pepper).digest("hex")
+  const hash = await bcrypt.hash(password, 12)
 
   console.log("\n--- SQL to execute ---")
   console.log(

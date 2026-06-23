@@ -6,6 +6,7 @@ const INTERPRET_DAILY_LIMIT = 1;
 
 async function getKV() {
   const { env } = await getCloudflareContext();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (env as any).CORTEX_KV;
 }
 
@@ -90,6 +91,7 @@ Points:
 
 export async function POST(request: Request) {
   const startTs = Date.now();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const logCtx: Record<string, any> = {};
 
   try {
@@ -114,10 +116,7 @@ export async function POST(request: Request) {
     // Daily retry limit (default: 1)
     if (await checkInterpretLimit(licenseKey)) {
       console.log("[ai/interpret] daily_limit_exhausted", logCtx);
-      return NextResponse.json(
-        { error: "daily_limit_exhausted" },
-        { status: 429 },
-      );
+      return NextResponse.json({ error: "daily_limit_exhausted" }, { status: 429 });
     }
 
     const body: InterpretBody = await request.json();
@@ -221,8 +220,7 @@ export async function POST(request: Request) {
       if (sseBuf.startsWith("data: ") && sseBuf.slice(6) !== "[DONE]") {
         try {
           const parsed = JSON.parse(sseBuf.slice(6));
-          if (parsed.choices?.[0]?.delta?.content)
-            fullText += parsed.choices[0].delta.content;
+          if (parsed.choices?.[0]?.delta?.content) fullText += parsed.choices[0].delta.content;
           else if (parsed.response) fullText += parsed.response;
         } catch {
           /* ignore */
@@ -238,7 +236,7 @@ export async function POST(request: Request) {
           analysisPreview: analysis.slice(0, 50),
           elapsed,
         });
-        recordInterpretUse(licenseKey).catch(() => { });
+        recordInterpretUse(licenseKey).catch(() => {});
         return NextResponse.json({ analysis });
       }
     } catch (e) {
@@ -259,7 +257,7 @@ export async function POST(request: Request) {
         analysisPreview: analysis.slice(0, 50),
         elapsed,
       });
-      recordInterpretUse(licenseKey).catch(() => { });
+      recordInterpretUse(licenseKey).catch(() => {});
       return NextResponse.json({ analysis });
     } catch (e) {
       console.warn("[ai/interpret] non-streaming also failed:", {
@@ -299,10 +297,7 @@ export async function POST(request: Request) {
 
 // ─── Streaming AI call ─────────────────────────────────────────────────────
 
-async function callAIStream(
-  sysPrompt: string,
-  userPrompt: string,
-): Promise<ReadableStream> {
+async function callAIStream(sysPrompt: string, userPrompt: string): Promise<ReadableStream> {
   // 1) DeepSeek streaming (primary)
   const deepseekKey = process.env.DEEPSEEK_API_KEY;
   if (deepseekKey) {
@@ -335,11 +330,11 @@ async function callAIStream(
 
   // 2) CF Workers AI binding (fallback)
   try {
-    const { env } = await import("@opennextjs/cloudflare").then((m) =>
-      m.getCloudflareContext(),
-    );
+    const { env } = await import("@opennextjs/cloudflare").then((m) => m.getCloudflareContext());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((env as any).AI) {
       const stream = await Promise.race([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (env as any).AI.run("@cf/qwen/qwen3-30b-a3b-fp8", {
           messages: [
             { role: "system", content: sysPrompt },
@@ -350,10 +345,7 @@ async function callAIStream(
           stream: true,
         }),
         new Promise<never>((_, reject) =>
-          setTimeout(
-            () => reject(new Error("env.AI streaming startup timeout")),
-            15000,
-          ),
+          setTimeout(() => reject(new Error("env.AI streaming startup timeout")), 15000),
         ),
       ]);
       return stream as ReadableStream;
@@ -389,8 +381,7 @@ async function callAI(sysPrompt: string, userPrompt: string): Promise<string> {
         }),
       });
       const data = await res.json();
-      if (data.choices?.[0]?.message?.content)
-        return data.choices[0].message.content;
+      if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
       console.warn("[ai/interpret] DeepSeek non-streaming api_error", {
         status: res.status,
       });
@@ -401,11 +392,11 @@ async function callAI(sysPrompt: string, userPrompt: string): Promise<string> {
 
   // 2) CF Workers AI binding (fallback)
   try {
-    const { env } = await import("@opennextjs/cloudflare").then((m) =>
-      m.getCloudflareContext(),
-    );
+    const { env } = await import("@opennextjs/cloudflare").then((m) => m.getCloudflareContext());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((env as any).AI) {
       const result = await Promise.race([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (env as any).AI.run("@cf/qwen/qwen3-30b-a3b-fp8", {
           messages: [
             { role: "system", content: sysPrompt },

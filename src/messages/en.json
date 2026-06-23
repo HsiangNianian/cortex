@@ -62,13 +62,7 @@
     "timeLimit": "Each question has a {seconds}-second limit, auto-skip on timeout",
     "aiUsageLabel": "How much time do you spend using AI tools daily?",
     "aiUsageHint": "ChatGPT, Claude, Copilot, Gemini, etc. all count",
-    "aiLevels": [
-      "< 30 min",
-      "30 min - 2 hr",
-      "2 - 5 hr",
-      "> 5 hr",
-      "I don't use AI"
-    ],
+    "aiLevels": ["< 30 min", "30 min - 2 hr", "2 - 5 hr", "> 5 hr", "I don't use AI"],
     "aiExitTitle": "Hold on, brave one",
     "aiExitMessage": "This test measures your cognitive ability with AI assistance. If you rarely use AI, what we'd be measuring isn't cognitive rust — it's your raw IQ.\n\nAre you sure you want to bear that consequence?",
     "aiExitBack": "Let me reconsider",
@@ -535,6 +529,7 @@
     }
   },
   "status": {
+    "blocked": "The site has been blocked by Vercel due to bandwidth limits. We are migrating — back soon.",
     "pageTitle": "System Status",
     "pageSubtitle": "Real-time system metrics and usage statistics",
     "requestsToday": "Requests Today",

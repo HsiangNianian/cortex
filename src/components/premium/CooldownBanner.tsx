@@ -1,35 +1,43 @@
-"use client"
+"use client";
 
-import { X, Bug, MessageCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Link } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
+import { useState, useEffect } from "react";
+import { X, Bug, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface CooldownBannerProps {
-  cooldownEndsAt: number
-  onClose: () => void
+  cooldownEndsAt: number;
+  onClose: () => void;
 }
 
 function formatRemaining(ms: number, t: ReturnType<typeof useTranslations>): string {
-  const totalHours = Math.ceil(ms / (1000 * 60 * 60))
-  const days = Math.floor(totalHours / 24)
-  const hours = totalHours % 24
-  if (days > 0 && hours > 0) return t("remainingDaysHours", { days, hours })
-  if (days > 0) return t("remainingDays", { days })
-  return t("remainingHours", { totalHours })
+  const totalHours = Math.ceil(ms / (1000 * 60 * 60));
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+  if (days > 0 && hours > 0) return t("remainingDaysHours", { days, hours });
+  if (days > 0) return t("remainingDays", { days });
+  return t("remainingHours", { totalHours });
 }
 
 export function CooldownBanner({ cooldownEndsAt, onClose }: CooldownBannerProps) {
-  const remainingMs = cooldownEndsAt - Date.now()
-  const t = useTranslations("cooldown")
-  const remaining = formatRemaining(remainingMs, t)
+  const [remainingMs, setRemainingMs] = useState(0);
+  const t = useTranslations("cooldown");
+  const remaining = formatRemaining(remainingMs, t);
+
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setRemainingMs(cooldownEndsAt - Date.now());
+  }, [cooldownEndsAt]);
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       role="dialog"
       aria-modal="true"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div className="relative w-full max-w-sm rounded-xl border border-amber-200 bg-amber-50 p-6 shadow-2xl text-center dark:border-amber-800 dark:bg-amber-950">
         <Button
@@ -46,12 +54,8 @@ export function CooldownBanner({ cooldownEndsAt, onClose }: CooldownBannerProps)
         <p className="text-4xl font-bold text-amber-800 dark:text-amber-200 mt-2 tabular-nums">
           {remaining}
         </p>
-        <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
-          {t("cooldownLabel")}
-        </p>
-        <p className="mt-4 text-sm text-amber-700 dark:text-amber-300">
-          {t("upgradePrompt")}
-        </p>
+        <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">{t("cooldownLabel")}</p>
+        <p className="mt-4 text-sm text-amber-700 dark:text-amber-300">{t("upgradePrompt")}</p>
 
         <div className="mt-4 flex flex-col gap-2">
           <Link
@@ -96,10 +100,8 @@ export function CooldownBanner({ cooldownEndsAt, onClose }: CooldownBannerProps)
           </div>
         </div>
 
-        <p className="mt-3 text-xs text-amber-500/70 dark:text-amber-500/50">
-          {t("warningText")}
-        </p>
+        <p className="mt-3 text-xs text-amber-500/70 dark:text-amber-500/50">{t("warningText")}</p>
       </div>
     </div>
-  )
+  );
 }

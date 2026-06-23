@@ -2,13 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { scoreAnswer, isCorrect } from "@/lib/scoring";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Flag, X } from "lucide-react";
@@ -67,14 +61,17 @@ export function QuestionCard({
   const question = questions[currentQ];
   if (!question) return null;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const questionSource = (question as any).source;
   const isAiQuestion = questionSource === "llm" || questionSource === "llm-pool";
-  const aiBadgeLabel = questionSource === "llm-pool" ? n("testing.aiPoolBadge") : n("testing.aiGeneratedBadge");
+  const aiBadgeLabel =
+    questionSource === "llm-pool" ? n("testing.aiPoolBadge") : n("testing.aiGeneratedBadge");
   const isMulti = Array.isArray(question.answer);
   const authorLabel = isAiQuestion
     ? "出题人: AI"
     : questionSource === "community"
-      ? "出题人: " + ((question as any).submitterName || "匿名")
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        "出题人: " + ((question as any).submitterName || "匿名")
       : null;
 
   return (
@@ -128,8 +125,11 @@ export function QuestionCard({
                     : "text-muted-foreground/40 hover:text-amber-500 hover:bg-muted"
               }`}
             >
-              <Flag className={`h-3.5 w-3.5 ${flaggedIds.has(question.id) ? "fill-amber-400" : ""}`} />
-              {!hasFlaggedBefore && (flaggedIds.has(question.id) ? n("testing.flagged") : n("testing.flagLabel"))}
+              <Flag
+                className={`h-3.5 w-3.5 ${flaggedIds.has(question.id) ? "fill-amber-400" : ""}`}
+              />
+              {!hasFlaggedBefore &&
+                (flaggedIds.has(question.id) ? n("testing.flagged") : n("testing.flagLabel"))}
             </button>
             <QuestionTimer remaining={timeLeft} total={QUESTION_TIME} />
           </div>
@@ -147,11 +147,7 @@ export function QuestionCard({
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-sm transition-colors ${
-                  answered
-                    ? "bg-foreground"
-                    : isCurrent
-                      ? "bg-foreground/30"
-                      : "bg-muted"
+                  answered ? "bg-foreground" : isCurrent ? "bg-foreground/30" : "bg-muted"
                 }`}
               />
             );
@@ -166,11 +162,8 @@ export function QuestionCard({
       <CardContent className="space-y-2">
         {question.options.map((option, i) => {
           const optSelected = isSelected(selected, i);
-          const showFeedback =
-            answers[currentQ] !== undefined &&
-            answers[currentQ] !== null;
-          const answerCorrect =
-            showFeedback && isCorrect(i, question.answer);
+          const showFeedback = answers[currentQ] !== undefined && answers[currentQ] !== null;
+          const answerCorrect = showFeedback && isCorrect(i, question.answer);
           const userPicked =
             showFeedback &&
             (Array.isArray(answers[currentQ])
@@ -179,9 +172,7 @@ export function QuestionCard({
           const isWrong = userPicked && !answerCorrect;
           // Partial credit: some correct but not full
           const answerScore =
-            showFeedback && isMulti
-              ? scoreAnswer(answers[currentQ], question.answer)
-              : -1;
+            showFeedback && isMulti ? scoreAnswer(answers[currentQ], question.answer) : -1;
           const isPartial = answerScore > 0 && answerScore < 1;
 
           return (
@@ -204,12 +195,7 @@ export function QuestionCard({
               }`}
             >
               <span className="font-medium">
-                {isMulti
-                  ? optSelected
-                    ? "☑"
-                    : "☐"
-                  : String.fromCharCode(65 + i)}
-                .
+                {isMulti ? (optSelected ? "☑" : "☐") : String.fromCharCode(65 + i)}.
               </span>{" "}
               {renderEmphasized(option)}
             </button>
@@ -224,15 +210,13 @@ export function QuestionCard({
           </p>
         )}
         <Button
-            size="lg"
-            className="w-full text-base"
-            disabled={isSelectionEmpty(selected)}
-            onClick={handleNext}
-          >
-            {isLastQuestion
-              ? n("testing.finishButton")
-              : n("testing.nextButton")}
-          </Button>
+          size="lg"
+          className="w-full text-base"
+          disabled={isSelectionEmpty(selected)}
+          onClick={handleNext}
+        >
+          {isLastQuestion ? n("testing.finishButton") : n("testing.nextButton")}
+        </Button>
       </CardFooter>
     </Card>
   );

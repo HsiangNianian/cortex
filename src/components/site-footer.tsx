@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
+import { useState } from "react";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
-type FooterNamespace = "result" | "stats"
+type FooterNamespace = "result" | "stats";
 
 export function SiteFooter({ namespace }: { namespace: FooterNamespace }) {
-  const t = useTranslations(namespace)
-  const ts = useTranslations("sponsors")
-  const [toast, setToast] = useState(false)
+  const t = useTranslations(namespace);
+  const ts = useTranslations("sponsors");
+  const tStatus = useTranslations("status");
+  const [toast, setToast] = useState(false);
 
   return (
     <>
@@ -18,65 +19,64 @@ export function SiteFooter({ namespace }: { namespace: FooterNamespace }) {
           toast ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
         }`}
       >
-        由于站点访问人数过多，相关站点已被 Vercel 因超限问题 Block。正在加班自掏腰包迁移中，稍后恢复访问。
+        {tStatus("blocked")}
       </div>
 
       <footer className="flex flex-col items-center gap-2 pt-4 text-xs text-muted-foreground">
         <div className="flex items-center justify-center gap-3">
-        <span>Cortex &copy; {new Date().getFullYear()}</span>
-        <a
-          href="https://academic.jyunko.cn"
-          target="_blank"
-          rel="noreferrer"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("author")}
-        </a>
-        <span className="footer-links text-muted-foreground/40">|</span>
-        <Link
-          href="/about"
-          className="footer-links transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("aboutLink")}
-        </Link>
-        <span className="footer-links text-muted-foreground/40">|</span>
-        <Link
-          href="/sponsors"
-          className="footer-links transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {ts("title")}
-        </Link>
-      </div>
-      <div className="footer-links flex items-center justify-center gap-3">
-        <a
-          href="https://deadpan.hydroroll.team"
-          target="_blank"
-          rel="noreferrer"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("otherGame")}
-        </a>
-        <span className="text-muted-foreground/40">|</span>
-        <a
-          href="https://lcti.hydroroll.team"
-          target="_blank"
-          rel="noreferrer"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("otherXingce")}
-        </a>
-        <span className="text-muted-foreground/40">|</span>
-        <a
-          href="https://ddlroast.hydroroll.team"
-          target="_blank"
-          rel="noreferrer"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("ddlRoast")}
-        </a>
-      </div>
-
+          <span>Cortex &copy; {new Date().getFullYear()}</span>
+          <a
+            href="https://academic.jyunko.cn"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          >
+            {t("author")}
+          </a>
+          <span className="footer-links text-muted-foreground/40">|</span>
+          <Link
+            href="/about"
+            className="footer-links transition-colors hover:text-foreground hover:underline underline-offset-4"
+          >
+            {t("aboutLink")}
+          </Link>
+          <span className="footer-links text-muted-foreground/40">|</span>
+          <Link
+            href="/sponsors"
+            className="footer-links transition-colors hover:text-foreground hover:underline underline-offset-4"
+          >
+            {ts("title")}
+          </Link>
+        </div>
+        <div className="footer-links flex items-center justify-center gap-3">
+          <a
+            href="https://deadpan.hydroroll.team"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          >
+            {t("otherGame")}
+          </a>
+          <span className="text-muted-foreground/40">|</span>
+          <a
+            href="https://lcti.hydroroll.team"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          >
+            {t("otherXingce")}
+          </a>
+          <span className="text-muted-foreground/40">|</span>
+          <a
+            href="https://ddlroast.hydroroll.team"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          >
+            {t("ddlRoast")}
+          </a>
+        </div>
       </footer>
     </>
-  )
+  );
 }

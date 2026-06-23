@@ -13,7 +13,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TrendingUp, TrendingDown, Minus, Flag } from "lucide-react";
-import { normalCDF, abilityToDegradationIndex, scoreAnswer, isCorrect, type TestResult, type DimensionScores } from "@/lib/scoring";
+import {
+  normalCDF,
+  abilityToDegradationIndex,
+  scoreAnswer,
+  isCorrect,
+  type TestResult,
+  type DimensionScores,
+} from "@/lib/scoring";
 import RadarChart from "@/components/radar-chart";
 import { DegradationGauge } from "./DegradationGauge";
 import { usePremium } from "../premium/usePremium";
@@ -71,55 +78,60 @@ export function ResultPhase({
   // Load cached AI analysis for this test session
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("cognitive-rust-result")
-      if (!raw) return
-      const entry = JSON.parse(raw)
-      if (!entry.timestamp) return
-      const cached = localStorage.getItem(`cortex:ai-interpret:${entry.timestamp}`)
+      const raw = localStorage.getItem("cognitive-rust-result");
+      if (!raw) return;
+      const entry = JSON.parse(raw);
+      if (!entry.timestamp) return;
+      const cached = localStorage.getItem(`cortex:ai-interpret:${entry.timestamp}`);
       if (cached) {
-        setAiAnalysis(cached)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setAiAnalysis(cached);
       }
-    } catch { /* ignore */ }
-  }, [])
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   async function handleExportCSV() {
-    if (!licenseKey) return
+    if (!licenseKey) return;
     try {
       const res = await fetch("/api/premium/export", {
         headers: { Authorization: `Bearer ${licenseKey}` },
-      })
-      if (!res.ok) return
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = "cognitive-rust-results.csv"
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    } catch { /* silent */ }
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cognitive-rust-results.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      /* silent */
+    }
   }
 
   const testCount: number = (() => {
     try {
-      const raw = localStorage.getItem("cognitive-rust-history")
-      if (!raw) return 1
-      const history = JSON.parse(raw)
-      return Array.isArray(history) ? history.length : 1
+      const raw = localStorage.getItem("cognitive-rust-history");
+      if (!raw) return 1;
+      const history = JSON.parse(raw);
+      return Array.isArray(history) ? history.length : 1;
     } catch {
-      return 1
+      return 1;
     }
-  })()
-  const isFirstTest = testCount === 1
+  })();
+  const isFirstTest = testCount === 1;
 
   async function handleAiInterpret() {
     if (!isPremium) {
-      setShowPremiumPrompt(true)
-      return
+      setShowPremiumPrompt(true);
+      return;
     }
-    setAiLoading(true)
-    setAiError(null)
+    setAiLoading(true);
+    setAiError(null);
     try {
       const body = {
         locale,
@@ -135,7 +147,7 @@ export function ResultPhase({
             }
           : null,
         testCount,
-      }
+      };
       const res = await fetch("/api/ai/interpret", {
         method: "POST",
         headers: {
@@ -143,89 +155,95 @@ export function ResultPhase({
           Authorization: `Bearer ${licenseKey}`,
         },
         body: JSON.stringify(body),
-      })
+      });
       if (res.status === 429) {
-        setAiError(n("result.interpretLimitExhausted"))
-        setAiLoading(false)
-        return
+        setAiError(n("result.interpretLimitExhausted"));
+        setAiLoading(false);
+        return;
       }
-      if (!res.ok) throw new Error("API error")
+      if (!res.ok) throw new Error("API error");
 
-      const contentType = res.headers.get("Content-Type") || ""
+      const contentType = res.headers.get("Content-Type") || "";
 
       if (contentType.includes("text/event-stream")) {
         // Streaming response
-        const reader = res.body!.getReader()
-        const decoder = new TextDecoder()
-        let buffer = ""
-        let fullAnalysis = ""
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let fullAnalysis = "";
 
         while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          buffer += decoder.decode(value, { stream: true })
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
 
-          const lines = buffer.split("\n")
-          buffer = lines.pop() || ""
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
 
           for (const line of lines) {
             if (line.startsWith("data: ")) {
-              const data = line.slice(6)
-              if (data === "[DONE]") break
+              const data = line.slice(6);
+              if (data === "[DONE]") break;
               try {
-                const parsed = JSON.parse(data)
+                const parsed = JSON.parse(data);
                 if (parsed.response) {
-                  fullAnalysis += parsed.response
-                  setAiAnalysis(fullAnalysis)
+                  fullAnalysis += parsed.response;
+                  setAiAnalysis(fullAnalysis);
                 }
-              } catch { /* ignore */ }
+              } catch {
+                /* ignore */
+              }
             }
           }
         }
 
         // Cache to localStorage
         try {
-          const entryRaw = localStorage.getItem("cognitive-rust-result")
+          const entryRaw = localStorage.getItem("cognitive-rust-result");
           if (entryRaw) {
-            const entry = JSON.parse(entryRaw)
+            const entry = JSON.parse(entryRaw);
             if (entry.timestamp) {
-              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, fullAnalysis)
+              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, fullAnalysis);
             }
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       } else {
         // Non-streaming fallback
-        const data = await res.json()
-        setAiAnalysis(data.analysis)
+        const data = await res.json();
+        setAiAnalysis(data.analysis);
         try {
-          const entryRaw = localStorage.getItem("cognitive-rust-result")
+          const entryRaw = localStorage.getItem("cognitive-rust-result");
           if (entryRaw) {
-            const entry = JSON.parse(entryRaw)
+            const entry = JSON.parse(entryRaw);
             if (entry.timestamp) {
-              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, data.analysis)
+              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, data.analysis);
             }
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
     } catch {
-      setAiError(n("result.aiInterpretError"))
+      setAiError(n("result.aiInterpretError"));
     } finally {
-      setAiLoading(false)
+      setAiLoading(false);
     }
   }
 
   const analysis: TrendAnalysis | null = useMemo(() => {
-    if (!isPremium) return null
+    if (!isPremium) return null;
     try {
-      const raw = localStorage.getItem("cognitive-rust-history")
-      if (!raw) return null
-      const history = JSON.parse(raw)
-      if (!Array.isArray(history) || history.length < 2) return null
-      return analyzeHistory(history)
+      const raw = localStorage.getItem("cognitive-rust-history");
+      if (!raw) return null;
+      const history = JSON.parse(raw);
+      if (!Array.isArray(history) || history.length < 2) return null;
+      return analyzeHistory(history);
     } catch {
-      return null
+      return null;
     }
-  }, [isPremium, result])
+  }, [isPremium, result]);
 
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -236,8 +254,10 @@ export function ResultPhase({
         <CardDescription className="text-balance">
           {isFirstTest ? (
             <>
-              首次测试用于建立个人认知基线，<br />
-              单次分数暂不具有独立参考意义。<br />
+              首次测试用于建立个人认知基线，
+              <br />
+              单次分数暂不具有独立参考意义。
+              <br />
               完成第二次测试后，你将看到变化趋势与改善分析。
             </>
           ) : (
@@ -258,10 +278,7 @@ export function ResultPhase({
         {/* Gauge + Tier — hidden on first test */}
         {!isFirstTest && (
           <div className="text-center">
-            <DegradationGauge
-              index={result.degradationIndex}
-              ringColor={result.tier.ringColor}
-            />
+            <DegradationGauge index={result.degradationIndex} ringColor={result.tier.ringColor} />
             <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
               <Badge
                 className="px-3 py-1 text-sm"
@@ -291,9 +308,7 @@ export function ResultPhase({
         {aiUsage !== null && (
           <div className="rounded-lg bg-muted/50 p-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                {n("result.aiUsageLabel")}
-              </span>
+              <span className="text-muted-foreground">{n("result.aiUsageLabel")}</span>
               <span className="font-medium text-foreground">
                 {(n.raw("declaration.aiLevels") as string[])[aiUsage]}
               </span>
@@ -305,152 +320,142 @@ export function ResultPhase({
         )}
 
         {/* Scoring method explanation — hidden on first test */}
-        {!isFirstTest && <div className="rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30 p-4">
-          <button
-            onClick={() => setShowScoringInfo(!showScoringInfo)}
-            className="flex w-full items-center justify-between text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <span>{n("result.scoringCalcTitle")}</span>
-            <span className="text-[10px]">
-              {showScoringInfo ? "▲" : "▼"}
-            </span>
-          </button>
-          <p className="mt-1.5 text-[10px] leading-tight text-muted-foreground/50">
-            评分仅供参考，不代表任何认知能力评估结论
-          </p>
-          {showScoringInfo && (
-            <div className="mt-3 space-y-2">
-              {result.estimationMethod === "irt" ? (
-                <>
-                  <p className="text-xs font-medium text-foreground">
-                    {n.rich("result.scoringIrtSteps", {
-                      strong: (chunks) => <strong>{chunks}</strong>,
-                    })}
-                  </p>
-                  <div className="space-y-1.5 text-xs text-muted-foreground">
-                    {result.theta !== undefined ? (
-                      <>
-                        <div className="flex items-center justify-between">
-                          <span>{n("result.scoringIrtTheta")}</span>
-                          <span className="font-mono tabular-nums text-foreground">
-                            {result.theta.toFixed(2)}
-                            {result.thetaSE !== undefined && (
-                              <span className="text-muted-foreground">
-                                {" ± "}{result.thetaSE.toFixed(2)}
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>{n("result.scoringIrtPercentile")}</span>
-                          <span className="font-mono tabular-nums text-foreground">
-                            {(normalCDF(result.theta) * 100).toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="shrink-0">{n("result.scoringIrtFormula")}</span>
-                          <span className="text-right font-mono tabular-nums text-foreground">
-                            {"100 − "}
-                            {(normalCDF(result.theta) * 100).toFixed(1)}
-                            {" ≈ "}
-                            <strong>{result.degradationIndex}</strong>
-                          </span>
-                        </div>
-
-                        {/* Per-dimension theta */}
-                        {result.thetaByType && (
-                          <div className="mt-2 border-t border-dashed border-muted-foreground/20 pt-2">
-                            <p className="mb-1.5 text-[11px] font-medium text-muted-foreground">
-                              {n("result.scoringByDimension")}
-                            </p>
-                            <div className="space-y-1">
-                              {(
-                                [
-                                  "logic",
-                                  "math",
-                                  "vocab",
-                                  "event",
-                                ] as const
-                              ).map((dim) => {
-                                const dimTheta = result.thetaByType?.[dim];
-                                if (!dimTheta) return null;
-                                const dimDI = abilityToDegradationIndex(
-                                  dimTheta.theta,
-                                );
-                                return (
-                                  <div
-                                    key={dim}
-                                    className="flex items-center justify-between gap-2"
-                                  >
-                                    <span className="shrink-0 text-muted-foreground">
-                                      {n("radar." + dim)}
-                                    </span>
-                                    <span className="text-right font-mono tabular-nums text-foreground">
-                                      θ = {dimTheta.theta.toFixed(2)}
-                                      <span className="text-muted-foreground">
-                                        {" ± "}
-                                        {dimTheta.se.toFixed(2)}
-                                      </span>
-                                      {" → DI "}
-                                      <strong>{dimDI}</strong>
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                            </div>
+        {!isFirstTest && (
+          <div className="rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30 p-4">
+            <button
+              onClick={() => setShowScoringInfo(!showScoringInfo)}
+              className="flex w-full items-center justify-between text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span>{n("result.scoringCalcTitle")}</span>
+              <span className="text-[10px]">{showScoringInfo ? "▲" : "▼"}</span>
+            </button>
+            <p className="mt-1.5 text-[10px] leading-tight text-muted-foreground/50">
+              评分仅供参考，不代表任何认知能力评估结论
+            </p>
+            {showScoringInfo && (
+              <div className="mt-3 space-y-2">
+                {result.estimationMethod === "irt" ? (
+                  <>
+                    <p className="text-xs font-medium text-foreground">
+                      {n.rich("result.scoringIrtSteps", {
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                      })}
+                    </p>
+                    <div className="space-y-1.5 text-xs text-muted-foreground">
+                      {result.theta !== undefined ? (
+                        <>
+                          <div className="flex items-center justify-between">
+                            <span>{n("result.scoringIrtTheta")}</span>
+                            <span className="font-mono tabular-nums text-foreground">
+                              {result.theta.toFixed(2)}
+                              {result.thetaSE !== undefined && (
+                                <span className="text-muted-foreground">
+                                  {" ± "}
+                                  {result.thetaSE.toFixed(2)}
+                                </span>
+                              )}
+                            </span>
                           </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="flex items-baseline justify-between gap-2">
-                        <span>{n("result.scoringIrtResult")}</span>
+                          <div className="flex items-center justify-between">
+                            <span>{n("result.scoringIrtPercentile")}</span>
+                            <span className="font-mono tabular-nums text-foreground">
+                              {(normalCDF(result.theta) * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between gap-2">
+                            <span className="shrink-0">{n("result.scoringIrtFormula")}</span>
+                            <span className="text-right font-mono tabular-nums text-foreground">
+                              {"100 − "}
+                              {(normalCDF(result.theta) * 100).toFixed(1)}
+                              {" ≈ "}
+                              <strong>{result.degradationIndex}</strong>
+                            </span>
+                          </div>
+
+                          {/* Per-dimension theta */}
+                          {result.thetaByType && (
+                            <div className="mt-2 border-t border-dashed border-muted-foreground/20 pt-2">
+                              <p className="mb-1.5 text-[11px] font-medium text-muted-foreground">
+                                {n("result.scoringByDimension")}
+                              </p>
+                              <div className="space-y-1">
+                                {(["logic", "math", "vocab", "event"] as const).map((dim) => {
+                                  const dimTheta = result.thetaByType?.[dim];
+                                  if (!dimTheta) return null;
+                                  const dimDI = abilityToDegradationIndex(dimTheta.theta);
+                                  return (
+                                    <div
+                                      key={dim}
+                                      className="flex items-center justify-between gap-2"
+                                    >
+                                      <span className="shrink-0 text-muted-foreground">
+                                        {n("radar." + dim)}
+                                      </span>
+                                      <span className="text-right font-mono tabular-nums text-foreground">
+                                        θ = {dimTheta.theta.toFixed(2)}
+                                        <span className="text-muted-foreground">
+                                          {" ± "}
+                                          {dimTheta.se.toFixed(2)}
+                                        </span>
+                                        {" → DI "}
+                                        <strong>{dimDI}</strong>
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span>{n("result.scoringIrtResult")}</span>
+                          <span className="font-mono tabular-nums text-foreground">
+                            <strong>{result.degradationIndex}</strong>
+                            {" / 100"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs font-medium text-foreground">
+                      {n.rich("result.scoringPctSteps", {
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                      })}
+                    </p>
+                    <div className="space-y-1.5 text-xs text-muted-foreground">
+                      <div className="flex items-center justify-between">
+                        <span>{n("result.scoringPctRate")}</span>
                         <span className="font-mono tabular-nums text-foreground">
-                          <strong>{result.degradationIndex}</strong>
-                          {" / 100"}
+                          {result.correctCount} / {result.totalQuestions}
+                          {" = "}
+                          {Math.round((result.correctCount / result.totalQuestions) * 100)}%
                         </span>
                       </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs font-medium text-foreground">
-                    {n.rich("result.scoringPctSteps", {
-                      strong: (chunks) => <strong>{chunks}</strong>,
-                    })}
-                  </p>
-                  <div className="space-y-1.5 text-xs text-muted-foreground">
-                    <div className="flex items-center justify-between">
-                      <span>{n("result.scoringPctRate")}</span>
-                      <span className="font-mono tabular-nums text-foreground">
-                        {result.correctCount} / {result.totalQuestions}
-                        {" = "}
-                        {Math.round((result.correctCount / result.totalQuestions) * 100)}%
-                      </span>
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="shrink-0">{n("result.scoringPctFormula")}</span>
+                        <span className="text-right font-mono tabular-nums text-foreground">
+                          {"100 − "}
+                          {Math.round((result.correctCount / result.totalQuestions) * 100)}
+                          {" = "}
+                          <strong>{result.degradationIndex}</strong>
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-baseline justify-between gap-2">
-                      <span className="shrink-0">{n("result.scoringPctFormula")}</span>
-                      <span className="text-right font-mono tabular-nums text-foreground">
-                        {"100 − "}
-                        {Math.round((result.correctCount / result.totalQuestions) * 100)}
-                        {" = "}
-                        <strong>{result.degradationIndex}</strong>
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-		</div>}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <Separator />
 
         {/* Dimension scores - Radar chart */}
         <div>
-          <p className="mb-3 text-sm font-medium text-foreground">
-            {n("result.radarLabel")}
-          </p>
+          <p className="mb-3 text-sm font-medium text-foreground">{n("result.radarLabel")}</p>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             <div className="w-48 shrink-0">
               <RadarChart userScores={result.dimensionScores} size={200} />
@@ -468,22 +473,14 @@ export function ResultPhase({
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                       <div
                         className={`h-full rounded-full transition-all ${
-                          isWeak
-                            ? "bg-red-400"
-                            : score >= 80
-                              ? "bg-green-400"
-                              : "bg-amber-400"
+                          isWeak ? "bg-red-400" : score >= 80 ? "bg-green-400" : "bg-amber-400"
                         }`}
                         style={{ width: `${score}%` }}
                       />
                     </div>
                     <span
                       className={`w-10 text-right font-medium tabular-nums ${
-                        isWeak
-                          ? "text-red-600"
-                          : score >= 80
-                            ? "text-green-600"
-                            : "text-amber-600"
+                        isWeak ? "text-red-600" : score >= 80 ? "text-green-600" : "text-amber-600"
                       }`}
                     >
                       {score}%
@@ -493,87 +490,82 @@ export function ResultPhase({
               })}
             </div>
           </div>
-		</div>
+        </div>
 
         <Separator />
 
-        {!isFirstTest && (<>
-          {/* Personalized advice */}
-          {(() => {
-            const allDims: { key: string; label: string; score: number | null }[] = [
-              { key: "logic", label: n("radar.logic"), score: result.dimensionScores.logic },
-              { key: "math", label: n("radar.math"), score: result.dimensionScores.math },
-              { key: "vocab", label: n("radar.vocab"), score: result.dimensionScores.vocab },
-              { key: "event", label: n("radar.event"), score: result.dimensionScores.event },
-            ];
-            const dims = allDims.filter(
-              (d): d is { key: string; label: string; score: number } =>
-                d.score !== null,
-            );
-            dims.sort((a, b) => a.score - b.score);
+        {!isFirstTest && (
+          <>
+            {/* Personalized advice */}
+            {(() => {
+              const allDims: { key: string; label: string; score: number | null }[] = [
+                { key: "logic", label: n("radar.logic"), score: result.dimensionScores.logic },
+                { key: "math", label: n("radar.math"), score: result.dimensionScores.math },
+                { key: "vocab", label: n("radar.vocab"), score: result.dimensionScores.vocab },
+                { key: "event", label: n("radar.event"), score: result.dimensionScores.event },
+              ];
+              const dims = allDims.filter(
+                (d): d is { key: string; label: string; score: number } => d.score !== null,
+              );
+              dims.sort((a, b) => a.score - b.score);
 
-            if (dims.length > 0 && dims[0].score < 60) {
-              const weakest = dims[0];
+              if (dims.length > 0 && dims[0].score < 60) {
+                const weakest = dims[0];
+                return (
+                  <div className="rounded-lg bg-muted/50 p-4">
+                    <p className="text-sm font-medium">{n("result.adviceTitle")}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {n("result.adviceWeakest", { dimension: weakest.label })}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {n.raw("result.adviceTips")[weakest.key] ?? n("result.adviceDefault")}
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
+            {/* Game suggestion for low logic / event scores */}
+            {(() => {
+              const logicLow =
+                result.dimensionScores.logic !== null && result.dimensionScores.logic < 60;
+              const eventLow =
+                result.dimensionScores.event !== null && result.dimensionScores.event < 60;
+              if (!logicLow && !eventLow) return null;
+
+              const title =
+                logicLow && eventLow
+                  ? n("result.logicEventGameTitle")
+                  : logicLow
+                    ? n("result.logicGameTitle")
+                    : n("result.eventGameTitle");
+
               return (
-                <div className="rounded-lg bg-muted/50 p-4">
-                  <p className="text-sm font-medium">
-                    {n("result.adviceTitle")}
-                  </p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {n("result.adviceWeakest", { dimension: weakest.label })}
-                  </p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {n.raw("result.adviceTips")[weakest.key] ??
-                      n("result.adviceDefault")}
+                <div className="rounded-lg border border-dashed border-blue-300/30 bg-blue-50/50 p-4 text-center dark:bg-blue-950/10">
+                  <p className="text-sm font-medium text-foreground">{title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {n.rich("result.logicGameDesc", {
+                      game: (chunks) => (
+                        <a
+                          href="https://deadpan.hydroroll.team"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 underline-offset-2 hover:underline"
+                        >
+                          {chunks}
+                        </a>
+                      ),
+                    })}
                   </p>
                 </div>
               );
-            }
-            return null;
-          })()}
+            })()}
 
-          {/* Game suggestion for low logic / event scores */}
-          {(() => {
-            const logicLow = result.dimensionScores.logic !== null && result.dimensionScores.logic < 60
-            const eventLow = result.dimensionScores.event !== null && result.dimensionScores.event < 60
-            if (!logicLow && !eventLow) return null
-
-            const title = logicLow && eventLow
-              ? n("result.logicEventGameTitle")
-              : logicLow
-                ? n("result.logicGameTitle")
-                : n("result.eventGameTitle")
-
-            return (
-              <div className="rounded-lg border border-dashed border-blue-300/30 bg-blue-50/50 p-4 text-center dark:bg-blue-950/10">
-                <p className="text-sm font-medium text-foreground">
-                  {title}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {n.rich("result.logicGameDesc", {
-                    game: (chunks) => (
-                      <a
-                        href="https://deadpan.hydroroll.team"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-blue-600 underline-offset-2 hover:underline"
-                      >
-                        {chunks}
-                      </a>
-                    ),
-                  })}
-                </p>
-              </div>
-            )
-          })()}
-
-          {/* LCTI suggestion for good logic scores */}
-          {result.dimensionScores.logic !== null &&
-            result.dimensionScores.logic >= 60 && (
+            {/* LCTI suggestion for good logic scores */}
+            {result.dimensionScores.logic !== null && result.dimensionScores.logic >= 60 && (
               <div className="rounded-lg border border-dashed border-green-300/30 bg-green-50/50 p-4 text-center dark:bg-green-950/10">
-                <p className="text-sm font-medium text-foreground">
-                  {n("result.logicGoodTitle")}
-                </p>
+                <p className="text-sm font-medium text-foreground">{n("result.logicGoodTitle")}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {n.rich("result.logicGoodDesc", {
                     lcti: (chunks) => (
@@ -590,17 +582,14 @@ export function ResultPhase({
                 </p>
               </div>
             )}
-        </>)}
+          </>
+        )}
 
         {/* 7-day retest reminder */}
         <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 text-center">
-          <p className="text-sm font-medium text-foreground">
-            {n("result.retestPrompt")}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {n("result.retestDesc")}
-          </p>
-		</div>
+          <p className="text-sm font-medium text-foreground">{n("result.retestPrompt")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{n("result.retestDesc")}</p>
+        </div>
 
         {/* Previous vs current comparison */}
         {prevResult && (
@@ -610,13 +599,8 @@ export function ResultPhase({
             </p>
             <div className="flex items-center gap-4">
               <div className="flex-1 text-center">
-                <p className="text-xs text-muted-foreground">
-                  {n("result.lastLabel")}
-                </p>
-                <p
-                  className="text-2xl font-bold"
-                  style={{ color: prevResult.tierColor }}
-                >
+                <p className="text-xs text-muted-foreground">{n("result.lastLabel")}</p>
+                <p className="text-2xl font-bold" style={{ color: prevResult.tierColor }}>
                   {prevResult.degradationIndex}
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -633,18 +617,11 @@ export function ResultPhase({
                     : "—"}
               </div>
               <div className="flex-1 text-center">
-                <p className="text-xs text-muted-foreground">
-                  {n("result.currentLabel")}
-                </p>
-                <p
-                  className="text-2xl font-bold"
-                  style={{ color: result.tier.ringColor }}
-                >
+                <p className="text-xs text-muted-foreground">{n("result.currentLabel")}</p>
+                <p className="text-2xl font-bold" style={{ color: result.tier.ringColor }}>
                   {result.degradationIndex}
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {n("tier." + result.tier.tierKey)}
-                </p>
+                <p className="text-xs text-muted-foreground">{n("tier." + result.tier.tierKey)}</p>
               </div>
             </div>
             <p className="mt-2 text-center text-xs text-muted-foreground">
@@ -664,17 +641,11 @@ export function ResultPhase({
                 {(["logic", "math", "vocab", "event"] as const).map((key) => {
                   const prev = prevResult.dimensionScores?.[key];
                   const cur = result.dimensionScores[key];
-                  if (prev === null || prev === undefined || cur === null)
-                    return null;
+                  if (prev === null || prev === undefined || cur === null) return null;
                   const diff = cur - prev;
                   return (
-                    <div
-                      key={key}
-                      className="flex items-center justify-between text-xs"
-                    >
-                      <span className="text-muted-foreground">
-                        {n("radar." + key)}
-                      </span>
+                    <div key={key} className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">{n("radar." + key)}</span>
                       <span className="tabular-nums">
                         <span className="text-muted-foreground">{prev}%</span>
                         <span className="mx-1 text-muted-foreground">→</span>
@@ -690,11 +661,7 @@ export function ResultPhase({
                           {cur}%
                         </span>
                         {diff !== 0 && (
-                          <span
-                            className={`ml-1 ${
-                              diff > 0 ? "text-green-600" : "text-red-600"
-                            }`}
-                          >
+                          <span className={`ml-1 ${diff > 0 ? "text-green-600" : "text-red-600"}`}>
                             ({diff > 0 ? "+" : ""}
                             {diff})
                           </span>
@@ -712,37 +679,52 @@ export function ResultPhase({
         {analysis && analysis.dimensions.length >= 2 && (
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
             <p className="text-sm font-semibold mb-3 flex items-center gap-1.5">
-              {analysis.overallTrend === "improving"
-                ? <><TrendingUp className="h-4 w-4 text-green-600" /> 整体呈改善趋势</>
-                : analysis.overallTrend === "declining"
-                ? <><TrendingDown className="h-4 w-4 text-red-600" /> 整体呈下降趋势</>
-                : <><Minus className="h-4 w-4 text-muted-foreground" /> 整体保持稳定</>
-              }
+              {analysis.overallTrend === "improving" ? (
+                <>
+                  <TrendingUp className="h-4 w-4 text-green-600" /> 整体呈改善趋势
+                </>
+              ) : analysis.overallTrend === "declining" ? (
+                <>
+                  <TrendingDown className="h-4 w-4 text-red-600" /> 整体呈下降趋势
+                </>
+              ) : (
+                <>
+                  <Minus className="h-4 w-4 text-muted-foreground" /> 整体保持稳定
+                </>
+              )}
               <span className="ml-1 text-xs font-normal text-muted-foreground">
                 （{analysis.testCount} 次测试）
               </span>
             </p>
             <div className="space-y-2">
-              {analysis.dimensions.filter(d => d.delta !== null).map((d) => (
-                <div key={d.dimension} className="flex items-center gap-2 text-xs">
-                  <span className="w-16 text-muted-foreground">{d.label}</span>
-                  <span className={`font-mono font-medium ${d.trend === "declining" ? "text-red-600" : d.trend === "improving" ? "text-green-600" : "text-muted-foreground"}`}>
-                    {d.delta !== null && d.delta > 0 ? "+" : ""}{d.delta}%
-                  </span>
-                  <span className="text-muted-foreground truncate">{d.tip}</span>
-                </div>
-              ))}
+              {analysis.dimensions
+                .filter((d) => d.delta !== null)
+                .map((d) => (
+                  <div key={d.dimension} className="flex items-center gap-2 text-xs">
+                    <span className="w-16 text-muted-foreground">{d.label}</span>
+                    <span
+                      className={`font-mono font-medium ${d.trend === "declining" ? "text-red-600" : d.trend === "improving" ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {d.delta !== null && d.delta > 0 ? "+" : ""}
+                      {d.delta}%
+                    </span>
+                    <span className="text-muted-foreground truncate">{d.tip}</span>
+                  </div>
+                ))}
             </div>
             {analysis.weakestDimension && (
               <p className="mt-2 text-xs text-muted-foreground">
-                当前弱项：<span className="font-medium text-foreground">{analysis.weakestDimension.label}</span>
+                当前弱项：
+                <span className="font-medium text-foreground">
+                  {analysis.weakestDimension.label}
+                </span>
               </p>
             )}
           </div>
         )}
 
         {!isFirstTest && (
-        /* AI Interpretation */
+          /* AI Interpretation */
           <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 dark:border-violet-800 dark:bg-violet-950/20">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-semibold text-foreground">
@@ -756,9 +738,7 @@ export function ResultPhase({
                 onClick={handleAiInterpret}
                 disabled={aiLoading}
               >
-                {aiAnalysis
-                  ? n("result.aiInterpretRegenerate")
-                  : n("result.aiInterpretButton")}
+                {aiAnalysis ? n("result.aiInterpretRegenerate") : n("result.aiInterpretButton")}
               </Button>
             </div>
 
@@ -781,18 +761,15 @@ export function ResultPhase({
               </p>
             )}
 
-            {aiError && (
-              <p className="mt-2 text-sm text-red-600">{aiError}</p>
-            )}
+            {aiError && <p className="mt-2 text-sm text-red-600">{aiError}</p>}
 
             {aiAnalysis && (
               <div className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                 {aiAnalysis}
               </div>
             )}
-          </div>)
-
-        }
+          </div>
+        )}
         {/* Score breakdown */}
         <div>
           <button
@@ -801,9 +778,7 @@ export function ResultPhase({
           >
             {n("result.reviewTitle")}
             <span className="text-muted-foreground">
-              {showExplanations
-                ? n("result.reviewToggleClose")
-                : n("result.reviewToggle")}
+              {showExplanations ? n("result.reviewToggleClose") : n("result.reviewToggle")}
             </span>
           </button>
 
@@ -839,7 +814,9 @@ export function ResultPhase({
                               : "text-muted-foreground/30 hover:text-amber-500 hover:bg-muted"
                           }`}
                         >
-                          <Flag className={`h-3 w-3 ${flaggedIds.has(q.id) ? "fill-amber-400" : ""}`} />
+                          <Flag
+                            className={`h-3 w-3 ${flaggedIds.has(q.id) ? "fill-amber-400" : ""}`}
+                          />
                         </button>
                         <span
                           className={`text-xs font-medium ${
@@ -903,7 +880,7 @@ export function ResultPhase({
               })}
             </div>
           )}
-		</div>
+        </div>
       </CardContent>
 
       <CardFooter className="flex-col gap-2">
@@ -925,7 +902,7 @@ export function ResultPhase({
           >
             {n("result.retestButton")}
           </Button>
-		</div>
+        </div>
         <div className="flex w-full items-center justify-center gap-3">
           <Link
             href={`/stats?latest=${result.degradationIndex}`}
@@ -952,15 +929,12 @@ export function ResultPhase({
               </button>
             </>
           )}
-		</div>
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          {n("result.disclaimer")}
-        </p>
+        </div>
+        <p className="mt-2 text-center text-xs text-muted-foreground">{n("result.disclaimer")}</p>
         <p className="mt-2 text-center text-xs text-muted-foreground">
           {n("landing.footerTagline")}
         </p>
       </CardFooter>
-
     </Card>
   );
 }

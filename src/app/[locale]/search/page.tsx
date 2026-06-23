@@ -1,115 +1,120 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from "react"
-import { useTranslations, useLocale } from "next-intl"
-import { Search, Loader2, ChevronDown, ChevronUp, ArrowLeft, Flag } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { Search, Loader2, ChevronDown, ChevronUp, ArrowLeft, Flag } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface SearchResult {
-  id: number
-  type: string
-  category: string
-  question: string
-  options: string[]
-  answer: number | number[]
-  explanation: string
-  difficulty: number
-  calibratedDifficulty?: number | null
-  score: number
-  source?: string
-  submitterName?: string
+  id: number;
+  type: string;
+  category: string;
+  question: string;
+  options: string[];
+  answer: number | number[];
+  explanation: string;
+  difficulty: number;
+  calibratedDifficulty?: number | null;
+  score: number;
+  source?: string;
+  submitterName?: string;
 }
 
 function diffLabel(d: number, t: (key: string) => string): string {
-  if (d < -0.5) return t("search.diffEasy")
-  if (d < 0.5) return t("search.diffMedium")
-  return t("search.diffHard")
+  if (d < -0.5) return t("search.diffEasy");
+  if (d < 0.5) return t("search.diffMedium");
+  return t("search.diffHard");
 }
 
 function sourceLabel(r: SearchResult, n: (key: string) => string): string {
-  if (r.source === "llm") return "AI"
-  if (r.source === "community") return r.submitterName || n("submitQuestion.anonymous")
-  return n("search.fromBank")
+  if (r.source === "llm") return "AI";
+  if (r.source === "community") return r.submitterName || n("submitQuestion.anonymous");
+  return n("search.fromBank");
 }
 
 export default function SearchPage() {
-  const n = useTranslations()
-  const locale = useLocale()
-  const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SearchResult[]>([])
-  const [loading, setLoading] = useState(false)
-  const [searched, setSearched] = useState(false)
-  const [expanded, setExpanded] = useState<Set<number>>(new Set())
-  const [flaggedIds, setFlaggedIds] = useState<Set<number>>(new Set())
-  const [hasFlaggedBefore, setHasFlaggedBefore] = useState(false)
-  const [toast, setToast] = useState<string | null>(null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const n = useTranslations();
+  const locale = useLocale();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const [flaggedIds, setFlaggedIds] = useState<Set<number>>(new Set());
+  const [hasFlaggedBefore, setHasFlaggedBefore] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Check if user has flagged before
   useEffect(() => {
     try {
-      const hist = localStorage.getItem("cognitive-rust-history")
-      if (hist && JSON.parse(hist).some((h: any) => h.flaggedIds?.length > 0)) {
-        setHasFlaggedBefore(true)
+      const hist = localStorage.getItem("cognitive-rust-history");
+      type HistoryEntry = { flaggedIds?: number[] };
+      if (
+        hist &&
+        (JSON.parse(hist) as HistoryEntry[]).some((h) => (h.flaggedIds?.length ?? 0) > 0)
+      ) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setHasFlaggedBefore(true);
       }
     } catch {}
-  }, [])
+  }, []);
 
   function toggleFlag(qId: number) {
     setFlaggedIds((prev) => {
-      const next = new Set(prev)
-      const adding = !next.has(qId)
-      if (adding) next.add(qId)
-      else next.delete(qId)
+      const next = new Set(prev);
+      const adding = !next.has(qId);
+      if (adding) next.add(qId);
+      else next.delete(qId);
       if (adding) {
         fetch("/api/flags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ questionId: `${locale}:${qId}` }),
-        }).catch(() => {})
+        }).catch(() => {});
       }
-      setToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"))
-      setTimeout(() => setToast(null), 2000)
-      return next
-    })
+      setToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"));
+      setTimeout(() => setToast(null), 2000);
+      return next;
+    });
   }
 
   const doSearch = useCallback(
     (q: string) => {
       if (!q.trim()) {
-        setResults([])
-        setSearched(false)
-        return
+        setResults([]);
+        setSearched(false);
+        return;
       }
-      setLoading(true)
-      setSearched(true)
+      setLoading(true);
+      setSearched(true);
       fetch(`/api/search?q=${encodeURIComponent(q)}&locale=${locale}&limit=20`)
         .then((r) => r.json())
         .then((d) => {
-          setResults(d.results ?? [])
-          setExpanded(new Set())
+          setResults(d.results ?? []);
+          setExpanded(new Set());
         })
         .catch(() => setResults([]))
-        .finally(() => setLoading(false))
+        .finally(() => setLoading(false));
     },
     [locale],
-  )
+  );
 
   function handleInput(val: string) {
-    setQuery(val)
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => doSearch(val), 300)
+    setQuery(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => doSearch(val), 300);
   }
 
   function toggleExpand(id: number) {
     setExpanded((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }
 
   return (
@@ -123,7 +128,10 @@ export default function SearchPage() {
       <div className="mx-auto w-full max-w-lg space-y-4">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <Link href="/" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+          <Link
+            href="/"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <h1 className="text-lg font-semibold tracking-tight">{n("search.title")}</h1>
@@ -165,10 +173,10 @@ export default function SearchPage() {
             </p>
             <div className="space-y-3">
               {results.map((r) => {
-                const isOpen = expanded.has(r.id)
+                const isOpen = expanded.has(r.id);
                 const correctAns = Array.isArray(r.answer)
                   ? r.answer.map((a) => r.options[a]).join(", ")
-                  : r.options[r.answer]
+                  : r.options[r.answer];
 
                 return (
                   <Card key={r.id} className="transition-shadow hover:shadow-sm">
@@ -186,7 +194,8 @@ export default function SearchPage() {
                           {sourceLabel(r, n)}
                         </Badge>
                         <Badge variant="outline" className="text-[10px]">
-                          {diffLabel(r.difficulty, n)} · {n("search.thetaLabel", { theta: r.difficulty.toFixed(1) })}
+                          {diffLabel(r.difficulty, n)} ·{" "}
+                          {n("search.thetaLabel", { theta: r.difficulty.toFixed(1) })}
                           {r.calibratedDifficulty != null && (
                             <span className="ml-1 text-orange-500 dark:text-orange-400">
                               →{r.calibratedDifficulty.toFixed(1)}
@@ -199,15 +208,24 @@ export default function SearchPage() {
                         <button
                           type="button"
                           title={n("testing.flagTip")}
-                          onClick={(e) => { e.stopPropagation(); toggleFlag(r.id); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFlag(r.id);
+                          }}
                           className={`flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] transition-colors ${
                             flaggedIds.has(r.id)
                               ? "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400"
                               : "text-muted-foreground/50 hover:text-amber-500 hover:bg-muted"
                           }`}
                         >
-                          <Flag className={`h-3 w-3 ${flaggedIds.has(r.id) ? "fill-amber-400" : ""}`} />
-                          {!hasFlaggedBefore && <span className="hidden sm:inline">{flaggedIds.has(r.id) ? n("testing.flagged") : n("testing.flagLabel")}</span>}
+                          <Flag
+                            className={`h-3 w-3 ${flaggedIds.has(r.id) ? "fill-amber-400" : ""}`}
+                          />
+                          {!hasFlaggedBefore && (
+                            <span className="hidden sm:inline">
+                              {flaggedIds.has(r.id) ? n("testing.flagged") : n("testing.flagLabel")}
+                            </span>
+                          )}
                         </button>
                       </div>
                     </CardHeader>
@@ -233,7 +251,11 @@ export default function SearchPage() {
                         onClick={() => toggleExpand(r.id)}
                         className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        {isOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                        {isOpen ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )}
                         {isOpen ? n("search.collapse") : n("search.expand")}
                       </button>
                       {isOpen && (
@@ -248,12 +270,12 @@ export default function SearchPage() {
                       )}
                     </CardContent>
                   </Card>
-                )
+                );
               })}
             </div>
           </>
         )}
       </div>
     </div>
-  )
+  );
 }

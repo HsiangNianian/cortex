@@ -33,106 +33,100 @@ import {
 } from "@/lib/adaptive-test";
 import type { AdaptiveTestSession } from "@/lib/adaptive-test";
 import { estimateAbility } from "@/lib/irt/engine";
-import {
-  fetchCommunityQuestions,
-  mergeCommunityQuestions,
-} from "@/lib/community/integration"
-import {
-  loadProgress,
-  clearProgress,
-  saveProgress,
-  type SavedProgress,
-} from "./helpers"
-import { usePremium } from "../premium/usePremium"
-import {
-  loadProfile,
-  saveProfile,
-  uploadProfile,
-  downloadProfile,
-} from "@/lib/sync/profile-sync"
-import type { StoredAbilityProfile } from "@/lib/sync/profile-sync"
+import { fetchCommunityQuestions, mergeCommunityQuestions } from "@/lib/community/integration";
+import { loadProgress, clearProgress, saveProgress, type SavedProgress } from "./helpers";
+import { usePremium } from "../premium/usePremium";
+import { loadProfile, saveProfile, uploadProfile, downloadProfile } from "@/lib/sync/profile-sync";
+import type { StoredAbilityProfile } from "@/lib/sync/profile-sync";
 
-const FREE_LIMIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
-const MAX_FREE_TESTS = 7
+const FREE_LIMIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+const MAX_FREE_TESTS = 7;
 const FREE_TEST_TIMESTAMPS_KEY = "cortex:free-test-timestamps";
 const OLD_FREE_TEST_KEY = "cortex:last-free-test";
 
 function readTimestamps(): number[] {
-  const raw = localStorage.getItem(FREE_TEST_TIMESTAMPS_KEY)
-  const timestamps: number[] = raw ? JSON.parse(raw) : []
-  return Array.isArray(timestamps) ? timestamps : []
+  const raw = localStorage.getItem(FREE_TEST_TIMESTAMPS_KEY);
+  const timestamps: number[] = raw ? JSON.parse(raw) : [];
+  return Array.isArray(timestamps) ? timestamps : [];
 }
 
 function saveTimestamps(timestamps: number[]): void {
-  const now = Date.now()
-  const windowStart = now - FREE_LIMIT_WINDOW_MS
-  const valid = timestamps.filter(ts => typeof ts === "number" && ts > windowStart)
-  localStorage.setItem(FREE_TEST_TIMESTAMPS_KEY, JSON.stringify(valid))
+  const now = Date.now();
+  const windowStart = now - FREE_LIMIT_WINDOW_MS;
+  const valid = timestamps.filter((ts) => typeof ts === "number" && ts > windowStart);
+  localStorage.setItem(FREE_TEST_TIMESTAMPS_KEY, JSON.stringify(valid));
 }
 
 /** Migrate old single-timestamp key into the new array, then remove it. */
 function migrateOldCooldown(): void {
   try {
-    const oldRaw = localStorage.getItem(OLD_FREE_TEST_KEY)
-    if (!oldRaw) return
-    const oldTs = parseInt(oldRaw, 10)
+    const oldRaw = localStorage.getItem(OLD_FREE_TEST_KEY);
+    if (!oldRaw) return;
+    const oldTs = parseInt(oldRaw, 10);
     if (isNaN(oldTs)) {
-      localStorage.removeItem(OLD_FREE_TEST_KEY)
-      return
+      localStorage.removeItem(OLD_FREE_TEST_KEY);
+      return;
     }
     // Only migrate if still within the window
     if (Date.now() - oldTs < FREE_LIMIT_WINDOW_MS) {
-      const timestamps = readTimestamps()
+      const timestamps = readTimestamps();
       if (!timestamps.includes(oldTs)) {
-        timestamps.push(oldTs)
-        saveTimestamps(timestamps)
+        timestamps.push(oldTs);
+        saveTimestamps(timestamps);
       }
     }
-    localStorage.removeItem(OLD_FREE_TEST_KEY)
-  } catch { /* ignore */ }
+    localStorage.removeItem(OLD_FREE_TEST_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 function getFreeTestCooldownEndsAt(): number | null {
   try {
-    migrateOldCooldown()
-    const timestamps = readTimestamps()
-    const now = Date.now()
-    const windowStart = now - FREE_LIMIT_WINDOW_MS
-    const valid = timestamps.filter(ts => ts > windowStart)
+    migrateOldCooldown();
+    const timestamps = readTimestamps();
+    const now = Date.now();
+    const windowStart = now - FREE_LIMIT_WINDOW_MS;
+    const valid = timestamps.filter((ts) => ts > windowStart);
     if (valid.length >= MAX_FREE_TESTS) {
-      const oldest = Math.min(...valid)
-      return oldest + FREE_LIMIT_WINDOW_MS
+      const oldest = Math.min(...valid);
+      return oldest + FREE_LIMIT_WINDOW_MS;
     }
-    return null
+    return null;
   } catch {
-    return null
+    return null;
   }
 }
 
 function recordFreeTest(): void {
   try {
-    migrateOldCooldown()
-    const timestamps = readTimestamps()
-    timestamps.push(Date.now())
-    saveTimestamps(timestamps)
-  } catch { /* ignore */ }
+    migrateOldCooldown();
+    const timestamps = readTimestamps();
+    timestamps.push(Date.now());
+    saveTimestamps(timestamps);
+  } catch {
+    /* ignore */
+  }
 }
 
 function getFreeTestUsedCount(): number {
   try {
-    migrateOldCooldown()
-    const timestamps = readTimestamps()
-    const now = Date.now()
-    const windowStart = now - FREE_LIMIT_WINDOW_MS
-    return timestamps.filter(ts => ts > windowStart).length
+    migrateOldCooldown();
+    const timestamps = readTimestamps();
+    const now = Date.now();
+    const windowStart = now - FREE_LIMIT_WINDOW_MS;
+    return timestamps.filter((ts) => ts > windowStart).length;
   } catch {
-    return 0
+    return 0;
   }
 }
 
 type Phase = "landing" | "declaration" | "testing" | "processing" | "result";
 
-type ToastState = string | { message: string; action: { label: string; onPress: () => void } } | null;
+type ToastState =
+  | string
+  | { message: string; action: { label: string; onPress: () => void } }
+  | null;
 
 interface StoredResultSummary {
   degradationIndex: number;
@@ -152,14 +146,16 @@ interface StoredResultSummary {
 }
 
 /** Patch old-format stored data that may lack newer dimension keys. */
-function normalizeStoredEntry<T extends { dimensionScores?: unknown; thetaByType?: unknown }>(entry: T): T {
+function normalizeStoredEntry<T extends { dimensionScores?: unknown; thetaByType?: unknown }>(
+  entry: T,
+): T {
   if (entry.dimensionScores) {
-    entry.dimensionScores = normalizeDimensionScores(entry.dimensionScores)
+    entry.dimensionScores = normalizeDimensionScores(entry.dimensionScores);
   }
   if (entry.thetaByType) {
-    entry.thetaByType = normalizeThetaByType(entry.thetaByType)
+    entry.thetaByType = normalizeThetaByType(entry.thetaByType);
   }
-  return entry
+  return entry;
 }
 
 export function useTestState() {
@@ -216,10 +212,20 @@ export function useTestState() {
         const ids = [...next];
         try {
           const saved = localStorage.getItem("cognitive-rust-result");
-          if (saved) { const e = JSON.parse(saved); e.flaggedIds = ids; localStorage.setItem("cognitive-rust-result", JSON.stringify(e)); }
+          if (saved) {
+            const e = JSON.parse(saved);
+            e.flaggedIds = ids;
+            localStorage.setItem("cognitive-rust-result", JSON.stringify(e));
+          }
           const fullRaw = localStorage.getItem("cognitive-rust-full-result");
-          if (fullRaw) { const f = JSON.parse(fullRaw); if (f.result) f.result.flaggedIds = ids; localStorage.setItem("cognitive-rust-full-result", JSON.stringify(f)); }
-        } catch { /* ignore */ }
+          if (fullRaw) {
+            const f = JSON.parse(fullRaw);
+            if (f.result) f.result.flaggedIds = ids;
+            localStorage.setItem("cognitive-rust-full-result", JSON.stringify(f));
+          }
+        } catch {
+          /* ignore */
+        }
         // Toast feedback
         showToast(adding ? n("testing.flagAdded") : n("testing.flagRemoved"), 2000);
       }
@@ -268,7 +274,7 @@ export function useTestState() {
 
         // AI pool questions now loaded on demand in handleBeginTest
       } else {
-        let qs = selectQuestions(QUESTIONS_PER_TEST, locale);
+        const qs = selectQuestions(QUESTIONS_PER_TEST, locale);
         if (hasParams) {
           setQuestions(
             qs.map((q) => ({
@@ -365,7 +371,7 @@ export function useTestState() {
           const dimResponses = responses.filter((r) =>
             dim === "event"
               ? r.type === "event" || r.type === "event-cause" || r.type === "event-argument"
-              : r.type === dim
+              : r.type === dim,
           );
           if (dimResponses.length >= 5) {
             const est = estimateAbility(dimResponses);
@@ -374,10 +380,10 @@ export function useTestState() {
         }
 
         // Override dimensionScores with IRT-based scores when available
-        const irtDimScores = { ...base.dimensionScores }
+        const irtDimScores = { ...base.dimensionScores };
         for (const dim of ["logic", "math", "vocab", "event"] as const) {
           if (thetaByType[dim]) {
-            irtDimScores[dim] = thetaToDimensionScore(thetaByType[dim]!.theta)
+            irtDimScores[dim] = thetaToDimensionScore(thetaByType[dim]!.theta);
           }
         }
 
@@ -420,7 +426,7 @@ export function useTestState() {
           flaggedIds: [...flaggedIds],
         };
         localStorage.setItem("cognitive-rust-result", JSON.stringify(entry));
-        setSavedResult(entry)
+        setSavedResult(entry);
         localStorage.setItem("cognitive-rust-full-result", JSON.stringify({ result: r, aiUsage }));
         const raw = localStorage.getItem("cognitive-rust-history");
         const history = raw ? JSON.parse(raw) : [];
@@ -430,12 +436,12 @@ export function useTestState() {
 
         // Track free test count within rolling 7-day window
         if (!isPremium) {
-          recordFreeTest()
-          setFreeTestUsedCount(getFreeTestUsedCount())
+          recordFreeTest();
+          setFreeTestUsedCount(getFreeTestUsedCount());
         }
         // Sync to cloud for premium users
         if (isPremium) {
-          syncNow().catch(() => {})
+          syncNow().catch(() => {});
         }
 
         // Save theta profile for cross-session persistence (all users)
@@ -443,10 +449,18 @@ export function useTestState() {
           const abilityProfile: StoredAbilityProfile = {
             overall: { theta: r.theta, standardError: r.thetaSE ?? 0 },
             byType: {
-              logic: r.thetaByType?.logic ? { theta: r.thetaByType.logic.theta, standardError: r.thetaByType.logic.se } : null,
-              math: r.thetaByType?.math ? { theta: r.thetaByType.math.theta, standardError: r.thetaByType.math.se } : null,
-              vocab: r.thetaByType?.vocab ? { theta: r.thetaByType.vocab.theta, standardError: r.thetaByType.vocab.se } : null,
-              event: r.thetaByType?.event ? { theta: r.thetaByType.event.theta, standardError: r.thetaByType.event.se } : null,
+              logic: r.thetaByType?.logic
+                ? { theta: r.thetaByType.logic.theta, standardError: r.thetaByType.logic.se }
+                : null,
+              math: r.thetaByType?.math
+                ? { theta: r.thetaByType.math.theta, standardError: r.thetaByType.math.se }
+                : null,
+              vocab: r.thetaByType?.vocab
+                ? { theta: r.thetaByType.vocab.theta, standardError: r.thetaByType.vocab.se }
+                : null,
+              event: r.thetaByType?.event
+                ? { theta: r.thetaByType.event.theta, standardError: r.thetaByType.event.se }
+                : null,
             },
             testDate: new Date().toISOString(),
             questionsAnswered: r.totalQuestions,
@@ -455,7 +469,7 @@ export function useTestState() {
 
           // Premium users: also upload to cloud
           if (isPremium && licenseKey) {
-            uploadProfile(licenseKey, abilityProfile).catch(() => {})
+            uploadProfile(licenseKey, abilityProfile).catch(() => {});
           }
         }
       } catch {
@@ -464,41 +478,51 @@ export function useTestState() {
       const elapsedMs = testStartTime.current ? Date.now() - testStartTime.current : null;
 
       // Build per-question response records for IRT calibration
-      const responseRecords: Array<{questionId: number; correct: number; theta: number | null}> = []
+      const responseRecords: Array<{ questionId: number; correct: number; theta: number | null }> =
+        [];
       if (ADAPTIVE_MODE && adaptiveSessionRef.current?.responses) {
-        const finalTheta = r.theta ?? null
+        const finalTheta = r.theta ?? null;
         for (const rr of adaptiveSessionRef.current.responses) {
           responseRecords.push({
             questionId: rr.questionId,
             correct: rr.score >= 0.5 ? 1 : 0,
             theta: finalTheta,
-          })
+          });
         }
       } else if (!ADAPTIVE_MODE && questions.length > 0) {
         for (let i = 0; i < questions.length; i++) {
-          const qScore = scoreAnswer(answers[i], questions[i].answer)
+          const qScore = scoreAnswer(answers[i], questions[i].answer);
           responseRecords.push({
             questionId: questions[i].id,
             correct: qScore >= 0.5 ? 1 : 0,
             theta: null,
-          })
+          });
         }
       }
 
-      const deviceId = (() => { try { return localStorage.getItem("cortex:device-id") ?? "anon" } catch { return "anon" } })()
+      const deviceId = (() => {
+        try {
+          return localStorage.getItem("cortex:device-id") ?? "anon";
+        } catch {
+          return "anon";
+        }
+      })();
 
       const payload = {
         degradationIndex: r.degradationIndex,
         tierLabel: r.tier.tierKey,
         correctCount: r.correctCount,
         totalQuestions: r.totalQuestions,
-        aiUsageLevel: aiUsage !== null ? AI_CANONICAL_LEVELS[aiUsage >= AI_CANONICAL_LEVELS.length ? 0 : aiUsage] : null,
+        aiUsageLevel:
+          aiUsage !== null
+            ? AI_CANONICAL_LEVELS[aiUsage >= AI_CANONICAL_LEVELS.length ? 0 : aiUsage]
+            : null,
         estimationMethod: r.estimationMethod,
         elapsedMs,
         theta: r.theta ?? null,
         deviceId,
         responses: responseRecords.length > 0 ? responseRecords : undefined,
-      }
+      };
       fetch("/api/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -598,12 +622,14 @@ export function useTestState() {
   // Clear free test timestamps when premium
   useEffect(() => {
     if (isPremium) {
-      setCooldownEndsAt(0)
-      setFreeTestUsedCount(0)
-      localStorage.removeItem(FREE_TEST_TIMESTAMPS_KEY)
-      localStorage.removeItem(OLD_FREE_TEST_KEY)
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setCooldownEndsAt(0);
+      setFreeTestUsedCount(0);
+      /* eslint-enable react-hooks/set-state-in-effect */
+      localStorage.removeItem(FREE_TEST_TIMESTAMPS_KEY);
+      localStorage.removeItem(OLD_FREE_TEST_KEY);
     }
-  }, [isPremium])
+  }, [isPremium]);
 
   // Show toast when AI question appears
   const notifiedAiIds = useRef<Set<number>>(new Set());
@@ -611,11 +637,9 @@ export function useTestState() {
     if (phase !== "testing") return;
     if (questions.length === 0) return;
     const lastQ = questions[questions.length - 1];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const qSource = (lastQ as any).source;
-    if (
-      (qSource === "llm" || qSource === "llm-pool") &&
-      !notifiedAiIds.current.has(lastQ.id)
-    ) {
+    if ((qSource === "llm" || qSource === "llm-pool") && !notifiedAiIds.current.has(lastQ.id)) {
       notifiedAiIds.current.add(lastQ.id);
       showToast(n("testing.aiQuestionToast"), 4000);
     }
@@ -633,7 +657,7 @@ export function useTestState() {
         const saved = localStorage.getItem("cognitive-rust-result");
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed.flaggedIds?.length > 0) setHasFlaggedBefore(true);
+          if ((parsed.flaggedIds?.length ?? 0) > 0) setHasFlaggedBefore(true);
           // Don't show "last test" banner for first-time test takers
           const histRaw = localStorage.getItem("cognitive-rust-history");
           const history = histRaw ? JSON.parse(histRaw) : [];
@@ -646,7 +670,8 @@ export function useTestState() {
           const histRaw = localStorage.getItem("cognitive-rust-history");
           if (histRaw) {
             const hist = JSON.parse(histRaw);
-            if (hist.some((h: any) => h.flaggedIds?.length > 0)) setHasFlaggedBefore(true);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (hist.some((h: any) => (h.flaggedIds?.length ?? 0) > 0)) setHasFlaggedBefore(true);
           }
         }
       } catch {
@@ -659,10 +684,7 @@ export function useTestState() {
           const reminder = JSON.parse(reminderRaw);
           if (Date.now() >= reminder.targetDate) {
             localStorage.removeItem("cognitive-rust-reminder");
-            if (
-              "Notification" in window &&
-              Notification.permission === "granted"
-            ) {
+            if ("Notification" in window && Notification.permission === "granted") {
               new Notification(n("toast.reminderTitle"), {
                 body: n("toast.reminderBody", {
                   tier: reminder.tierLabelKey
@@ -688,11 +710,11 @@ export function useTestState() {
 
       // Check 7-day / 7-test limit for free users
       if (!isPremium) {
-        const cooldownEnd = getFreeTestCooldownEndsAt()
+        const cooldownEnd = getFreeTestCooldownEndsAt();
         if (cooldownEnd !== null && Date.now() < cooldownEnd) {
-          setCooldownEndsAt(cooldownEnd)
+          setCooldownEndsAt(cooldownEnd);
         }
-        setFreeTestUsedCount(getFreeTestUsedCount())
+        setFreeTestUsedCount(getFreeTestUsedCount());
       }
     });
     return () => {
@@ -738,13 +760,19 @@ export function useTestState() {
     // Premium users: validate license server-side before bypassing free limit
     if (isPremium && licenseKey) {
       try {
-        const deviceId = (() => { try { return localStorage.getItem("cortex:device-id") ?? "anon" } catch { return "anon" } })()
+        const deviceId = (() => {
+          try {
+            return localStorage.getItem("cortex:device-id") ?? "anon";
+          } catch {
+            return "anon";
+          }
+        })();
         const res = await fetch("/api/license/validate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ licenseKey, deviceId }),
-        })
-        const data = await res.json()
+        });
+        const data = await res.json();
         if (!data.valid) {
           // License became invalid — fall through to free user checks
         }
@@ -755,13 +783,13 @@ export function useTestState() {
 
     // Check 7-day / 7-test limit for free users
     if (!isPremium) {
-      const cooldownEnd = getFreeTestCooldownEndsAt()
+      const cooldownEnd = getFreeTestCooldownEndsAt();
       if (cooldownEnd !== null && Date.now() < cooldownEnd) {
-        setCooldownEndsAt(cooldownEnd)
-        setCooldownVersion((v) => v + 1)
-        return // blocked by limit
+        setCooldownEndsAt(cooldownEnd);
+        setCooldownVersion((v) => v + 1);
+        return; // blocked by limit
       }
-      setFreeTestUsedCount(getFreeTestUsedCount())
+      setFreeTestUsedCount(getFreeTestUsedCount());
     }
     clearProgress();
     setSavedProgress(null);
@@ -773,8 +801,7 @@ export function useTestState() {
     testStartTime.current = Date.now();
     // In adaptive mode, saved progress is incompatible — restart instead
     if (ADAPTIVE_MODE) {
-      const resumedAiUsage =
-        typeof savedProgress.aiUsage === "number" ? savedProgress.aiUsage : 0;
+      const resumedAiUsage = typeof savedProgress.aiUsage === "number" ? savedProgress.aiUsage : 0;
       setAiUsage(resumedAiUsage);
       clearProgress();
       setSavedProgress(null);
@@ -812,17 +839,17 @@ export function useTestState() {
     localProfile: StoredAbilityProfile | null,
   ): Promise<void> {
     try {
-      const cloudProfile = await downloadProfile(key)
-      if (!cloudProfile || !adaptiveSessionRef.current) return
-      const localTs = localProfile ? new Date(localProfile.testDate).getTime() : 0
-      const cloudTs = new Date(cloudProfile.testDate).getTime()
+      const cloudProfile = await downloadProfile(key);
+      if (!cloudProfile || !adaptiveSessionRef.current) return;
+      const localTs = localProfile ? new Date(localProfile.testDate).getTime() : 0;
+      const cloudTs = new Date(cloudProfile.testDate).getTime();
       if (cloudTs > localTs) {
         // Cloud has a newer profile — update session and local cache
         adaptiveSessionRef.current.thetaEstimate = {
           theta: cloudProfile.overall.theta,
           standardError: cloudProfile.overall.standardError,
-        }
-        saveProfile(cloudProfile)
+        };
+        saveProfile(cloudProfile);
       }
     } catch {
       /* background refresh — silent fail */
@@ -837,10 +864,10 @@ export function useTestState() {
       .then((r) => r.json())
       .then((data) => {
         if (data.questions?.length > 0) {
-          const existing = new Set(adaptivePoolRef.current.map((q) => q.id))
-          const fresh = data.questions.filter((q: Question) => !existing.has(q.id))
+          const existing = new Set(adaptivePoolRef.current.map((q) => q.id));
+          const fresh = data.questions.filter((q: Question) => !existing.has(q.id));
           if (fresh.length > 0) {
-            adaptivePoolRef.current = [...adaptivePoolRef.current, ...fresh]
+            adaptivePoolRef.current = [...adaptivePoolRef.current, ...fresh];
           }
         }
       })
@@ -1040,7 +1067,10 @@ export function useTestState() {
     if (selected === null) return;
     if (Array.isArray(selected) && selected.length === 0) return;
     setToast(null);
-    if (toastTimerRef.current) { clearTimeout(toastTimerRef.current); toastTimerRef.current = null; }
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
     submitAnswer(selected);
   }
 
@@ -1071,7 +1101,9 @@ export function useTestState() {
       }
       // Sync to cloud for premium users
       if (isPremium) syncNow().catch(() => {});
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
   async function handleRestart() {
@@ -1127,7 +1159,9 @@ export function useTestState() {
 
       // Load prevResult from history for comparison
       const historyRaw = localStorage.getItem("cognitive-rust-history");
-      const historyParsed: StoredResultSummary[] = historyRaw ? JSON.parse(historyRaw).map(normalizeStoredEntry) : [];
+      const historyParsed: StoredResultSummary[] = historyRaw
+        ? JSON.parse(historyRaw).map(normalizeStoredEntry)
+        : [];
       if (historyParsed.length >= 2) {
         setPrevResult(historyParsed[historyParsed.length - 2]);
       }
@@ -1156,8 +1190,7 @@ export function useTestState() {
       event: n("radar.event"),
       cta: n("landing.title") + " — cortex.hydroroll.team",
     });
-    const pageUrl =
-      window.location.origin + "/share?ref=" + result.degradationIndex;
+    const pageUrl = window.location.origin + "/share?ref=" + result.degradationIndex;
 
     if (navigator.share) {
       try {
@@ -1173,7 +1206,7 @@ export function useTestState() {
     }
 
     try {
-      const shareText = isPremium ? text : text + "\n\n测试来自 认知防锈 cortex.hydroroll.team"
+      const shareText = isPremium ? text : text + "\n\n测试来自 认知防锈 cortex.hydroroll.team";
       await navigator.clipboard.writeText(shareText + "\n" + pageUrl);
       showToast(n("toast.resultCopied"), 2000);
     } catch {
@@ -1292,7 +1325,8 @@ export function useTestState() {
   return {
     // State
     phase,
-    declared, setDeclared,
+    declared,
+    setDeclared,
     currentQ,
     selected,
     answers,
@@ -1301,12 +1335,15 @@ export function useTestState() {
     result,
     savedResult,
     savedProgress,
-    showExplanations, setShowExplanations,
+    showExplanations,
+    setShowExplanations,
     isDownloading,
-    toast, setToast,
+    toast,
+    setToast,
     challengeRef,
     prevResult,
-    aiUsage, setAiUsage,
+    aiUsage,
+    setAiUsage,
     questions,
     isLastQuestion,
     totalQuestions: QUESTIONS_PER_TEST,

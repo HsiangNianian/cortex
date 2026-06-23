@@ -67,43 +67,45 @@ export function LandingPhase({
   const [showAnnouncement, setShowAnnouncement] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCooldownDismissed(false);
   }, [cooldownVersion]);
 
   // Check announcement state for premium users on mount
   useEffect(() => {
-    if (!isPremium) return
-    const key = "premium:announcement:ai_interpret:seen"
-    if (localStorage.getItem(key)) return
+    if (!isPremium) return;
+    const key = "premium:announcement:ai_interpret:seen";
+    if (localStorage.getItem(key)) return;
     // In dev mode, skip cloud check — just show the announcement (localStorage only)
     if (process.env.NODE_ENV === "development") {
-      setShowAnnouncement(true)
-      return
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowAnnouncement(true);
+      return;
     }
-    ;(async () => {
+    (async () => {
       try {
         const res = await fetch("/api/premium/ack-announcement?announcement=ai_interpret", {
           headers: { Authorization: `Bearer ${licenseKey}` },
-        })
-        if (!res.ok) return
-        const data = await res.json()
+        });
+        if (!res.ok) return;
+        const data = await res.json();
         if (data.seen) {
-          localStorage.setItem(key, "true")
-          return
+          localStorage.setItem(key, "true");
+          return;
         }
-        setShowAnnouncement(true)
+        setShowAnnouncement(true);
       } catch {
-        setShowAnnouncement(true)
+        setShowAnnouncement(true);
       }
-    })()
-  }, [isPremium, licenseKey])
+    })();
+  }, [isPremium, licenseKey]);
 
   async function handleDismissAnnouncement() {
-    const key = "premium:announcement:ai_interpret:seen"
-    localStorage.setItem(key, "true")
-    setShowAnnouncement(false)
+    const key = "premium:announcement:ai_interpret:seen";
+    localStorage.setItem(key, "true");
+    setShowAnnouncement(false);
     // In dev mode, skip cloud ack
-    if (process.env.NODE_ENV === "development") return
+    if (process.env.NODE_ENV === "development") return;
     try {
       await fetch("/api/premium/ack-announcement", {
         method: "POST",
@@ -112,11 +114,18 @@ export function LandingPhase({
           Authorization: `Bearer ${licenseKey}`,
         },
         body: JSON.stringify({ announcement: "ai_interpret" }),
-      })
-    } catch { /* silent */ }
+      });
+    } catch {
+      /* silent */
+    }
   }
 
-  const isCoolingDown = cooldownEndsAt > Date.now() && !cooldownDismissed;
+  const [currentTime, setCurrentTime] = useState(0);
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setCurrentTime(Date.now());
+  }, []);
+  const isCoolingDown = cooldownEndsAt > currentTime && !cooldownDismissed;
 
   return (
     <>
@@ -137,22 +146,16 @@ export function LandingPhase({
                 {activeTemplate?.id === "dragonboat" ? "🎋" : "?"}
               </span>
             </div>
-            <CardTitle className="text-2xl tracking-tight">
-              {n("landing.title")}
-            </CardTitle>
+            <CardTitle className="text-2xl tracking-tight">{n("landing.title")}</CardTitle>
             <CardDescription className="mt-3 text-base leading-relaxed">
               {isChallenge ? (
                 <>
                   {n("landing.challengePrefix")}{" "}
-                  <span className="font-bold text-foreground">
-                    {challengeRef}
-                  </span>{" "}
+                  <span className="font-bold text-foreground">{challengeRef}</span>{" "}
                   {n("landing.challengeSuffix")}
                 </>
               ) : (
-                <>
-                  {n("landing.defaultSubtitle", { count: QUESTIONS_PER_TEST })}
-                </>
+                <>{n("landing.defaultSubtitle", { count: QUESTIONS_PER_TEST })}</>
               )}
             </CardDescription>
           </CardHeader>
@@ -197,10 +200,7 @@ export function LandingPhase({
                         className="inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-primary px-2.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                       >
                         {n("landing.communityJoinCta")}
-                        <ExternalLink
-                          className="h-3.5 w-3.5"
-                          aria-hidden="true"
-                        />
+                        <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                       </a>
                       {isChinese && (
                         <a
@@ -209,10 +209,7 @@ export function LandingPhase({
                           rel="noreferrer"
                           className="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                         >
-                          <Gamepad2
-                            className="h-3.5 w-3.5"
-                            aria-hidden="true"
-                          />
+                          <Gamepad2 className="h-3.5 w-3.5" aria-hidden="true" />
                           {n("landing.communityGameCta")}
                         </a>
                       )}
@@ -224,9 +221,7 @@ export function LandingPhase({
 
             <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-foreground">
-                  {QUESTIONS_PER_TEST}
-                </span>{" "}
+                <span className="font-medium text-foreground">{QUESTIONS_PER_TEST}</span>{" "}
                 {n("landing.questionsCount", { count: QUESTIONS_PER_TEST })}
               </div>
               <div className="flex items-center gap-2">
@@ -238,9 +233,7 @@ export function LandingPhase({
                 })}
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-medium text-foreground">
-                  {n("landing.noAiLabel")}
-                </span>{" "}
+                <span className="font-medium text-foreground">{n("landing.noAiLabel")}</span>{" "}
                 {n("landing.noAiSubtext")}
               </div>
             </div>
@@ -258,18 +251,13 @@ export function LandingPhase({
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-foreground">
-                    {n("landing.lastTestLabel")}
-                  </span>
+                  <span className="font-medium text-foreground">{n("landing.lastTestLabel")}</span>
                   <span className="text-xs text-muted-foreground">
                     {new Date(savedResult.timestamp).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="mt-1 flex items-center gap-2">
-                  <span
-                    className="text-lg font-bold"
-                    style={{ color: savedResult.tierColor }}
-                  >
+                  <span className="text-lg font-bold" style={{ color: savedResult.tierColor }}>
                     {savedResult.degradationIndex}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -297,11 +285,7 @@ export function LandingPhase({
           <CardFooter className="flex-col gap-2">
             {savedProgress && !isChallenge ? (
               <>
-                <Button
-                  size="lg"
-                  className="w-full text-base"
-                  onClick={handleResume}
-                >
+                <Button size="lg" className="w-full text-base" onClick={handleResume}>
                   {n("landing.resumeButton")}
                   <span className="ml-2 text-sm opacity-70">
                     {n("landing.resumeProgress", {
@@ -319,40 +303,34 @@ export function LandingPhase({
                   {n("landing.restartButton")}
                 </Button>
               </>
-            ) : (() => {
-              const cooldownRemaining = cooldownEndsAt > Date.now() ? cooldownEndsAt - Date.now() : 0
-              const cooldownText = cooldownRemaining > 0
-                ? (() => {
-                    const h = Math.ceil(cooldownRemaining / (1000 * 60 * 60))
-                    const d = Math.floor(h / 24)
-                    const rh = h % 24
-                    return d > 0 && rh > 0 ? `${d}d${rh}h`
-                         : d > 0 ? `${d}d`
-                         : `${rh}h`
-                  })()
-                : null
-              const badgeText = isPremium
-                ? null
-                : isCoolingDown
-                  ? ` (${cooldownText})`
-                  : ` (${freeTestUsedCount}/7)`
-              return (
-                <Button
-                  size="lg"
-                  className="w-full text-base"
-                  onClick={handleStart}
-                >
-                  {savedResult
-                    ? n("landing.retakeButton")
-                    : n("landing.ctaButton")}
-                  {badgeText && (
-                    <span className="ml-2 text-sm tabular-nums opacity-70">
-                      {badgeText}
-                    </span>
-                  )}
-                </Button>
-              )
-            })()}
+            ) : (
+              (() => {
+                const cooldownRemaining =
+                  cooldownEndsAt > currentTime ? cooldownEndsAt - currentTime : 0;
+                const cooldownText =
+                  cooldownRemaining > 0
+                    ? (() => {
+                        const h = Math.ceil(cooldownRemaining / (1000 * 60 * 60));
+                        const d = Math.floor(h / 24);
+                        const rh = h % 24;
+                        return d > 0 && rh > 0 ? `${d}d${rh}h` : d > 0 ? `${d}d` : `${rh}h`;
+                      })()
+                    : null;
+                const badgeText = isPremium
+                  ? null
+                  : isCoolingDown
+                    ? ` (${cooldownText})`
+                    : ` (${freeTestUsedCount}/7)`;
+                return (
+                  <Button size="lg" className="w-full text-base" onClick={handleStart}>
+                    {savedResult ? n("landing.retakeButton") : n("landing.ctaButton")}
+                    {badgeText && (
+                      <span className="ml-2 text-sm tabular-nums opacity-70">{badgeText}</span>
+                    )}
+                  </Button>
+                );
+              })()
+            )}
             <Link
               href="/stats"
               className="text-xs text-muted-foreground underline-offset-4 hover:underline"
@@ -373,16 +351,11 @@ export function LandingPhase({
       {showAnnouncement && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-2xl">
-            <h3 className="text-lg font-semibold">
-              {n("result.aiInterpretAnnounceTitle")}
-            </h3>
+            <h3 className="text-lg font-semibold">{n("result.aiInterpretAnnounceTitle")}</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               {n("result.aiInterpretAnnounceDesc")}
             </p>
-            <Button
-              className="mt-5 w-full"
-              onClick={handleDismissAnnouncement}
-            >
+            <Button className="mt-5 w-full" onClick={handleDismissAnnouncement}>
               {n("result.aiInterpretAnnounceCta")}
             </Button>
           </div>

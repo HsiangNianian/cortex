@@ -1,12 +1,30 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { SiteFooter } from "@/components/site-footer";
 import { useTestState } from "./test-flow/useTestState";
-import { LandingPhase } from "./test-flow/LandingPhase";
-import { DeclarationPhase } from "./test-flow/DeclarationPhase";
-import { QuestionCard } from "./test-flow/QuestionCard";
-import { ProcessingPhase } from "./test-flow/ProcessingPhase";
-import { ResultPhase } from "./test-flow/ResultPhase";
+
+const dynamicLoading = () => (
+  <div className="animate-pulse rounded-xl bg-muted h-96 w-full max-w-lg" />
+);
+
+const LandingPhase = dynamic(() => import("./test-flow/LandingPhase").then((m) => m.LandingPhase), {
+  loading: dynamicLoading,
+});
+const DeclarationPhase = dynamic(
+  () => import("./test-flow/DeclarationPhase").then((m) => m.DeclarationPhase),
+  { loading: dynamicLoading },
+);
+const QuestionCard = dynamic(() => import("./test-flow/QuestionCard").then((m) => m.QuestionCard), {
+  loading: dynamicLoading,
+});
+const ProcessingPhase = dynamic(
+  () => import("./test-flow/ProcessingPhase").then((m) => m.ProcessingPhase),
+  { loading: dynamicLoading },
+);
+const ResultPhase = dynamic(() => import("./test-flow/ResultPhase").then((m) => m.ResultPhase), {
+  loading: dynamicLoading,
+});
 
 export default function TestFlow() {
   const s = useTestState();
@@ -78,14 +96,10 @@ export default function TestFlow() {
       {/* Toast */}
       <div
         className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-sm rounded-xl bg-foreground px-4 py-3 text-center text-sm font-medium text-background shadow-lg transition-all duration-300 ${
-          s.toast
-            ? "translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-4 opacity-0"
+          s.toast ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-4 opacity-0"
         }`}
       >
-        {typeof s.toast === "string"
-          ? s.toast
-          : s.toast?.message}
+        {typeof s.toast === "string" ? s.toast : s.toast?.message}
         {s.toast && typeof s.toast === "object" && s.toast.action && (
           <button
             className="ml-2 rounded-full bg-background/20 px-3 py-0.5 text-xs font-semibold text-background hover:bg-background/30"
