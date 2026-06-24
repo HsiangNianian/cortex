@@ -6,7 +6,6 @@ import { LanguageToggle } from "@/components/language-toggle";
 import { FestivalWrapper } from "@/components/festival/FestivalWrapper";
 import { Bulletin } from "@/components/bulletin";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
-import { QQLoginButton } from "@/components/QQLoginButton";
 import { PremiumWrapper } from "@/components/premium/PremiumWrapper";
 import { IntlErrorBoundary } from "@/components/IntlErrorBoundary";
 import { Link } from "@/i18n/navigation";
@@ -167,7 +166,6 @@ export default async function LocaleLayout({
             </svg>
             <span className="hidden sm:inline">{navT("marketplace")}</span>
           </Link>
-          <QQLoginButton />
           <LanguageToggle />
           <ThemeToggle />
         </div>

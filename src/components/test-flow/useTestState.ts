@@ -40,7 +40,7 @@ import { loadProfile, saveProfile, uploadProfile, downloadProfile } from "@/lib/
 import type { StoredAbilityProfile } from "@/lib/sync/profile-sync";
 
 const FREE_LIMIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-const MAX_FREE_TESTS = 7;
+const MAX_FREE_TESTS = 3;
 const FREE_TEST_TIMESTAMPS_KEY = "cortex:free-test-timestamps";
 const OLD_FREE_TEST_KEY = "cortex:last-free-test";
 
