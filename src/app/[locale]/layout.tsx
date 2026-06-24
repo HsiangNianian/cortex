@@ -48,6 +48,10 @@ export async function generateMetadata({
     title: t("title") + " | " + t("tagline"),
     description: t("description", { count: QUESTIONS_PER_TEST }),
     manifest: `/${locale}/manifest.json`,
+    icons: [
+      { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", url: "/favicon-180.png" },
+    ],
     metadataBase: new URL(BASE_URL),
     alternates: {
       canonical: locale === "zh-CN" ? BASE_URL : `${BASE_URL}/${locale}`,
