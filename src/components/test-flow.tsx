@@ -99,14 +99,18 @@ export default function TestFlow() {
           s.toast ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-4 opacity-0"
         }`}
       >
-        {typeof s.toast === "string" ? s.toast : s.toast?.message}
+        <div className="text-center">
+          {typeof s.toast === "string" ? s.toast : s.toast?.message}
+        </div>
         {s.toast && typeof s.toast === "object" && s.toast.action && (
-          <button
-            className="ml-2 rounded-full bg-background/20 px-3 py-0.5 text-xs font-semibold text-background hover:bg-background/30"
-            onClick={s.toast.action.onPress}
-          >
-            {s.toast.action.label}
-          </button>
+          <div className="mt-2 flex justify-center">
+            <button
+              className="rounded-full bg-background/20 px-3 py-0.5 text-xs font-semibold text-background hover:bg-background/30"
+              onClick={s.toast.action.onPress}
+            >
+              {s.toast.action.label}
+            </button>
+          </div>
         )}
       </div>
 
