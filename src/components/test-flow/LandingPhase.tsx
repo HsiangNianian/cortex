@@ -18,6 +18,7 @@ import type { DimensionScores } from "@/lib/scoring";
 import type { SavedProgress } from "./helpers";
 import { SiteGoal } from "@/components/site-goal";
 import { CooldownBanner } from "../premium/CooldownBanner";
+import { MAX_FREE_TESTS } from "./useTestState";
 import { usePremium } from "../premium/usePremium";
 import { useFestivalTemplate } from "../festival/FestivalTemplateProvider";
 
@@ -320,7 +321,7 @@ export function LandingPhase({
                   ? null
                   : isCoolingDown
                     ? ` (${cooldownText})`
-                    : ` (${freeTestUsedCount}/7)`;
+                    : ` (${freeTestUsedCount}/${MAX_FREE_TESTS})`;
                 return (
                   <Button size="lg" className="w-full text-base" onClick={handleStart}>
                     {savedResult ? n("landing.retakeButton") : n("landing.ctaButton")}

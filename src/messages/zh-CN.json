@@ -425,7 +425,7 @@
     "remainingDaysHours": "{days}天{hours}小时",
     "remainingDays": "{days}天",
     "remainingHours": "{totalHours}小时",
-    "cooldownLabel": "冷却剩余 · 免费版每7天可测7次",
+    "cooldownLabel": "冷却剩余 · 免费版每7天可测3次",
     "upgradePrompt": "升级后随时可测，不限次数",
     "unlockCta": "解锁高级版 ¥29.90 →",
     "afdianLink": "前往爱发电",
