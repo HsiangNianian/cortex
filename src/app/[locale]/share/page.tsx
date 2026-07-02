@@ -30,19 +30,17 @@ export async function generateMetadata({
   });
 
   return {
-    title,
-    description,
+    title: t("title") + " · " + t("subtitle"),
+    description: t("description", { count: 20 }),
     openGraph: {
-      title,
-      description,
+      title: t("title") + " · " + t("subtitle"),
+      description: t("description", { count: 20 }),
       type: "website",
-      images: [{ url: ogUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
-      images: [ogUrl],
+      title: t("title") + " · " + t("subtitle"),
+      description: t("description", { count: 20 }),
     },
   };
 }
