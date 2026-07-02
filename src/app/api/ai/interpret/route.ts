@@ -1,3 +1,5 @@
+export const dynamic = "force-static"
+
 import { NextResponse } from "next/server";
 import { validateAICall } from "@/lib/ai-auth";
 import { getCloudflareContext } from "@opennextjs/cloudflare";

@@ -1,3 +1,5 @@
+export const dynamic = "force-static"
+
 import { QUESTIONS_PER_TEST } from "@/lib/questions";
 import { RESULT_TIERS } from "@/lib/scoring";
 import { SITE_HOST } from "@/lib/site-config";

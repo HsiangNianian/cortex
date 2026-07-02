@@ -1,3 +1,5 @@
+export const dynamic = "force-static"
+
 import { NextResponse } from "next/server";
 import { search } from "@/lib/search";
 import { d1Query } from "@/lib/db";
