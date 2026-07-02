@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+
+export function generateStaticParams() {
+  return [{ locale: "zh-CN" }, { locale: "en" }, { locale: "ja" }]
+}
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { FestivalWrapper } from "@/components/festival/FestivalWrapper";
