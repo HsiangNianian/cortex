@@ -28,10 +28,10 @@ function diffLabel(d: number, t: (key: string) => string): string {
   return t("search.diffHard");
 }
 
-function sourceLabel(r: SearchResult, n: (key: string) => string): string {
+function sourceLabel(r: SearchResult): string {
   if (r.source === "llm") return "AI";
-  if (r.source === "community") return r.submitterName || n("submitQuestion.anonymous");
-  return n("search.fromBank");
+  if (r.source === "community") return r.submitterName || "anonymous";
+  return "";
 }
 
 export default function SearchPage() {
@@ -191,7 +191,7 @@ export default function SearchPage() {
                           {n("question.category." + r.category)}
                         </Badge>
                         <Badge variant="secondary" className="text-[10px] text-muted-foreground">
-                          {sourceLabel(r, n)}
+                          {sourceLabel(r)}
                         </Badge>
                         <Badge variant="outline" className="text-[10px]">
                           {diffLabel(r.difficulty, n)} ·{" "}

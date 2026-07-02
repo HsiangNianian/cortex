@@ -95,26 +95,19 @@ export async function POST(request: Request) {
   const logCtx: Record<string, any> = {};
 
   try {
-    // Premium check
+    // Auth check (open mode when AI_ACCESS_KEY is unset)
     const auth = request.headers.get("Authorization") ?? "";
-    const licenseKey = auth.startsWith("Bearer ") ? auth.slice(7) : "";
-    logCtx.licenseKey = licenseKey ? licenseKey.slice(0, 8) + "…" : null;
-    if (!licenseKey) {
-      console.log("[ai/interpret] missing_license", logCtx);
-      return NextResponse.json({ error: "missing_license" }, { status: 401 });
+    const bearerToken = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+    const { valid, reason } = await validateAICall(bearerToken || null);
+    logCtx.authResult = valid ? "ok" : reason;
+    if (!valid) {
+      console.log("[ai/interpret] auth_failed", { ...logCtx, reason });
+      return NextResponse.json({ error: reason || "unauthorized" }, { status: 401 });
     }
-    const license = await validateAICall(licenseKey);
-    logCtx.licenseValid = license.valid;
-    if (!license.valid) {
-      console.log("[ai/interpret] invalid_license", {
-        ...logCtx,
-        reason: license.reason,
-      });
-      return NextResponse.json({ error: "invalid_license" }, { status: 403 });
-    }
+    const rateLimitKey = bearerToken || "oss-anonymous";
 
     // Daily retry limit (default: 1)
-    if (await checkInterpretLimit(licenseKey)) {
+    if (await checkInterpretLimit(rateLimitKey)) {
       console.log("[ai/interpret] daily_limit_exhausted", logCtx);
       return NextResponse.json({ error: "daily_limit_exhausted" }, { status: 429 });
     }
@@ -236,7 +229,7 @@ export async function POST(request: Request) {
           analysisPreview: analysis.slice(0, 50),
           elapsed,
         });
-        recordInterpretUse(licenseKey).catch(() => {});
+        recordInterpretUse(rateLimitKey).catch(() => {});
         return NextResponse.json({ analysis });
       }
     } catch (e) {
@@ -257,7 +250,7 @@ export async function POST(request: Request) {
         analysisPreview: analysis.slice(0, 50),
         elapsed,
       });
-      recordInterpretUse(licenseKey).catch(() => {});
+      recordInterpretUse(rateLimitKey).catch(() => {});
       return NextResponse.json({ analysis });
     } catch (e) {
       console.warn("[ai/interpret] non-streaming also failed:", {

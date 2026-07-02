@@ -33,7 +33,6 @@ import {
 } from "@/lib/adaptive-test";
 import type { AdaptiveTestSession } from "@/lib/adaptive-test";
 import { estimateAbility } from "@/lib/irt/engine";
-import { fetchCommunityQuestions, mergeCommunityQuestions } from "@/lib/community/integration";
 import { loadProgress, clearProgress, saveProgress, type SavedProgress } from "./helpers";
 import { usePremium } from "../premium-seam";
 import {
@@ -219,17 +218,6 @@ export function useTestState() {
           );
         } else {
           setQuestions(qs);
-        }
-      }
-
-      // Fetch and merge community questions
-      const communityQs = await fetchCommunityQuestions(locale);
-      if (communityQs.length > 0) {
-        if (ADAPTIVE_MODE) {
-          adaptivePoolRef.current = [...adaptivePoolRef.current, ...communityQs];
-          setAllQuestions((prev) => [...prev, ...communityQs]);
-        } else {
-          setQuestions((prev) => mergeCommunityQuestions(prev, communityQs));
         }
       }
     });
@@ -1057,16 +1045,6 @@ export function useTestState() {
       setAllQuestions(getAllQuestions(locale));
     } else {
       setQuestions(selectQuestions(QUESTIONS_PER_TEST, locale));
-    }
-
-    // Fetch and merge community questions
-    const communityQs = await fetchCommunityQuestions(locale);
-    if (communityQs.length > 0) {
-      if (ADAPTIVE_MODE) {
-        setAllQuestions((prev) => [...prev, ...communityQs]);
-      } else {
-        setQuestions((prev) => mergeCommunityQuestions(prev, communityQs));
-      }
     }
 
     setPhase("landing");
