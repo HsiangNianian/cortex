@@ -35,91 +35,24 @@ import type { AdaptiveTestSession } from "@/lib/adaptive-test";
 import { estimateAbility } from "@/lib/irt/engine";
 import { fetchCommunityQuestions, mergeCommunityQuestions } from "@/lib/community/integration";
 import { loadProgress, clearProgress, saveProgress, type SavedProgress } from "./helpers";
-import { usePremium } from "../premium/usePremium";
-import { loadProfile, saveProfile, uploadProfile, downloadProfile } from "@/lib/sync/profile-sync";
-import type { StoredAbilityProfile } from "@/lib/sync/profile-sync";
+import { usePremium } from "../premium-seam";
+import {
+  loadProfile,
+  saveProfile,
+  uploadProfile,
+  downloadProfile,
+  getFreeTestCooldownEndsAt,
+  recordFreeTest,
+  getFreeTestUsedCount,
+  clearFreeTestTimestamps,
+  validateLicenseBeforeStart,
+  MAX_FREE_TESTS,
+  FREE_LIMIT_WINDOW_MS,
+  type StoredAbilityProfile,
+} from "@/lib/premium-seam";
+import { SITE_HOST } from "@/lib/site-config";
 
-const FREE_LIMIT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-export const MAX_FREE_TESTS = 3;
-const FREE_TEST_TIMESTAMPS_KEY = "cortex:free-test-timestamps";
-const OLD_FREE_TEST_KEY = "cortex:last-free-test";
-
-function readTimestamps(): number[] {
-  const raw = localStorage.getItem(FREE_TEST_TIMESTAMPS_KEY);
-  const timestamps: number[] = raw ? JSON.parse(raw) : [];
-  return Array.isArray(timestamps) ? timestamps : [];
-}
-
-function saveTimestamps(timestamps: number[]): void {
-  const now = Date.now();
-  const windowStart = now - FREE_LIMIT_WINDOW_MS;
-  const valid = timestamps.filter((ts) => typeof ts === "number" && ts > windowStart);
-  localStorage.setItem(FREE_TEST_TIMESTAMPS_KEY, JSON.stringify(valid));
-}
-
-/** Migrate old single-timestamp key into the new array, then remove it. */
-function migrateOldCooldown(): void {
-  try {
-    const oldRaw = localStorage.getItem(OLD_FREE_TEST_KEY);
-    if (!oldRaw) return;
-    const oldTs = parseInt(oldRaw, 10);
-    if (isNaN(oldTs)) {
-      localStorage.removeItem(OLD_FREE_TEST_KEY);
-      return;
-    }
-    // Only migrate if still within the window
-    if (Date.now() - oldTs < FREE_LIMIT_WINDOW_MS) {
-      const timestamps = readTimestamps();
-      if (!timestamps.includes(oldTs)) {
-        timestamps.push(oldTs);
-        saveTimestamps(timestamps);
-      }
-    }
-    localStorage.removeItem(OLD_FREE_TEST_KEY);
-  } catch {
-    /* ignore */
-  }
-}
-
-function getFreeTestCooldownEndsAt(): number | null {
-  try {
-    migrateOldCooldown();
-    const timestamps = readTimestamps();
-    const now = Date.now();
-    const windowStart = now - FREE_LIMIT_WINDOW_MS;
-    const valid = timestamps.filter((ts) => ts > windowStart);
-    if (valid.length >= MAX_FREE_TESTS) {
-      const oldest = Math.min(...valid);
-      return oldest + FREE_LIMIT_WINDOW_MS;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function recordFreeTest(): void {
-  try {
-    migrateOldCooldown();
-    const timestamps = readTimestamps();
-    timestamps.push(Date.now());
-    saveTimestamps(timestamps);
-  } catch {
-    /* ignore */
-  }
-}
-
-function getFreeTestUsedCount(): number {
-  try {
-    migrateOldCooldown();
-    const timestamps = readTimestamps();
-    const now = Date.now();
-    const windowStart = now - FREE_LIMIT_WINDOW_MS;
-    return timestamps.filter((ts) => ts > windowStart).length;
-  } catch {
-    return 0;
-  }
-}
+export { MAX_FREE_TESTS } from "@/lib/premium-seam";
 
 type Phase = "landing" | "declaration" | "testing" | "processing" | "result";
 
@@ -626,8 +559,7 @@ export function useTestState() {
       setCooldownEndsAt(0);
       setFreeTestUsedCount(0);
       /* eslint-enable react-hooks/set-state-in-effect */
-      localStorage.removeItem(FREE_TEST_TIMESTAMPS_KEY);
-      localStorage.removeItem(OLD_FREE_TEST_KEY);
+      clearFreeTestTimestamps();
     }
   }, [isPremium]);
 
@@ -772,26 +704,7 @@ export function useTestState() {
   async function handleStart() {
     // Premium users: validate license server-side before bypassing free limit
     if (isPremium && licenseKey) {
-      try {
-        const deviceId = (() => {
-          try {
-            return localStorage.getItem("cortex:device-id") ?? "anon";
-          } catch {
-            return "anon";
-          }
-        })();
-        const res = await fetch("/api/license/validate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ licenseKey, deviceId }),
-        });
-        const data = await res.json();
-        if (!data.valid) {
-          // License became invalid — fall through to free user checks
-        }
-      } catch {
-        // Network error — allow through (don't block legitimate users on transient failures)
-      }
+      await validateLicenseBeforeStart(licenseKey);
     }
 
     // Check 7-day / 3-test limit for free users
@@ -1215,7 +1128,7 @@ export function useTestState() {
       math: n("radar.math"),
       vocab: n("radar.vocab"),
       event: n("radar.event"),
-      cta: n("landing.title") + " — cortex.hydroroll.team",
+      cta: n("landing.title") + " — " + SITE_HOST,
     });
     const pageUrl = window.location.origin + "/share?ref=" + result.degradationIndex;
 
@@ -1233,7 +1146,7 @@ export function useTestState() {
     }
 
     try {
-      const shareText = isPremium ? text : text + "\n\n测试来自 认知防锈 cortex.hydroroll.team";
+      const shareText = isPremium ? text : text + "\n\n测试来自 认知防锈 " + SITE_HOST;
       await navigator.clipboard.writeText(shareText + "\n" + pageUrl);
       showToast(n("toast.resultCopied"), 2000);
     } catch {
@@ -1306,7 +1219,7 @@ export function useTestState() {
       <text x="600" y="379" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="600" fill="white">${n("tier." + result.tier.tierKey)}</text>
       <text x="600" y="435" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#666">${result.correctCount} / ${result.totalQuestions}</text>
       ${dimParts ? `<text x="600" y="465" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" fill="#999">${dimParts}</text>` : ""}
-      <text x="600" y="580" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#bbb">cortex.hydroroll.team</text>
+      <text x="600" y="580" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#bbb">${SITE_HOST}</text>
       ${!isPremium ? `<text x="600" y="610" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#d97706" font-weight="500">认知防锈 · 免费版</text>` : ""}
     </svg>`;
 

@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   Card,
@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, TrendingDown, Minus, Flag } from "lucide-react";
+import { Flag } from "lucide-react";
 import {
   normalCDF,
   abilityToDegradationIndex,
@@ -23,8 +23,13 @@ import {
 } from "@/lib/scoring";
 import RadarChart from "@/components/radar-chart";
 import { DegradationGauge } from "./DegradationGauge";
-import { usePremium } from "../premium/usePremium";
-import { analyzeHistory, type TrendAnalysis } from "@/lib/premium/analysis";
+import {
+  PremiumBadge,
+  TrendSection,
+  AIInterpretSection,
+  CrossPromoSuggestions,
+  ExportCsvLink,
+} from "../premium-seam";
 
 interface ResultPhaseProps {
   result: TestResult;
@@ -67,48 +72,7 @@ export function ResultPhase({
   onToggleFlag,
 }: ResultPhaseProps) {
   const n = useTranslations();
-  const locale = useLocale();
   const [showScoringInfo, setShowScoringInfo] = useState(false);
-  const { isPremium, licenseKey } = usePremium();
-  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("cognitive-rust-result");
-      if (!raw) return;
-      const entry = JSON.parse(raw);
-      if (!entry.timestamp) return;
-      const cached = localStorage.getItem(`cortex:ai-interpret:${entry.timestamp}`);
-      if (cached) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setAiAnalysis(cached);
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  async function handleExportCSV() {
-    if (!licenseKey) return;
-    try {
-      const res = await fetch("/api/premium/export", {
-        headers: { Authorization: `Bearer ${licenseKey}` },
-      });
-      if (!res.ok) return;
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "cognitive-rust-results.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch {
-      /* silent */
-    }
-  }
 
   const testCount: number = (() => {
     try {
@@ -121,123 +85,6 @@ export function ResultPhase({
     }
   })();
   const isFirstTest = testCount === 1;
-
-  async function handleAiInterpret() {
-    if (!isPremium) return;
-    setAiLoading(true);
-    setAiError(null);
-    try {
-      const body = {
-        locale,
-        degradationIndex: result.degradationIndex,
-        tierLabelKey: result.tier.tierKey,
-        dimensionScores: result.dimensionScores,
-        thetaByType: result.thetaByType,
-        prevResult: prevResult
-          ? {
-              degradationIndex: prevResult.degradationIndex,
-              timestamp: prevResult.timestamp,
-              dimensionScores: prevResult.dimensionScores,
-            }
-          : null,
-        testCount,
-      };
-      const res = await fetch("/api/ai/interpret", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${licenseKey}`,
-        },
-        body: JSON.stringify(body),
-      });
-      if (res.status === 429) {
-        setAiError(n("result.interpretLimitExhausted"));
-        setAiLoading(false);
-        return;
-      }
-      if (!res.ok) throw new Error("API error");
-
-      const contentType = res.headers.get("Content-Type") || "";
-
-      if (contentType.includes("text/event-stream")) {
-        // Streaming response
-        const reader = res.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let fullAnalysis = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || "";
-
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") break;
-              try {
-                const parsed = JSON.parse(data);
-                if (parsed.response) {
-                  fullAnalysis += parsed.response;
-                  setAiAnalysis(fullAnalysis);
-                }
-              } catch {
-                /* ignore */
-              }
-            }
-          }
-        }
-
-        // Cache to localStorage
-        try {
-          const entryRaw = localStorage.getItem("cognitive-rust-result");
-          if (entryRaw) {
-            const entry = JSON.parse(entryRaw);
-            if (entry.timestamp) {
-              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, fullAnalysis);
-            }
-          }
-        } catch {
-          /* ignore */
-        }
-      } else {
-        // Non-streaming fallback
-        const data = await res.json();
-        setAiAnalysis(data.analysis);
-        try {
-          const entryRaw = localStorage.getItem("cognitive-rust-result");
-          if (entryRaw) {
-            const entry = JSON.parse(entryRaw);
-            if (entry.timestamp) {
-              localStorage.setItem(`cortex:ai-interpret:${entry.timestamp}`, data.analysis);
-            }
-          }
-        } catch {
-          /* ignore */
-        }
-      }
-    } catch {
-      setAiError(n("result.aiInterpretError"));
-    } finally {
-      setAiLoading(false);
-    }
-  }
-
-  const analysis: TrendAnalysis | null = useMemo(() => {
-    if (!isPremium) return null;
-    try {
-      const raw = localStorage.getItem("cognitive-rust-history");
-      if (!raw) return null;
-      const history = JSON.parse(raw);
-      if (!Array.isArray(history) || history.length < 2) return null;
-      return analyzeHistory(history);
-    } catch {
-      return null;
-    }
-  }, [isPremium, result]);
 
   return (
     <Card className="mx-auto w-full max-w-lg border-0 shadow-lg sm:border md:max-w-xl lg:max-w-2xl">
@@ -291,11 +138,7 @@ export function ResultPhase({
                   IRT
                 </Link>
               )}
-              {isPremium && (
-                <Badge variant="default" className="bg-amber-500 text-white text-xs">
-                  ✦ Premium
-                </Badge>
-              )}
+              <PremiumBadge />
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {n("tier." + result.tier.tierKey + "Desc")}
@@ -525,62 +368,7 @@ export function ResultPhase({
               return null;
             })()}
 
-            {/* Game suggestion for low logic / event scores */}
-            {(() => {
-              const logicLow =
-                result.dimensionScores.logic !== null && result.dimensionScores.logic < 60;
-              const eventLow =
-                result.dimensionScores.event !== null && result.dimensionScores.event < 60;
-              if (!logicLow && !eventLow) return null;
-
-              const title =
-                logicLow && eventLow
-                  ? n("result.logicEventGameTitle")
-                  : logicLow
-                    ? n("result.logicGameTitle")
-                    : n("result.eventGameTitle");
-
-              return (
-                <div className="rounded-lg border border-dashed border-blue-300/30 bg-blue-50/50 p-4 text-center dark:bg-blue-950/10">
-                  <p className="text-sm font-medium text-foreground">{title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {n.rich("result.logicGameDesc", {
-                      game: (chunks) => (
-                        <a
-                          href="https://deadpan.hydroroll.team"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-blue-600 underline-offset-2 hover:underline"
-                        >
-                          {chunks}
-                        </a>
-                      ),
-                    })}
-                  </p>
-                </div>
-              );
-            })()}
-
-            {/* LCTI suggestion for good logic scores */}
-            {result.dimensionScores.logic !== null && result.dimensionScores.logic >= 60 && (
-              <div className="rounded-lg border border-dashed border-green-300/30 bg-green-50/50 p-4 text-center dark:bg-green-950/10">
-                <p className="text-sm font-medium text-foreground">{n("result.logicGoodTitle")}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {n.rich("result.logicGoodDesc", {
-                    lcti: (chunks) => (
-                      <a
-                        href="https://lcti.hydroroll.team"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-green-600 underline-offset-2 hover:underline"
-                      >
-                        {chunks}
-                      </a>
-                    ),
-                  })}
-                </p>
-              </div>
-            )}
+            <CrossPromoSuggestions result={result} isFirstTest={isFirstTest} />
           </>
         )}
 
@@ -674,127 +462,9 @@ export function ResultPhase({
           </div>
         )}
 
-        {/* Premium: Dimension Trend Analysis */}
-        {analysis && analysis.dimensions.length >= 2 && (
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-            <p className="text-sm font-semibold mb-3 flex items-center gap-1.5">
-              {analysis.overallTrend === "improving" ? (
-                <>
-                  <TrendingUp className="h-4 w-4 text-green-600" /> 整体呈改善趋势
-                </>
-              ) : analysis.overallTrend === "declining" ? (
-                <>
-                  <TrendingDown className="h-4 w-4 text-red-600" /> 整体呈下降趋势
-                </>
-              ) : (
-                <>
-                  <Minus className="h-4 w-4 text-muted-foreground" /> 整体保持稳定
-                </>
-              )}
-              <span className="ml-1 text-xs font-normal text-muted-foreground">
-                （{analysis.testCount} 次测试）
-              </span>
-            </p>
-            <div className="space-y-2">
-              {analysis.dimensions
-                .filter((d) => d.delta !== null)
-                .map((d) => (
-                  <div key={d.dimension} className="flex items-center gap-2 text-xs">
-                    <span className="w-16 text-muted-foreground">{d.label}</span>
-                    <span
-                      className={`font-mono font-medium ${d.trend === "declining" ? "text-red-600" : d.trend === "improving" ? "text-green-600" : "text-muted-foreground"}`}
-                    >
-                      {d.delta !== null && d.delta > 0 ? "+" : ""}
-                      {d.delta}%
-                    </span>
-                    <span className="text-muted-foreground truncate">{d.tip}</span>
-                  </div>
-                ))}
-            </div>
-            {analysis.weakestDimension && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                当前弱项：
-                <span className="font-medium text-foreground">
-                  {analysis.weakestDimension.label}
-                </span>
-              </p>
-            )}
-          </div>
-        )}
+        <TrendSection result={result} isFirstTest={isFirstTest} />
 
-        {/* Premium placeholder — user has history but no premium */}
-        {!analysis && !isFirstTest && !isPremium && (
-          <div className="rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20 p-6 text-center">
-            <p className="text-sm font-medium text-muted-foreground">逐维度趋势分析</p>
-            <p className="mt-1 text-xs text-muted-foreground/60">
-              升级 Premium 后查看各维度认知变化趋势与改善建议
-            </p>
-            <Link
-              href="/unlock"
-              className="mt-3 inline-block rounded-full bg-foreground px-5 py-1.5 text-xs font-medium text-background hover:opacity-90 transition-opacity"
-            >
-              解锁 Premium
-            </Link>
-          </div>
-        )}
-
-        {!isFirstTest && (
-          /* AI Interpretation */
-          <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 dark:border-violet-800 dark:bg-violet-950/20">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-foreground">
-                {n("result.aiInterpretTitle")}
-                <sup className="ml-0.5 text-sm text-amber-500">*</sup>
-              </p>
-              {isPremium ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 text-xs"
-                  onClick={handleAiInterpret}
-                  disabled={aiLoading}
-                >
-                  {aiAnalysis ? n("result.aiInterpretRegenerate") : n("result.aiInterpretButton")}
-                </Button>
-              ) : null}
-            </div>
-
-            {!isPremium && (
-              <div className="mt-2 rounded-lg border border-dashed border-amber-200 bg-amber-50/60 p-3 text-center dark:border-amber-800 dark:bg-amber-950/20">
-                <p className="text-xs text-amber-700 dark:text-amber-400">
-                  Premium 专属 · 基于你的测试数据生成个性化认知分析报告
-                </p>
-                <Link
-                  href="/unlock"
-                  className="mt-1.5 inline-block text-xs font-medium text-amber-600 underline-offset-2 hover:underline dark:text-amber-400"
-                >
-                  升级查看 →
-                </Link>
-              </div>
-            )}
-
-            {isPremium && !aiAnalysis && !aiLoading && !aiError && (
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                {n("result.aiInterpretDesc")}
-              </p>
-            )}
-
-            {aiLoading && (
-              <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                {n("result.aiInterpretLoading")}
-              </p>
-            )}
-
-            {aiError && <p className="mt-2 text-sm text-red-600">{aiError}</p>}
-
-            {aiAnalysis && (
-              <div className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                {aiAnalysis}
-              </div>
-            )}
-          </div>
-        )}
+        <AIInterpretSection result={result} prevResult={prevResult} isFirstTest={isFirstTest} />
         {/* Score breakdown */}
         <div>
           <button
@@ -943,17 +613,7 @@ export function ResultPhase({
           >
             {n("result.downloadButton")}
           </button>
-          {isPremium && (
-            <>
-              <span className="text-muted-foreground/40">|</span>
-              <button
-                onClick={handleExportCSV}
-                className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-              >
-                导出 CSV
-              </button>
-            </>
-          )}
+          <ExportCsvLink />
         </div>
         <p className="mt-2 text-center text-xs text-muted-foreground">{n("result.disclaimer")}</p>
         <p className="mt-2 text-center text-xs text-muted-foreground">

@@ -1,25 +1,30 @@
-import { QUESTIONS_PER_TEST } from "@/lib/questions"
-import { RESULT_TIERS } from "@/lib/scoring"
+import { QUESTIONS_PER_TEST } from "@/lib/questions";
+import { RESULT_TIERS } from "@/lib/scoring";
+import { SITE_HOST } from "@/lib/site-config";
 
-const TIER_CONFIG: Record<string, { label: string; color: string }> = {}
+const TIER_CONFIG: Record<string, { label: string; color: string }> = {};
 for (const t of RESULT_TIERS) {
-  TIER_CONFIG[t.tierKey] = { label: t.label, color: t.ringColor }
+  TIER_CONFIG[t.tierKey] = { label: t.label, color: t.ringColor };
 }
 
 function esc(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const index = Math.min(100, Math.max(0, Number(searchParams.get("i") ?? 50)))
-    const tierKey = searchParams.get("t") ?? "moderateDecline"
-    const correct = searchParams.get("c") ?? "?"
-    const total = searchParams.get("n") ?? String(QUESTIONS_PER_TEST)
-    const challengeText = searchParams.get("challenge") ?? ""
+    const { searchParams } = new URL(request.url);
+    const index = Math.min(100, Math.max(0, Number(searchParams.get("i") ?? 50)));
+    const tierKey = searchParams.get("t") ?? "moderateDecline";
+    const correct = searchParams.get("c") ?? "?";
+    const total = searchParams.get("n") ?? String(QUESTIONS_PER_TEST);
+    const challengeText = searchParams.get("challenge") ?? "";
 
-    const tier = TIER_CONFIG[tierKey] ?? TIER_CONFIG["moderateDecline"]
+    const tier = TIER_CONFIG[tierKey] ?? TIER_CONFIG["moderateDecline"];
 
     const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -40,17 +45,17 @@ export async function GET(request: Request) {
 
   <text x="600" y="428" text-anchor="middle" font-size="18" fill="#666" font-family="sans-serif">${esc(correct)} / ${esc(total)} 正确</text>
 ${challengeText ? `  <text x="600" y="478" text-anchor="middle" font-size="20" fill="#444" font-family="sans-serif">${esc(challengeText)}</text>\n` : ""}
-  <text x="600" y="580" text-anchor="middle" font-size="16" fill="#aaa" font-family="sans-serif">cortex.hydroroll.team</text>
-</svg>`
+  <text x="600" y="580" text-anchor="middle" font-size="16" fill="#aaa" font-family="sans-serif">${SITE_HOST}</text>
+</svg>`;
 
     return new Response(svg, {
       headers: {
         "Content-Type": "image/svg+xml",
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
       },
-    })
+    });
   } catch (err) {
-    console.error("OG image error:", err)
-    return new Response("OG generation failed", { status: 500 })
+    console.error("OG image error:", err);
+    return new Response("OG generation failed", { status: 500 });
   }
 }

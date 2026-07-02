@@ -1,9 +1,11 @@
 // QQ OAuth configuration
-// APP_ID is public; APP_KEY must be kept secret (set as Cloudflare env var)
+import { SITE_URL } from "@/lib/site-config";
 
+// APP_ID is public; APP_KEY must be kept secret (set as Cloudflare env var)
 export const QQ_APP_ID = process.env.QQ_APP_ID ?? "";
 export const QQ_APP_KEY = process.env.QQ_APP_KEY ?? "";
-export const QQ_REDIRECT_URI = "https://cortex.hydroroll.team/api/auth/qq/callback";
+
+export const QQ_REDIRECT_URI = `${SITE_URL}/api/auth/qq/callback`;
 
 export const QQ_AUTHORIZE_URL = "https://graph.qq.com/oauth2.0/authorize";
 export const QQ_TOKEN_URL = "https://graph.qq.com/oauth2.0/token";

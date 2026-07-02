@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site-config";
 
-const BASE_URL = "https://cortex.hydroroll.team";
+const BASE_URL = SITE_URL;
 
 const LOCALES = ["zh-CN", "en", "ja"] as const;
 

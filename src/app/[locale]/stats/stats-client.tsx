@@ -13,7 +13,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { ArrowLeft, Users, Brain, BarChart3 } from "lucide-react";
 import { TIER_COLOR_MAP, TIER_KEYS } from "@/lib/scoring";
 import { AI_CANONICAL_LEVELS } from "@/lib/constants";
-import { usePremium } from "@/components/premium/usePremium";
+import { PremiumBadge } from "@/components/premium-seam";
 
 interface StatsPageData {
   totalTests: number;
@@ -49,7 +49,6 @@ export default function StatsClient() {
   const tierLabel = useTranslations("tier");
   const decl = useTranslations("declaration");
 
-  const { isPremium } = usePremium();
   const [data, setData] = useState<StatsPageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -228,11 +227,7 @@ export default function StatsClient() {
                         <div className="text-xs text-muted-foreground">
                           {t("ranking", { count: above })} · {t("rankedBehind", { count: below })}
                         </div>
-                        {isPremium && (
-                          <span className="mt-0.5 inline-block rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                            ✦ Premium
-                          </span>
-                        )}
+                        <PremiumBadge />
                         {userTier && (
                           <span
                             className="mt-0.5 inline-block rounded-full px-1.5 py-0.5 text-[10px] font-medium text-white"
@@ -323,11 +318,7 @@ export default function StatsClient() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">{t("trendTitle")}</CardTitle>
-              {isPremium && (
-                <Badge variant="default" className="bg-amber-500 text-white text-xs">
-                  ✦ Premium
-                </Badge>
-              )}
+              <PremiumBadge />
             </div>
             <CardDescription>{t("trendDesc", { count: history.length })}</CardDescription>
             {/* Dimension toggle */}

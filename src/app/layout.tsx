@@ -1,11 +1,12 @@
-import type { Metadata } from "next"
-import Script from "next/script"
-import "./globals.css"
-import "./festival/dragonboat.css"
-import { cookies } from "next/headers"
+import type { Metadata } from "next";
+import Script from "next/script";
+import "./globals.css";
+import "./festival/dragonboat.css";
+import { cookies } from "next/headers";
+import { SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cortex.hydroroll.team"),
+  metadataBase: new URL(SITE_URL),
   icons: {
     icon: "/favicon.svg",
   },
@@ -16,15 +17,15 @@ export const metadata: Metadata = {
     locale: "zh_CN",
     alternateLocale: ["en_US", "ja_JP"],
   },
-}
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies()
-  const locale = cookieStore.get("NEXT_LOCALE")?.value ?? "zh-CN"
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value ?? "zh-CN";
 
   return (
     <html lang={locale} className="antialiased" suppressHydrationWarning>
@@ -37,9 +38,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-dvh bg-gradient-to-b from-background to-muted/30">
-        {children}
-      </body>
+      <body className="min-h-dvh bg-gradient-to-b from-background to-muted/30">{children}</body>
     </html>
-  )
+  );
 }

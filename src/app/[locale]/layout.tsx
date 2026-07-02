@@ -6,15 +6,16 @@ import { LanguageToggle } from "@/components/language-toggle";
 import { FestivalWrapper } from "@/components/festival/FestivalWrapper";
 import { Bulletin } from "@/components/bulletin";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
-import { PremiumWrapper } from "@/components/premium/PremiumWrapper";
+import { PremiumWrapper } from "@/components/premium-seam";
 import { IntlErrorBoundary } from "@/components/IntlErrorBoundary";
 import { Link } from "@/i18n/navigation";
 import { QUESTIONS_PER_TEST } from "@/lib/questions";
 import { RESULT_TIERS } from "@/lib/scoring";
+import { SITE_URL } from "@/lib/site-config";
 
 const OG_DEFAULT_TIER_LABEL = RESULT_TIERS[Math.floor(RESULT_TIERS.length / 2)].label;
 
-const BASE_URL = "https://cortex.hydroroll.team";
+const BASE_URL = SITE_URL;
 
 function jsonLdWebApplication(locale: string) {
   const inLanguage = locale === "zh-CN" ? "zh-Hans" : locale === "ja" ? "ja" : "en";

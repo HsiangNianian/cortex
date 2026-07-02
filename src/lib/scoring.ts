@@ -1,4 +1,5 @@
-import type { Question } from "./questions"
+import type { Question } from "./questions";
+import { SITE_URL } from "./site-config";
 
 /**
  * Score a user's answer against the correct answer(s).
@@ -11,19 +12,19 @@ export function scoreAnswer(
   userAnswer: number | null | number[],
   correctAnswer: number | number[],
 ): number {
-  if (userAnswer === null) return 0
+  if (userAnswer === null) return 0;
   // Multi-select with multi-answer
   if (Array.isArray(userAnswer) && Array.isArray(correctAnswer)) {
-    const correctSet = new Set(correctAnswer)
+    const correctSet = new Set(correctAnswer);
     // Any wrong option → 0
-    if (userAnswer.some((a) => !correctSet.has(a))) return 0
+    if (userAnswer.some((a) => !correctSet.has(a))) return 0;
     // Fraction of correct options selected
-    return userAnswer.length / correctAnswer.length
+    return userAnswer.length / correctAnswer.length;
   }
   // Multi-select answer but single-select user input
-  if (Array.isArray(correctAnswer)) return correctAnswer.includes(userAnswer as number) ? 1 : 0
+  if (Array.isArray(correctAnswer)) return correctAnswer.includes(userAnswer as number) ? 1 : 0;
   // Single-select both sides
-  return userAnswer === correctAnswer ? 1 : 0
+  return userAnswer === correctAnswer ? 1 : 0;
 }
 
 /** Convenience: did the user get full credit? */
@@ -31,14 +32,14 @@ export function isCorrect(
   userAnswer: number | null | number[],
   correctAnswer: number | number[],
 ): boolean {
-  return scoreAnswer(userAnswer, correctAnswer) === 1
+  return scoreAnswer(userAnswer, correctAnswer) === 1;
 }
 
 export interface DimensionScores {
-  logic: number | null // percentage correct (0-100), null if no questions of this type
-  math: number | null
-  vocab: number | null
-  event: number | null
+  logic: number | null; // percentage correct (0-100), null if no questions of this type
+  math: number | null;
+  vocab: number | null;
+  event: number | null;
 }
 
 // Dimension labels — kept for backward compat, use `n("radar." + type)` for display
@@ -47,52 +48,64 @@ export const DIMENSION_LABELS: Record<string, string> = {
   math: "速算",
   vocab: "词汇语义",
   event: "事理分析",
-}
+};
 
-const ALL_DIMS = ["logic", "math", "vocab", "event"] as const
+const ALL_DIMS = ["logic", "math", "vocab", "event"] as const;
 
 /** Normalize dimension scores from old-format data that may lack newer dimensions. */
 export function normalizeDimensionScores(raw: unknown): DimensionScores {
-  const obj = (raw ?? {}) as Record<string, unknown>
+  const obj = (raw ?? {}) as Record<string, unknown>;
   return {
     logic: typeof obj.logic === "number" ? obj.logic : null,
     math: typeof obj.math === "number" ? obj.math : null,
     vocab: typeof obj.vocab === "number" ? obj.vocab : null,
     event: typeof obj.event === "number" ? obj.event : null,
-  }
+  };
 }
 
 /** Normalize thetaByType from old-format data that may lack newer dimensions. */
 export function normalizeThetaByType(raw: unknown): TestResult["thetaByType"] {
-  const obj = (raw ?? {}) as Record<string, unknown>
+  const obj = (raw ?? {}) as Record<string, unknown>;
   const dim = (key: string) => {
-    const v = obj[key] as { theta: number; se: number } | null | undefined
-    return v && typeof v.theta === "number" && typeof v.se === "number" ? v : null
-  }
+    const v = obj[key] as { theta: number; se: number } | null | undefined;
+    return v && typeof v.theta === "number" && typeof v.se === "number" ? v : null;
+  };
   return {
     logic: dim("logic"),
     math: dim("math"),
     vocab: dim("vocab"),
     event: dim("event"),
-  }
+  };
 }
 
 export interface ResultTier {
-  min: number
-  max: number
-  label: string
-  description: string
-  advice: string
-  tierKey: string
-  color: string
-  ringColor: string
+  min: number;
+  max: number;
+  label: string;
+  description: string;
+  advice: string;
+  tierKey: string;
+  color: string;
+  ringColor: string;
 }
 
-export const TIER_LABELS = ["cognitivePeak", "mildDecline", "moderateDecline", "significantDecline", "severeDecline"] as const
+export const TIER_LABELS = [
+  "cognitivePeak",
+  "mildDecline",
+  "moderateDecline",
+  "significantDecline",
+  "severeDecline",
+] as const;
 
-export const TIER_KEYS = ["cognitivePeak", "mildDecline", "moderateDecline", "significantDecline", "severeDecline"] as const
+export const TIER_KEYS = [
+  "cognitivePeak",
+  "mildDecline",
+  "moderateDecline",
+  "significantDecline",
+  "severeDecline",
+] as const;
 
-export const TIER_COLORS = ["#16a34a", "#65a30d", "#d97706", "#ea580c", "#dc2626"] as const
+export const TIER_COLORS = ["#16a34a", "#65a30d", "#d97706", "#ea580c", "#dc2626"] as const;
 
 // Map from legacy Chinese tier label → color (for localStorage backward compat)
 export const TIER_COLOR_MAP: Record<string, string> = {
@@ -106,10 +119,10 @@ export const TIER_COLOR_MAP: Record<string, string> = {
   moderateDecline: "#d97706",
   significantDecline: "#ea580c",
   severeDecline: "#dc2626",
-}
+};
 
 export function getTierByIndex(index: number): ResultTier {
-  return RESULT_TIERS.find((t) => index >= t.min && index <= t.max) ?? RESULT_TIERS[0]
+  return RESULT_TIERS.find((t) => index >= t.min && index <= t.max) ?? RESULT_TIERS[0];
 }
 
 export const RESULT_TIERS: ResultTier[] = [
@@ -130,8 +143,7 @@ export const RESULT_TIERS: ResultTier[] = [
     label: "轻度退化",
     description:
       "你的认知能力整体保持良好，但已经出现了一些轻微的退化信号。可能在某些类型的思考上开始不自觉依赖 AI。",
-    advice:
-      "在请 AI 帮忙之前，先给自己 30 秒独立思考的时间。这个小习惯能有效阻止退化趋势。",
+    advice: "在请 AI 帮忙之前，先给自己 30 秒独立思考的时间。这个小习惯能有效阻止退化趋势。",
     tierKey: "mildDecline",
     color: "text-lime-600",
     ringColor: "#65a30d",
@@ -142,8 +154,7 @@ export const RESULT_TIERS: ResultTier[] = [
     label: "中度退化",
     description:
       "你的认知活跃度已经出现明显下降。日常过度依赖 AI 完成思考任务，可能在不知不觉中削弱了你的独立分析能力。",
-    advice:
-      '建议每天留出 15 分钟的"无 AI 深度阅读/思考时间"，让大脑重新习惯独立运转。',
+    advice: '建议每天留出 15 分钟的"无 AI 深度阅读/思考时间"，让大脑重新习惯独立运转。',
     tierKey: "moderateDecline",
     color: "text-amber-600",
     ringColor: "#d97706",
@@ -172,33 +183,33 @@ export const RESULT_TIERS: ResultTier[] = [
     color: "text-red-600",
     ringColor: "#dc2626",
   },
-]
+];
 
 export interface TestResult {
-  score: number
-  degradationIndex: number
-  correctCount: number
-  totalQuestions: number
-  tier: ResultTier
-  dimensionScores: DimensionScores
-  answers: (number | null | number[])[]
-  timeouts: boolean[]
-  questions: Question[]
+  score: number;
+  degradationIndex: number;
+  correctCount: number;
+  totalQuestions: number;
+  tier: ResultTier;
+  dimensionScores: DimensionScores;
+  answers: (number | null | number[])[];
+  timeouts: boolean[];
+  questions: Question[];
   /** Phase 1: how the degradation index was computed */
-  estimationMethod?: "percentage" | "irt"
+  estimationMethod?: "percentage" | "irt";
   /** IRT: ability estimate in logits (range ~ -3 to +3) */
-  theta?: number
+  theta?: number;
   /** IRT: standard error of the theta estimate */
-  thetaSE?: number
+  thetaSE?: number;
   /** IRT: per-dimension theta estimates */
   thetaByType?: {
-    logic: { theta: number; se: number } | null
-    math: { theta: number; se: number } | null
-    vocab: { theta: number; se: number } | null
-    event: { theta: number; se: number } | null
-  }
+    logic: { theta: number; se: number } | null;
+    math: { theta: number; se: number } | null;
+    vocab: { theta: number; se: number } | null;
+    event: { theta: number; se: number } | null;
+  };
   /** IDs of questions the user flagged for review */
-  flaggedIds?: number[]
+  flaggedIds?: number[];
 }
 
 /**
@@ -207,23 +218,21 @@ export interface TestResult {
  * Φ(x) = 0.5 × (1 + sign(x) × erf(|x| / √2))
  */
 export function normalCDF(x: number): number {
-  const a1 = 0.254829592
-  const a2 = -0.284496736
-  const a3 = 1.421413741
-  const a4 = -1.453152027
-  const a5 = 1.061405429
-  const p = 0.3275911
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
 
-  const sign = x < 0 ? -1 : 1
+  const sign = x < 0 ? -1 : 1;
   // Scale by 1/√2 — the A&S formula approximates erf(z), and Φ(x) = 0.5·(1 + erf(x/√2))
-  const z = Math.abs(x) / Math.SQRT2
+  const z = Math.abs(x) / Math.SQRT2;
 
-  const t = 1 / (1 + p * z)
-  const erf =
-    1 -
-    (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-z * z))
+  const t = 1 / (1 + p * z);
+  const erf = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-z * z);
 
-  return 0.5 * (1 + sign * erf)
+  return 0.5 * (1 + sign * erf);
 }
 
 /**
@@ -236,46 +245,46 @@ export function normalCDF(x: number): number {
  * theta = +1.5 → degradationIndex ≈ 7 (cognitive peak).
  */
 export function abilityToDegradationIndex(theta: number): number {
-  const percentile = normalCDF(theta) * 100
-  return Math.round(Math.max(0, Math.min(100, 100 - percentile)))
+  const percentile = normalCDF(theta) * 100;
+  return Math.round(Math.max(0, Math.min(100, 100 - percentile)));
 }
 
 /** Convert per-dimension IRT theta to a 0-100 score (higher θ → higher score). */
 export function thetaToDimensionScore(theta: number): number {
-  return Math.round(Math.max(0, Math.min(100, normalCDF(theta) * 100)))
+  return Math.round(Math.max(0, Math.min(100, normalCDF(theta) * 100)));
 }
 
 /**
  * Calculate test result from user's answers.
  */
 export function calculateResult(
-  answers: (number | null | number[]) [],
+  answers: (number | null | number[])[],
   timeouts: boolean[],
   questions: Question[],
 ): TestResult {
   const correctCount = answers.reduce<number>((count, answer, i) => {
-    if (answer === null) return count
-    return count + scoreAnswer(answer, questions[i].answer)
-  }, 0)
+    if (answer === null) return count;
+    return count + scoreAnswer(answer, questions[i].answer);
+  }, 0);
 
-  const score = (correctCount / questions.length) * 100
-  const degradationIndex = 100 - score
+  const score = (correctCount / questions.length) * 100;
+  const degradationIndex = 100 - score;
 
   const tier =
-    RESULT_TIERS.find(
-      (t) => degradationIndex >= t.min && degradationIndex <= t.max,
-    ) ?? RESULT_TIERS[0]
+    RESULT_TIERS.find((t) => degradationIndex >= t.min && degradationIndex <= t.max) ??
+    RESULT_TIERS[0];
 
   // Per-dimension scores
-  const dimCorrect: Record<string, { correct: number; total: number }> = {}
+  const dimCorrect: Record<string, { correct: number; total: number }> = {};
   for (let i = 0; i < questions.length; i++) {
     // Map sub-types to their parent dimension for scoring
-    const dim = questions[i].type === "event-argument" || questions[i].type === "event-cause"
-      ? "event"
-      : questions[i].type
-    if (!dimCorrect[dim]) dimCorrect[dim] = { correct: 0, total: 0 }
-    dimCorrect[dim].total++
-    dimCorrect[dim].correct += scoreAnswer(answers[i], questions[i].answer)
+    const dim =
+      questions[i].type === "event-argument" || questions[i].type === "event-cause"
+        ? "event"
+        : questions[i].type;
+    if (!dimCorrect[dim]) dimCorrect[dim] = { correct: 0, total: 0 };
+    dimCorrect[dim].total++;
+    dimCorrect[dim].correct += scoreAnswer(answers[i], questions[i].answer);
   }
 
   const dimensionScores: DimensionScores = {
@@ -291,7 +300,7 @@ export function calculateResult(
     event: dimCorrect.event
       ? Math.round((dimCorrect.event.correct / dimCorrect.event.total) * 100)
       : null,
-  }
+  };
 
   return {
     score,
@@ -304,7 +313,7 @@ export function calculateResult(
     timeouts,
     questions,
     estimationMethod: "percentage",
-  }
+  };
 }
 
 export function getChallengeCopy(tierKey: string, index: number): string {
@@ -314,23 +323,26 @@ export function getChallengeCopy(tierKey: string, index: number): string {
     moderateDecline: `AI might be making me rusty. I scored ${index}/100. What's your score?`,
     significantDecline: `OK this is concerning. I got ${index}/100. Time to see where you stand.`,
     severeDecline: `The AI brain rust is real. ${index}/100. Dare to test yourself?`,
-  }
-  return challenges[tierKey] ?? challenges.moderateDecline
+  };
+  return challenges[tierKey] ?? challenges.moderateDecline;
 }
 
-export function generateShareText(result: TestResult, labels?: {
-  site: string
-  degradation: string
-  correct: string
-  tier: string
-  description: string
-  advice: string
-  logic: string
-  math: string
-  vocab: string
-  event: string
-  cta: string
-}): string {
+export function generateShareText(
+  result: TestResult,
+  labels?: {
+    site: string;
+    degradation: string;
+    correct: string;
+    tier: string;
+    description: string;
+    advice: string;
+    logic: string;
+    math: string;
+    vocab: string;
+    event: string;
+    cta: string;
+  },
+): string {
   const l = labels ?? {
     site: "认知防锈 · 基线测试结果",
     degradation: "退化指数",
@@ -342,28 +354,28 @@ export function generateShareText(result: TestResult, labels?: {
     math: "速算",
     vocab: "词汇",
     event: "事理",
-    cta: "在 https://cortex.hydroroll.team 测试你的认知状态",
-  }
+    cta: `在 ${SITE_URL} 测试你的认知状态`,
+  };
   const lines = [
     l.site,
     "",
     `${l.degradation}：${result.degradationIndex}/100 — ${l.tier}`,
     `${l.correct}：${result.correctCount}/${result.totalQuestions}`,
-  ]
+  ];
 
   // Add dimension scores
-  const dimParts: string[] = []
+  const dimParts: string[] = [];
   if (result.dimensionScores.logic !== null)
-    dimParts.push(`${l.logic} ${result.dimensionScores.logic}%`)
+    dimParts.push(`${l.logic} ${result.dimensionScores.logic}%`);
   if (result.dimensionScores.math !== null)
-    dimParts.push(`${l.math} ${result.dimensionScores.math}%`)
+    dimParts.push(`${l.math} ${result.dimensionScores.math}%`);
   if (result.dimensionScores.vocab !== null)
-    dimParts.push(`${l.vocab} ${result.dimensionScores.vocab}%`)
+    dimParts.push(`${l.vocab} ${result.dimensionScores.vocab}%`);
   if (result.dimensionScores.event !== null)
-    dimParts.push(`${l.event} ${result.dimensionScores.event}%`)
-  if (dimParts.length > 0) lines.push("", dimParts.join(" · "))
+    dimParts.push(`${l.event} ${result.dimensionScores.event}%`);
+  if (dimParts.length > 0) lines.push("", dimParts.join(" · "));
 
-  lines.push("", l.description, "", l.advice, "")
-  lines.push(l.cta)
-  return lines.join("\n")
+  lines.push("", l.description, "", l.advice, "");
+  lines.push(l.cta);
+  return lines.join("\n");
 }
