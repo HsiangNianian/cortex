@@ -2,6 +2,10 @@ import { NextResponse } from "next/server"
 
 export const dynamic = "force-static"
 
+export function generateStaticParams() {
+  return [{ locale: "zh-CN" }, { locale: "en" }, { locale: "ja" }]
+}
+
 const manifest = {
   name: "认知防锈 · Cognitive Anti-Rust",
   short_name: "认知防锈",
