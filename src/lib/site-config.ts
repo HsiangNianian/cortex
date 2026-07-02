@@ -32,14 +32,19 @@ export const GAME_SITE_URL = process.env.NEXT_PUBLIC_GAME_SITE_URL ?? "";
 export const AFDIAN_SPONSOR_URL = process.env.NEXT_PUBLIC_AFDIAN_SPONSOR_URL ?? "";
 
 /**
- * Base path for static-export deployment (e.g. GitHub Pages subpath).
+ * Normalized base path for static-export deployment (e.g. GitHub Pages subpath).
  * Raw `fetch("/api/...")` calls must be prefixed with this, unlike
  * `<Link>` / `next/image` which auto-apply basePath.
+ *
+ * Guaranteed to be either "" or a leading-slash path WITHOUT trailing slash
+ * (e.g. "/cortex"), read from the same env var as next.config.ts.
  */
-export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const _raw = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+export const BASE_PATH = _raw ? "/" + _raw.replace(/^\/+|\/+$/g, "") : "";
 
 /** Prefix a root-absolute path with the configured basePath. */
 export function withBasePath(path: string): string {
   if (!BASE_PATH) return path;
-  return `${BASE_PATH}${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${BASE_PATH}${normalizedPath}`;
 }

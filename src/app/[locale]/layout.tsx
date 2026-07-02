@@ -57,9 +57,9 @@ export async function generateMetadata({
       { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
       { rel: "apple-touch-icon", url: "/favicon-180.png" },
     ],
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(BASE_URL),
     alternates: {
-      canonical: locale === "zh-CN" ? BASE_URL : `${BASE_URL}/${locale}`,
+      canonical: locale === "zh-CN" ? `${BASE_URL}/` : `${BASE_URL}/${locale}/`,
       languages: {
         "zh-Hans": `${BASE_URL}/`,
         en: `${BASE_URL}/en`,
