@@ -1,100 +1,98 @@
-# 认知防锈 · Cognitive Anti-Rust
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://cortex.hydroroll.team/api/og?index=50&tier=moderateDecline&correct=%3F">
+    <img src="https://cortex.hydroroll.team/api/og?index=50&tier=moderateDecline&correct=%3F" alt="Cognitive Rustproof" width="600">
+  </picture>
+</p>
 
-一个认知健康追踪工具，帮助用户感知、测量、延缓因过度依赖 AI 而导致的核心心智能力退化。
+<h1 align="center">Cognitive Rustproof</h1>
 
-## 当前状态
+<p align="center">
+  <em>How is your cognitive state? An open-source IRT-based test that measures AI's impact on your thinking abilities.</em>
+</p>
 
-Phase 1 完成。
+<p align="center">
+  <a href="https://github.com/HsiangNianian/cortex"><img src="https://img.shields.io/github/stars/HsiangNianian/cortex?style=flat&logo=github&color=eed64a" alt="GitHub stars"></a>
+  <a href="https://github.com/HsiangNianian/cortex/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-65a30d?style=flat" alt="MIT license"></a>
+  <a href="https://cortex.hydroroll.team"><img src="https://img.shields.io/badge/demo-cortex.hydroroll.team-000?style=flat&logo=cloudflare" alt="Demo"></a>
+  <br>
+  <img src="https://img.shields.io/badge/Next.js_16-000?style=flat&logo=next.js" alt="Next.js 16">
+  <img src="https://img.shields.io/badge/React_19-000?style=flat&logo=react" alt="React 19">
+  <img src="https://img.shields.io/badge/shadcn/ui-000?style=flat&logo=shadcnui" alt="shadcn/ui">
+  <img src="https://img.shields.io/badge/Tailwind_CSS_v4-000?style=flat&logo=tailwindcss" alt="Tailwind CSS v4">
+  <img src="https://img.shields.io/badge/TypeScript-000?style=flat&logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/pnpm-000?style=flat&logo=pnpm" alt="pnpm">
+</p>
 
-- 动态评估引擎: IRT 1PL + EAP 能力估计 + 最大信息量选题
-- 自适应测试协调器（维度轮换 + theta 追踪）
-- 全部题目已标定 difficulty
-- 44 题题库（逻辑/速算/词汇），每测 20 题随机抽取
-- 多语言: zh-CN 150 题 / en 148 题 / ja 146 题
-- 难度覆盖 IRT -3.0 ~ +3.0 全区间
-- 退化指数算法 + 5 档分级 + 多维度雷达画像
-- 全平台统计页（正态分布、百分位排名、AI 使用量分组）
-- 个人趋势折线图
-- PWA 支持 + 分享卡片 + 主题切换
-- LLM 题目生成（DeepSeek SSE 流式 + Redis 缓存 + 限频）
+<p align="center">
+  <b>English</b> · <a href="README.zh.md">中文</a> · <a href="README.ja.md">日本語</a>
+</p>
 
-## 技术栈
+---
 
-| 层     | 选型                                   |
-| ------ | -------------------------------------- |
-| 框架   | Next.js 16 (App Router)                |
-| UI     | React 19 + Tailwind CSS v4 + shadcn/ui |
-| 数据   | Cloudflare KV（Workers Paid $5/月）    |
-| 平台   | Cloudflare Workers (via OpenNext)      |
-| 包管理 | pnpm                                   |
-| 语言   | TypeScript                             |
+## What Is This
 
-## 本地开发
+Cognitive Rustproof is an open-source cognitive baseline test that helps you regularly measure your core mental abilities — logic reasoning, mental math, and vocabulary.
+
+It uses **Item Response Theory (IRT)**, the same framework behind the SAT and GRE, to adapt question difficulty to your ability level in real time. Each test takes about 15 minutes. Results give you a **degradation index** (0–100, lower is better).
+
+The real value comes from **retesting**: take a test every 7+ days and connect the dots. Trends matter more than any single score.
+
+---
+
+## Quick Start
 
 ```bash
+# Install dependencies
 pnpm install
+
+# Start development server
 pnpm dev
 ```
 
-打开 [http://localhost:3000](http://localhost:3000)。
+Visit `http://localhost:3000` to preview.
 
-AI 相关功能（题目生成、AI 解读）需要设置 `OPENAI_API_KEY` 等环境变量，可在 `.env.local` 中配置（参考 `.env.example`）。
+---
 
-## 自部署
+## AI Question Generation
 
-### 前置条件
-
-- [Cloudflare](https://cloudflare.com) 账号（Workers Paid Plan，$5/月）
-- 安装 [wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) 并登录
-- 安装 [pnpm](https://pnpm.io)
-
-### 1. 创建基础设施
-
-```bash
-# KV namespace（用于统计数据存储）
-wrangler kv namespace create CORTEX_KV
-
-# D1 database（用于社区功能）
-wrangler d1 create cortex-db
-```
-
-记下输出的 ID，后续需要填入环境变量。
-
-### 2. 配置环境变量
-
-复制 `.env.example` 为 `.env.local`，按需修改：
+The test includes AI-generated questions with adaptive difficulty. Configure your LLM API:
 
 ```bash
 cp .env.example .env.local
 ```
 
-关键变量：
+Edit `.env.local` with your API key (any OpenAI-compatible provider — DeepSeek recommended):
 
-| 变量                    | 说明                                            |
-| ----------------------- | ----------------------------------------------- |
-| `OPENAI_API_KEY`        | DeepSeek / OpenAI 兼容 API 密钥                 |
-| `NEXT_PUBLIC_SITE_URL`  | 你的部署域名（如 `https://cortex.example.com`） |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare 账号 ID                              |
-| `CLOUDFLARE_API_TOKEN`  | Cloudflare API Token（有 KV + D1 权限）         |
-| `CORTEX_KV_ID`          | 上一步创建的 KV namespace ID                    |
-| `CORTEX_DB_ID`          | 上一步创建的 D1 database ID                     |
-| `AI_ACCESS_KEY`         | （可选）AI 接口的 bearer token 鉴权             |
+| Variable                  | Description                                |
+| ------------------------- | ------------------------------------------ |
+| `OPENAI_BASE_URL`         | API endpoint (default: DeepSeek)           |
+| `OPENAI_API_KEY`          | Your API key                               |
+| `OPENAI_MODEL`            | Model name (default: `deepseek-v4-flash`)  |
+| `NEXT_PUBLIC_ADAPTIVE_MODE` | Set `true` to enable AI questions        |
 
-本地开发使用 `wrangler` 时，参考 `.dev.vars.example` 配置 `.dev.vars`。
+---
 
-### 3. 部署
+## Tech Stack
 
-```bash
-# 构建
-pnpm cf:build
+| Layer     | Choice                                    |
+| --------- | ----------------------------------------- |
+| Framework | Next.js 16 (App Router)                   |
+| UI        | React 19 + Tailwind CSS v4 + shadcn/ui    |
+| Package   | pnpm                                      |
+| Language  | TypeScript                                |
 
-# 部署
-pnpm cf:deploy
-```
+---
 
-## 构建
+## Links
 
-```bash
-pnpm build
-pnpm start
-```
+- **Official site**: [cortex.hydroroll.team](https://cortex.hydroroll.team)
+- **GitHub**: [github.com/HsiangNianian/cortex](https://github.com/HsiangNianian/cortex)
+
+---
+
+## License
+
+[![MIT](https://img.shields.io/badge/license-MIT-65a30d)](LICENSE)
+
+MIT © Hsiang Nianian
