@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/HsiangNianian/cortex"><img src="https://img.shields.io/github/stars/HsiangNianian/cortex?style=flat&logo=github&color=eed64a" alt="GitHub stars"></a>
+  <a href="https://github.com/HsiangNianian/cortex"><img src="https://img.shields.io/github/stars/HsiangNianian/cortex?logo=github" alt="GitHub stars"></a>
   <a href="https://github.com/HsiangNianian/cortex/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-65a30d?style=flat" alt="MIT license"></a>
   <a href="https://cortex.hydroroll.team"><img src="https://img.shields.io/badge/demo-cortex.hydroroll.team-000?style=flat&logo=cloudflare" alt="Demo"></a>
   <br>
