@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import "./festival/dragonboat.css";
-import { cookies } from "next/headers";
 import { SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -19,22 +18,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value ?? "zh-CN";
-
   return (
-    <html lang={locale} className="antialiased" suppressHydrationWarning>
+    <html lang="zh-CN" className="antialiased" suppressHydrationWarning>
       <head>
         <Script
           id="theme-init"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=localStorage.getItem('cortex-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})()`,
+          }}
+        />
+        <Script
+          id="lang-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var s=window.location.pathname.split('/')[1];var m={'zh-CN':'zh-CN','en':'en','ja':'ja'};if(m[s]){document.documentElement.lang=m[s]}})()`,
           }}
         />
       </head>
