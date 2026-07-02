@@ -34,8 +34,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function AboutPage() {
-  const t = await getTranslations("about");
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "about" });
 
   return (
     <div className="min-h-dvh bg-gradient-to-b from-background to-muted/30">

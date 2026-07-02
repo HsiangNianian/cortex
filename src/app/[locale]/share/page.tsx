@@ -54,10 +54,13 @@ export async function generateMetadata({
 
 export default async function SharePage({
   searchParams,
+  params: pageParams,
 }: {
   searchParams: Promise<{ ref?: string }>
+  params: Promise<{ locale: string }>
 }) {
-  const t = await getTranslations("share")
+  const { locale } = await pageParams
+  const t = await getTranslations({ locale, namespace: "share" })
   const params = await searchParams
   const ref = parseRefParam(params.ref)
   const refStr = ref !== null ? String(ref) : ""
