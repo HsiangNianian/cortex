@@ -79,9 +79,6 @@ export default function TestFlow() {
             showExplanations={s.showExplanations}
             setShowExplanations={s.setShowExplanations}
             isDownloading={s.isDownloading}
-            flaggedIds={s.flaggedIds}
-            hasFlaggedBefore={s.hasFlaggedBefore}
-            onToggleFlag={s.toggleFlag}
             handleShare={s.handleShare}
             handleSetReminder={s.handleSetReminder}
             handleRestart={s.handleRestart}
