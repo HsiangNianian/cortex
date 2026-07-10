@@ -7,6 +7,7 @@ export function generateStaticParams() {
 }
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
+import { GlobalWhiteboard } from "@/components/GlobalWhiteboard";
 import { FestivalWrapper } from "@/components/festival/FestivalWrapper";
 
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
@@ -122,26 +123,31 @@ export default async function LocaleLayout({
       >
         <div className="flex-1" />
         <div className="flex items-center gap-3">
-          <Link
-            href="/search"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="inline h-3.5 w-3.5 sm:mr-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+          {/* 测试中隐藏搜索、语言、主题，白板工具条保持可见 */}
+          <span className="test-hideable flex items-center gap-3">
+            <Link
+              href="/search"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-            <span className="hidden sm:inline">{navT("search")}</span>
-          </Link>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="inline h-3.5 w-3.5 sm:mr-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <span className="hidden sm:inline">{navT("search")}</span>
+            </Link>
 
-          <LanguageToggle />
-          <ThemeToggle />
+            <LanguageToggle />
+            <ThemeToggle />
+          </span>
+
+          <GlobalWhiteboard />
         </div>
       </div>
       <ServiceWorkerRegister />
